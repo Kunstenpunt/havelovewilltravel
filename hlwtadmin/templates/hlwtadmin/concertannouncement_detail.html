@@ -1,0 +1,20 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Title: {{ concertannouncement.title }}</h1>
+
+    <p>Artist: {{ concertannouncement.musicbrainz.name }}</p>
+
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Concert</h4>
+        {{ concertannouncement.concert }}
+    </div>
+
+    <hr>
+    <div style="margin-left:20px;margin-top:20px">
+        <ul>
+            <li>{% if perms.hlwtadmin.can_update_concertannouncement %}<a href="{% url 'concertannouncement_update' concertannouncement.id %}">Update this concert announcement</a>{% endif %}</li>
+        </ul>
+    </div>
+
+{% endblock %}

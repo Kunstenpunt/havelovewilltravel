@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Concertannouncement List</h1>
+  {% if concertannouncement_list %}
+  <ul>
+    {% for concertannouncement in concertannouncement_list %}
+      <li>
+        <a href="{{ concertannouncement.get_absolute_url }}">{{ concertannouncement.title }}</a> ({{ concertannouncement.date }})
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no concertannouncements in the library.</p>
+  {% endif %}
+{% endblock %}

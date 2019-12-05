@@ -1,0 +1,56 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Title: {{ concert.title }}</h1>
+
+    <p>Datum: {{ concert.date }}</p>
+    <p>Cancelled: {{ concert.cancelled }}</p>
+
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Artists</h4>
+        <ul>
+            {% for relation in concert.relationconcertmusicbrainz_set.all %}
+              <li>
+                  <a href="{% url 'artist_detail' relation.musicbrainz.id %}">{{ relation.musicbrainz.name }}</a>
+                  {% if perms.hlwtadmin.can_delete_relationconcertmusicbrainz %}<a href="{% url 'relationconcertmusicbrainz_delete' relation.id %}">[delete relation]</a>{% endif %}
+              </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Related organisations</h4>
+        <ul>
+            {% for relation in concert.relationconcertorganity_set.all %}
+                <li>
+                    {{ relation.relation_type.all|join:"," }}
+                    <a href="{% url 'organity_detail' relation.organity.pk %}">{{ relation.organity.name }}</a>
+                    ({{ relation.organity.rawvenue_set.count }} related raw venues)
+                    {% if perms.hlwtadmin.can_delete_relationconcertorganity %}<a href="{% url 'relationconcertorganity_delete' relation.id %}">[delete relation]</a>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Based on</h4>
+        <ul>
+            {% for relation in concert.concertannouncement_set.all %}
+                <li>
+                    <strong>{{ relation.gigfinder.name }}:</strong>
+                    {{ relation.title }}, {{ relation.date }}, {{ relation.raw_venue }}, {{ relation.gigfinder_artist_name }}, {{ relation.gigfinder_concert_id }}
+                    {% if perms.hlwtadmin.can_update_concertannouncement %}<a href="{% url 'concertannouncement_update' relation.id %}">[update concertannouncement]</a>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <hr>
+    <div style="margin-left:20px;margin-top:20px">
+        <ul>
+            <li>{% if perms.hlwtadmin.can_update_concert %}<a href="{% url 'concert_update' concert.id %}">Update this concert</a>{% endif %}</li>
+            <li>{% if perms.hlwtadmin.can_create_relationconcertorganity %}<a href="{% url 'relationconcertorganity_create' concert.id %}">Relate this concert to an organity</a>{% endif %}</li>
+            <li>{% if perms.hlwtadmin.can_create_relationconcertmusicbrainz %}<a href="{% url 'relationconcertmusicbrainz_create' concert.id %}">Relate this concert to an artist</a>{% endif %}</li>
+        </ul>
+    </div>
+{% endblock %}

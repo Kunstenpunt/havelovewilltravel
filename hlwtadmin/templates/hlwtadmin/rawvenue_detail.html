@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Title: {{ rawvenue.raw_venue }}</h1>
+
+    <p>Clean venue: {{ rawvenue.venue }}</p>
+
+    <hr>
+    <div style="margin-left:20px;margin-top:20px">
+        {% if perms.hlwtadmin.can_update_rawvenue %}<a href="{% url 'rawvenue_update' rawvenue.id %}">Relate this rawvenue to a clean venue</a>{% endif %}
+    </div>
+{% endblock %}

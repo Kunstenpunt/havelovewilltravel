@@ -1,0 +1,21 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Have Love Will Travel Admin Home</h1>
+  <p>Welcome to Have Love Will Travel Admin</p>
+  <p>The database has the following record counts:</p>
+  <ul>
+    <li><strong>Artists:</strong> {{ num_artists }}</li>
+    <li><strong>Venues, festivals, ...:</strong> {{ num_venues }}</li>
+    <li><strong>Concerts:</strong> {{ num_concerts }}</li>
+  </ul>
+
+  <p>Work on the shop:</p>
+  <ul>
+    <li><strong>Concertannouncements without concerts:</strong> {{ num_concertannouncements_without_concerts }}</li>
+    <li><strong>Concerts without artists:</strong> {{ num_concerts_without_artists }}</li>
+    <li><strong>Concerts without organities:</strong> {{ num_concerts_without_organities }}</li>
+    <li><strong>Rawvenues without organities:</strong> {{ num_rawvenues_without_organities }}</li>
+    <li><strong>Organities without rawvenues:</strong> {{ num_organities_without_rawvenues }}</li>
+  </ul>
+{% endblock %}
