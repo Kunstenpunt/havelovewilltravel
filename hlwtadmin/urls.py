@@ -36,7 +36,7 @@ urlpatterns = [
     # relationconcertorganities
     path('relationconcertorganity/create/<int:pk>', views.RelationConcertOrganityCreate.as_view(), name='relationconcertorganity_create'),
     path('relationconcertorganity/<int:pk>/update/', views.RelationConcertOrganityUpdate.as_view(), name='relationconcertorganity_update'),
-    path('relationconcertorganity/<int:pk>/delete/', views.RelationConcertOrganityDelete.as_view(), name='relationconcertorganity_delete'),
+    path('relationconcertorganity/<int:pk>/delete/<int:concertid>', views.RelationConcertOrganityDelete.as_view(), name='relationconcertorganity_delete'),
     # relationconcertorganities
     path('relationconcertmusicbrainz/create/<int:pk>', views.RelationConcertMusicbrainzCreate.as_view(), name='relationconcertmusicbrainz_create'),
     path('relationconcertmusicbrainz/<int:pk>/update/', views.RelationConcertMusicbrainzUpdate.as_view(), name='relationconcertmusicbrainz_update'),
@@ -45,4 +45,5 @@ urlpatterns = [
     path('musicbrainz-autocomplete/', views.MusicbrainzAutocomplete.as_view(model=models.Musicbrainz), name='musicbrainz_autocomplete'),
     path('concert-autocomplete/', views.ConcertAutocomplete.as_view(model=models.Concert), name='concert_autocomplete'),
     path('organity-autocomplete/', views.OrganityAutocomplete.as_view(model=models.Organity), name='organity_autocomplete'),
+    path('address-autocomplete/', views.AddressAutocomplete.as_view(model=models.Address), name='address_autocomplete'),
 ]

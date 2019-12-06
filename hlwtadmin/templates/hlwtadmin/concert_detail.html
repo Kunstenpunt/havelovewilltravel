@@ -26,7 +26,7 @@
                     {{ relation.relation_type.all|join:"," }}
                     <a href="{% url 'organity_detail' relation.organity.pk %}">{{ relation.organity.name }}</a>
                     ({{ relation.organity.rawvenue_set.count }} related raw venues)
-                    {% if perms.hlwtadmin.can_delete_relationconcertorganity %}<a href="{% url 'relationconcertorganity_delete' relation.id %}">[delete relation]</a>{% endif %}
+                    {% if perms.hlwtadmin.can_delete_relationconcertorganity %}<a href="{% url 'relationconcertorganity_delete' relation.id concert.id %}">[delete relation]</a>{% endif %}
                 </li>
             {% endfor %}
         </ul>
