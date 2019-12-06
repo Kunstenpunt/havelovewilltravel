@@ -606,6 +606,18 @@ class RelationConcertOrganityUpdate(UpdateView):
         context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['num_concerts'] = Concert.objects.all().count()
+        context['num_artists'] = Musicbrainz.objects.count()
+        context['num_venues'] = Organity.objects.count()
+        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
+        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
+        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
+        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
+        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
+        return context
+
 
 class RelationConcertOrganityDelete(DeleteView):
     model = RelationConcertOrganity
@@ -669,6 +681,18 @@ class RelationConcertMusicbrainzCreate(CreateView):
 class RelationConcertMusicbrainzUpdate(UpdateView):
     form_class = RelationConcertMusicbrainzForm
     model = RelationConcertMusicbrainz
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['num_concerts'] = Concert.objects.all().count()
+        context['num_artists'] = Musicbrainz.objects.count()
+        context['num_venues'] = Organity.objects.count()
+        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
+        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
+        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
+        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
+        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
+        return context
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
