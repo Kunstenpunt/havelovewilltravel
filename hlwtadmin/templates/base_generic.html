@@ -38,11 +38,11 @@
                         <li><a href="{% url 'organities' %}">All organities</a></li>
                         <li><a href="{% url 'artists' %}">All artists</a></li>
                         <hr>
-                        <li><a href="{% url 'concertannouncements' %}">All concert announcements without master concert</a></li>
-                        <li><a href="{% url 'venueless_concerts' %}">All concerts without organities</a></li>
-                        <li><a href="{% url 'artistless_concerts' %}">All concerts without artists</a></li>
-                        <li><a href="{% url 'rawvenues' %}">All raw venues without organity</a></li>
-                        <li><a href="{% url 'sparse_organities' %}">All organities without raw venues</a></li>
+                        <li><a href="{% url 'concertannouncements' %}">Announcements wo/ master</a> ({{ num_concertannouncements_without_concerts }})</li>
+                        <li><a href="{% url 'venueless_concerts' %}">Concerts wo/ organities</a> ({{ num_concerts_without_organities }})</li>
+                        <li><a href="{% url 'artistless_concerts' %}">Concerts wo/ artists</a> ({{ num_concerts_without_artists }})</li>
+                        <li><a href="{% url 'rawvenues' %}">Raw venues wo/ organity</a> ({{ num_rawvenues_without_organities }})</li>
+                        <li><a href="{% url 'sparse_organities' %}">Organities wo/ raw venues</a> ({{ num_organities_without_rawvenues }})</li>
                         <hr>
                         {% if user.is_authenticated %}
                             <li>User: {{ user.get_username }}</li>
