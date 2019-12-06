@@ -31,6 +31,9 @@
 
     <hr>
     <div style="margin-left:20px;margin-top:20px">
-        {% if perms.hlwtadmin.can_delete_organity %}<a href="{% url 'organity_delete' organity.id %}">Delete this organity</a>{% endif %}
+        <ul>
+            <li>{% if perms.hlwtadmin.can_delete_organity %}<a href="{% url 'organity_delete' organity.id %}">Delete this organity</a>{% endif %}</li>
+            <li>{% if perms.hlwtadmin.can_update_organity %}<a href="{% url 'organity_update' organity.id %}">Update this organity</a>{% endif %}</li>
+        </ul>
     </div>
 {% endblock %}

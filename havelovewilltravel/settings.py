@@ -25,7 +25,7 @@ SECRET_KEY = 'i)h8$l^$#(sb2q!_7t_zu+h9eymm!k04-f6*u-xq2o_o4@cct='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['musieksentrumpc', '127.0.0.1']
 
 
 # Application definition
