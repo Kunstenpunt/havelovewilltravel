@@ -9,7 +9,7 @@ class GigFinder(models.Model):
     api_key = models.CharField(max_length=500)
 
     def __str__(self):
-        return self.name + " (" + self.base_url + ")"
+        return self.name
 
 
 class Artist(models.Model):

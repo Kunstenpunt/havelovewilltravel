@@ -5,14 +5,42 @@
 
     <div style="margin-left:20px;margin-top:20px">
         <h4>Concerts</h4>
-        <ul>
+        <table border="1">
+            <tr>
+                <th>Date</th>
+                <th>Main organisation</th>
+                <th>Main location</th>
+                <th>Gigfinder</th>
+                <th>Action</th>
+            </tr>
             {% for relation in artist.relationconcertartist_set.all %}
-              <li>
-                  <a href="{% url 'concert_detail' relation.concert.id %}">{{ relation.concert }}</a>
-                  {% if perms.hlwtadmin.can_delete_relationconcertartist %}<a href="{% url 'relationconcertartist_delete' relation.id relation.concert.id %}">[delete relation]</a>{% endif %}
-              </li>
+              <tr>
+                  <td>
+                      <a href="{% url 'concert_detail' relation.concert.id %}">{{ relation.concert.date }}</a>
+                  </td>
+                  <td>
+                      <a href="{% url 'organisation_detail' relation.concert.relationconcertorganisation_set.first.organisation.id %}">
+                          {{ relation.concert.relationconcertorganisation_set.first.organisation }}
+                      </a>
+                  </td>
+                  <td>
+                      {% if relation.concert.relationconcertorganisation_set.first.organisation.location %}
+                        <a href="{% url 'location_detail' relation.concert.relationconcertorganisation_set.first.organisation.location.id %}">
+                            {{ relation.concert.relationconcertorganisation_set.first.organisation.location }}
+                        </a>
+                      {% endif %}
+                  </td>
+                  <td>
+                      {% for ca in relation.concert.concertannouncement_set.all %}
+                          {{ ca.gigfinder }}
+                      {% endfor %}
+                  </td>
+                  <td>
+                      {% if perms.hlwtadmin.can_delete_relationconcertartist %}<a href="{% url 'relationconcertartist_delete' relation.id relation.concert.id %}">[delete relation]</a>{% endif %}
+                  </td>
+              </tr>
             {% endfor %}
-        </ul>
+        </table>
 
         <h4>Related artists</h4>
         <ul>
