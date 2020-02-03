@@ -189,27 +189,28 @@ class FacebookScraper(object):
 
             if events:
                 for concert in events:
-                    if isinstance(concert, dict) and "event_id" in concert: # TODO check if eventid not yet in concertannouncements
-                        venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], "facebook"])
-                        venue = Venue.objects.filter(raw_venue=venue_name).first()
-                        if not venue:
-                            venue = Venue.objects.create(
-                                raw_venue=venue_name,
-                                raw_location="|".join([concert["stad"], concert["land"], "facebook"])
-                            )
-                            venue.save()
+                    if isinstance(concert, dict) and "event_id" in concert:
+                        if not ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first():
+                            venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], "facebook"])
+                            venue = Venue.objects.filter(raw_venue=venue_name).first()
+                            if not venue:
+                                venue = Venue.objects.create(
+                                    raw_venue=venue_name,
+                                    raw_location="|".join([concert["stad"], concert["land"], "facebook"])
+                                )
+                                venue.save()
 
-                        ca = ConcertAnnouncement.objects.create(
-                            title=concert["titel"],
-                            artist=Artist.objects.filter(mbid=mbid).first(),
-                            date=concert["datum"].isoformat(),
-                            gigfinder=self.gf,
-                            gigfinder_concert_id=concert["event_id"],
-                            last_seen_on=datetime.now(),
-                            raw_venue=venue,
-                            ignore=False
-                        )
-                        ca.save()
+                            ca = ConcertAnnouncement.objects.create(
+                                title=concert["titel"],
+                                artist=Artist.objects.filter(mbid=mbid).first(),
+                                date=concert["datum"].isoformat(),
+                                gigfinder=self.gf,
+                                gigfinder_concert_id=concert["event_id"],
+                                last_seen_on=datetime.now(),
+                                raw_venue=venue,
+                                ignore=False
+                            )
+                            ca.save()
 
     def get_lat_lon_for_venue(self, venue, city, country):
         url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}"
