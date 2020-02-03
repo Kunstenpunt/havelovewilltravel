@@ -2,3 +2,4 @@ db.sqlite3
 hlwtadmin/google_api_places_api_key.txt
 hlwtadmin/fixtures/latest.json
 hlwtadmin/fixtures/latest.xlsx
+*.pyc
