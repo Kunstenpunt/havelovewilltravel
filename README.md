@@ -1,2 +1,2 @@
 # havelovewilltravel
-A management environment for havelovewilltravel.be
+A data management environment for havelovewilltravel.be
