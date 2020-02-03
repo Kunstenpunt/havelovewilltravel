@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Artist List</h1>
+  {% if artist_list %}
+  <ul>
+    {% for artist in artist_list %}
+      <li>
+        <a href="{{ artist.get_absolute_url }}">{{ artist.name }}</a> (<a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">link to musicbrainz</a>)
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no artists in the library.</p>
+  {% endif %}
+{% endblock %}

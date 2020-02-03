@@ -6,16 +6,20 @@
   <p>The database has the following record counts:</p>
   <ul>
     <li><strong>Artists:</strong> {{ num_artists }}</li>
-    <li><strong>Venues, festivals, ...:</strong> {{ num_venues }}</li>
+    <li><strong>Organisations:</strong> {{ num_organisations }}</li>
     <li><strong>Concerts:</strong> {{ num_concerts }}</li>
+    <li><strong>Venues:</strong> {{ num_venues }}</li>
+    <li><strong>Announcements:</strong> {{ num_announcements }}</li>
   </ul>
 
   <p>Work on the shop:</p>
   <ul>
-    <li><strong>Concertannouncements without concerts:</strong> {{ num_concertannouncements_without_concerts }}</li>
-    <li><strong>Concerts without artists:</strong> {{ num_concerts_without_artists }}</li>
-    <li><strong>Concerts without organities:</strong> {{ num_concerts_without_organities }}</li>
-    <li><strong>Rawvenues without organities:</strong> {{ num_rawvenues_without_organities }}</li>
-    <li><strong>Organities without rawvenues:</strong> {{ num_organities_without_rawvenues }}</li>
+    <li><strong><a href="{% url 'concertannouncements' %}">Announcements wo/ master</a>:</strong> {{ num_concertannouncements_without_concerts }}</li>
+    <li><strong><a href="{% url 'artistless_concerts' %}">Concerts wo/ artists</a>:</strong> {{ num_concerts_without_artists }}</li>
+    <li><strong><a href="{% url 'organisationless_concerts' %}">Concerts wo/ organisations</a>:</strong> {{ num_concerts_without_organities }}</li>
+    <li><strong><a href="{% url 'sparsevenues' %}">Venues wo/ organisation</a>:</strong> {{ num_rawvenues_without_organities }}</li>
+    <li><strong><a href="{% url 'sparse_organisations' %}">Organisations wo/ venues</a>:</strong> {{ num_organities_without_rawvenues }}</li>
+    <li><strong><a href="{% url 'sparse_organisations2' %}">Organisations without locations</a>:</strong> {{ num_organities_without_locations }}</li>
+    <li><strong><a href="{% url 'sparse_locations' %}">Cities without countries</a>:</strong> {{ num_cities_without_countries }}</li>
   </ul>
 {% endblock %}

@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<h1>Delete Relation Concert to Organity</h1>
+<h1>Delete Relation Artist to Artist</h1>
 
-<p>Are you sure you want to delete the relation: {{ relationconcertorganity }}?</p>
+<p>Are you sure you want to delete the relation: {{ relationartistartist.artist_a }} - {{ relationartistartist.artist_b }}?</p>
 
 <form action="" method="POST">
   {% csrf_token %}

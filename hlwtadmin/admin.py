@@ -1,21 +1,18 @@
 from django.contrib import admin
 
-from .models import Concert, ConcertAnnouncement, Musicbrainz, Gigfinder, GigfinderUrl, Organity, Address, Location, \
-    Country, RelationOrganityOrganity, RelationConcertMusicbrainz, RelationConcertOrganity, RawVenue, OrganityType
+from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, \
+    Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, OrganisationType
 
 # Register your models here.
 
 admin.site.register(Concert)
 admin.site.register(ConcertAnnouncement)
-admin.site.register(Musicbrainz)
-admin.site.register(GigfinderUrl)
-admin.site.register(Gigfinder)
-admin.site.register(Organity)
-admin.site.register(Address)
+admin.site.register(Artist)
+admin.site.register(Organisation)
 admin.site.register(Location)
 admin.site.register(Country)
-admin.site.register(RelationConcertOrganity)
-admin.site.register(RelationOrganityOrganity)
-admin.site.register(RelationConcertMusicbrainz)
-admin.site.register(RawVenue)
-admin.site.register(OrganityType)
+admin.site.register(RelationConcertOrganisation)
+admin.site.register(RelationOrganisationOrganisation)
+admin.site.register(RelationConcertArtist)
+admin.site.register(Venue)
+admin.site.register(OrganisationType)

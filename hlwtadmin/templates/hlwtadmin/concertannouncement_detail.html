@@ -1,13 +1,22 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Title: {{ concertannouncement.title }}</h1>
+    <h1>Concert announcement: {{ concertannouncement.title }}</h1>
 
-    <p>Artist: {{ concertannouncement.musicbrainz.name }}</p>
+    <p>Related artist: {% if concertannouncement.artist %} <a href="{% url 'artist_detail' concertannouncement.artist.mbid %}">{{ concertannouncement.artist }}</a> {% endif %}</p>
+    <p>Date: {{ concertannouncement.date }}, Time: {{ concertannouncement.time }}</p>
+    <p>Gigfinder: {{ concertannouncement.gigfinder }}, {{ concertannouncement.gigfinder_artist_name }}, {{ concertannouncement.gigfinder_concert_id }}</p>
+    <p>Last seen on: {{ concertannouncement.last_seen_on }}</p>
+    <p>Ignore: {{ concertannouncement.ignore }}</p>
+    <p>Venue: {% if concertannouncement.raw_venue %} <a href="{% url 'venue_detail' concertannouncement.raw_venue.id %}">{{ concertannouncement.raw_venue }} </a> {% endif %}</p>
 
     <div style="margin-left:20px;margin-top:20px">
-        <h4>Concert</h4>
-        {{ concertannouncement.concert }}
+        <h4>Related concert</h4>
+        {% if concertannouncement.concert %}
+            {% if perms.hlwtadmin.can_update_concert %}<a href="{% url 'concert_detail' concertannouncement.concert.id %}">{{ concertannouncement.concert }}</a>
+            {% else %}{{ concertannouncement.concert }}
+            {% endif %}
+        {% endif %}
     </div>
 
     <hr>

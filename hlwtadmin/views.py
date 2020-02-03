@@ -1,5 +1,4 @@
-from django.shortcuts import render, get_object_or_404
-from django.views import generic
+from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
@@ -7,8 +6,9 @@ from django import forms
 from dal import autocomplete
 from django.db.models import Q
 
-from .models import Concert, ConcertAnnouncement, Musicbrainz, Gigfinder, GigfinderUrl, Organity, Address, Location, \
-    Country, RelationOrganityOrganity, RelationConcertMusicbrainz, RelationConcertOrganity, RawVenue, OrganityType
+from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, \
+    Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
+    RelationArtistArtist
 
 
 class ConcertAutocomplete(autocomplete.Select2QuerySetView):
@@ -17,6 +17,12 @@ class ConcertAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             qs = qs.filter(title__icontains=self.q)
         return qs
+
+    def get_result_label(self, item):
+        if item.date:
+            return item.title + " (" + item.date.isoformat() + ")"
+        else:
+            return item.title
 
 
 class ConcertAnnouncementAutocomplete(autocomplete.Select2QuerySetView):
@@ -27,33 +33,48 @@ class ConcertAnnouncementAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 
-class MusicbrainzAutocomplete(autocomplete.Select2QuerySetView):
+class ArtistAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        qs = Musicbrainz.objects.all()
+        qs = Artist.objects.all()
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         return qs
 
 
-class OrganityAutocomplete(autocomplete.Select2QuerySetView):
+class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        qs = Organity.objects.all()
+        qs = Organisation.objects.all()
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        return qs
+
+    def get_result_label(self, item):
+        if item.disambiguation or item.location:
+            brackets = " (" + (item.disambiguation + ", " if item.disambiguation else "") + (str(item.location) if item.location else "") + ")"
+            return item.name + brackets
+        else:
+            return item.name
+
+
+class LocationAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Location.objects.all()
+        if self.q:
+            qs = qs.filter(Q(city__icontains=self.q) | Q(country__name__icontains=self.q))
+        return qs
+
+
+class CountryAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Country.objects.all()
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         return qs
 
 
-class AddressAutocomplete(autocomplete.Select2QuerySetView):
+class VenueAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        qs = Address.objects.all()
-        if self.q:
-            qs = qs.filter(Q(location__city__icontains=self.q) | Q(address__icontains=self.q) | Q(location__country__name__icontains=self.q))
-        return qs
-
-
-class RawvenueAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        qs = RawVenue.objects.all()
+        qs = Venue.objects.all()
         if self.q:
             qs = qs.filter(raw_venue__icontains=self.q)
         return qs
@@ -65,13 +86,17 @@ def index(request):
     # Generate counts of some of the main objects
     context = {
         'num_concerts': (Concert.objects.all().count()),
-        'num_artists': (Musicbrainz.objects.count()),
-        'num_venues': (Organity.objects.count()),
+        'num_artists': (Artist.objects.count()),
+        'num_organisations': (Organisation.objects.count()),
+        'num_venues': Venue.objects.count(),
+        'num_announcements': ConcertAnnouncement.objects.count(),
         'num_concertannouncements_without_concerts': ConcertAnnouncement.objects.filter(concert__isnull=True).count(),
-        'num_concerts_without_artists': Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count(),
-        'num_concerts_without_organities': Concert.objects.filter(relationconcertorganity__organity__isnull=True).count(),
-        'num_rawvenues_without_organities': RawVenue.objects.filter(venue__isnull=True).count(),
-        'num_organities_without_rawvenues': Organity.objects.filter(rawvenue__isnull=True).count()
+        'num_concerts_without_artists': Concert.objects.filter(relationconcertartist__artist__isnull=True).count(),
+        'num_concerts_without_organities': Concert.objects.filter(relationconcertorganisation__organisation__isnull=True).count(),
+        'num_rawvenues_without_organities': Venue.objects.filter(organisation__isnull=True).count(),
+        'num_organities_without_rawvenues': Organisation.objects.filter(venue__isnull=True).count(),
+        'num_organities_without_locations': Organisation.objects.filter(location__isnull=True).count(),
+        'num_cities_without_countries': Location.objects.filter(country__isnull=True).count()
     }
 
     # Render the HTML template index.html with the data in the context variable
@@ -80,58 +105,34 @@ def index(request):
 
 class ConcertListView(ListView):
     model = Concert
-    paginate_by = 25
+    paginate_by = 15
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
 class ArtistlessConcertListView(ListView):
     model = Concert
-    paginate_by = 25
+    paginate_by = 15
 
     def get_queryset(self):
-        return Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True)
+        return Concert.objects.filter(relationconcertartist__artist__isnull=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class VenuelessConcertListView(ListView):
+class OrganisationlessConcertListView(ListView):
     model = Concert
-    paginate_by = 25
+    paginate_by = 15
 
     def get_queryset(self):
-        return Concert.objects.filter(relationconcertorganity__organity__isnull=True)
+        return Concert.objects.filter(relationconcertorganisation__organisation__isnull=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
@@ -140,14 +141,6 @@ class ConcertDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
@@ -157,14 +150,6 @@ class ConcertCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
@@ -174,14 +159,6 @@ class ConcertUpdate(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
@@ -191,295 +168,277 @@ class ConcertDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class MusicbrainzListView(ListView):
-    model = Musicbrainz
-    paginate_by = 25
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
-        return context
-
-
-class MusicbrainzDetailView(DetailView):
-    model = Musicbrainz
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
-        return context
-
-
-class OrganityForm(forms.ModelForm):
-    class Meta:
-        model = Organity
-        fields = ['name', 'address', 'organity_type']
-        widgets = {
-            'address': autocomplete.ModelSelect2(
-                url='address_autocomplete'
-            ),
-        }
-
-
-class OrganityListView(ListView):
-    model = Organity
-    paginate_by = 25
-
-    def get_queryset(self):
-        return Organity.objects.filter(rawvenue__isnull=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
-        return context
-
-
-class FullOrganityListView(ListView):
-    model = Organity
-    paginate_by = 25
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
-        return context
-
-
-class OrganityDetailView(DetailView):
-    model = Organity
+class ArtistCreate(CreateView):
+    model = Artist
     fields = '__all__'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class OrganityCreate(CreateView):
-    model = Organity
+class ArtistListView(ListView):
+    model = Artist
+    paginate_by = 15
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class ArtistDetailView(DetailView):
+    model = Artist
     fields = '__all__'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class OrganityUpdate(UpdateView):
-    form_class = OrganityForm
-    model = Organity
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
-        return context
-
-
-class OrganityDelete(DeleteView):
-    model = Organity
-    success_url = reverse_lazy('organities')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
-        return context
-
-
-class RawvenueForm(forms.ModelForm):
+class LocationForm(forms.ModelForm):
     class Meta:
-        model = RawVenue
-        fields = ['raw_venue', 'venue']
+        model = Location
+        fields = ['city', 'latitude', 'longitude', 'country']
         widgets = {
-            'venue': autocomplete.ModelSelect2(
-                url='organity_autocomplete'
+            'country': autocomplete.ModelSelect2(
+                url='country_autocomplete'
             ),
         }
 
 
-class RawvenueListView(ListView):
-    model = RawVenue
-    paginate_by = 25
+class LocationCreate(CreateView):
+    model = Location
+    form_class = LocationForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class LocationUpdateView(UpdateView):
+    model = Location
+    form_class = LocationForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class LocationListView(ListView):
+    model = Location
+    paginate_by = 15
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class SparseLocationListView(ListView):
+    model = Location
+    paginate_by = 15
 
     def get_queryset(self):
-        return RawVenue.objects.filter(venue__isnull=True)
+        return Location.objects.filter(country__isnull=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class RawvenueDetailView(DetailView):
-    model = RawVenue
+class LocationDetailView(DetailView):
+    model = Location
+    fields = '__all__'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class RawvenueCreate(CreateView):
-    form_class = RawvenueForm
-    model = RawVenue
+class OrganisationForm(forms.ModelForm):
+    class Meta:
+        model = Organisation
+        fields = ['name', 'disambiguation', 'organisation_type', 'location']
+        widgets = {
+            'location': autocomplete.ModelSelect2(
+                url='location_autocomplete'
+            ),
+        }
+
+
+class OrganisationListView(ListView):
+    model = Organisation
+    paginate_by = 15
+
+    def get_queryset(self):
+        return Organisation.objects.filter(venue__isnull=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class RawvenueUpdate(UpdateView):
-    form_class = RawvenueForm
-    model = RawVenue
+class OrganisationListView2(ListView):
+    model = Organisation
+    paginate_by = 15
+
+    def get_queryset(self):
+        return Organisation.objects.filter(location__isnull=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class RawvenueDelete(DeleteView):
-    model = RawVenue
-    success_url = reverse_lazy('rawvenues')
+class FullOrganisationListView(ListView):
+    model = Organisation
+    paginate_by = 15
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
+        return context
+
+
+class OrganisationDetailView(DetailView):
+    model = Organisation
+    fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class OrganisationCreate(CreateView):
+    model = Organisation
+    fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class OrganisationUpdate(UpdateView):
+    form_class = OrganisationForm
+    model = Organisation
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class OrganisationDelete(DeleteView):
+    model = Organisation
+    success_url = reverse_lazy('organisations')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class VenueForm(forms.ModelForm):
+    class Meta:
+        model = Venue
+        fields = ['raw_venue', 'raw_location', 'organisation']
+        widgets = {
+            'organisation': autocomplete.ModelSelect2(
+                url='organisation_autocomplete'
+            ),
+        }
+
+
+class SparseVenueListView(ListView):
+    model = Venue
+    paginate_by = 15
+
+    def get_queryset(self):
+        return Venue.objects.filter(organisation__isnull=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class VenueListView(ListView):
+    model = Venue
+    paginate_by = 15
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class VenueDetailView(DetailView):
+    model = Venue
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class VenueCreate(CreateView):
+    form_class = VenueForm
+    model = Venue
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class VenueUpdate(UpdateView):
+    form_class = VenueForm
+    model = Venue
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class VenueDelete(DeleteView):
+    model = Venue
+    success_url = reverse_lazy('venues')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         return context
 
 
 class ConcertAnnouncementForm(forms.ModelForm):
     class Meta:
         model = ConcertAnnouncement
-        fields = ['title', 'musicbrainz', 'date', 'time', 'gigfinder', 'gigfinder_artist_name', 'gigfinder_concert_id', 'concert', 'raw_venue', 'ignore']
+        fields = ['title', 'artist', 'date', 'time', 'gigfinder', 'gigfinder_concert_id', 'concert', 'raw_venue', 'ignore']
         widgets = {
-            'musicbrainz': autocomplete.ModelSelect2(
-                url='musicbrainz_autocomplete'
+            'artist': autocomplete.ModelSelect2(
+                url='artist_autocomplete'
             ),
             'concert': autocomplete.ModelSelect2(
                 url='concert_autocomplete'
+            ),
+            'raw_venue': autocomplete.ModelSelect2(
+                url='venue_autocomplete'
             )
         }
 
 
+class AllConcertAnnouncementListView(ListView):
+    model = ConcertAnnouncement
+    paginate_by = 15
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class ConcertAnnouncementListView(ListView):
     model = ConcertAnnouncement
-    paginate_by = 25
+    paginate_by = 15
 
     def get_queryset(self):
         return ConcertAnnouncement.objects.filter(concert__isnull=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
@@ -488,14 +447,6 @@ class ConcertAnnouncementDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
@@ -505,14 +456,6 @@ class ConcertAnnouncementCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
@@ -522,14 +465,6 @@ class ConcertAnnouncementUpdate(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
@@ -539,34 +474,27 @@ class ConcertAnnouncementDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class RelationConcertOrganityForm(forms.ModelForm):
+class RelationConcertOrganisationForm(forms.ModelForm):
     class Meta:
-        model = RelationConcertOrganity
-        fields = ['concert', 'organity', 'organity_credited_as', 'relation_type']
+        model = RelationConcertOrganisation
+        fields = ['concert', 'organisation', 'organisation_credited_as', 'relation_type']
         widgets = {
             'concert': autocomplete.ModelSelect2(
                 url='concert_autocomplete'
             ),
-            'organity': autocomplete.ModelSelect2(
-                url='organity_autocomplete'
+            'organisation': autocomplete.ModelSelect2(
+                url='organisation_autocomplete',
+                attrs={'data-html': False}
             )
         }
 
 
-class RelationConcertOrganityCreate(CreateView):
-    form_class = RelationConcertOrganityForm
-    model = RelationConcertOrganity
+class RelationConcertOrganisationCreate(CreateView):
+    form_class = RelationConcertOrganisationForm
+    model = RelationConcertOrganisation
 
     def get_initial(self):
         concert = get_object_or_404(Concert, pk=self.kwargs.get("pk"))
@@ -579,82 +507,50 @@ class RelationConcertOrganityCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class RelationConcertOrganityUpdate(UpdateView):
-    form_class = RelationConcertOrganityForm
-    model = RelationConcertOrganity
+class RelationConcertOrganisationUpdate(UpdateView):
+    form_class = RelationConcertOrganisationForm
+    model = RelationConcertOrganisation
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
-        return context
+    def get_success_url(self):
+        relation = get_object_or_404(RelationConcertOrganisation, pk=self.kwargs.get("pk"))
+        return reverse_lazy('concert_detail', kwargs={"pk": relation.concert.id})
 
 
-class RelationConcertOrganityDelete(DeleteView):
-    model = RelationConcertOrganity
+class RelationConcertOrganisationDelete(DeleteView):
+    model = RelationConcertOrganisation
 
     def get_success_url(self):
         return reverse_lazy('concert_detail', kwargs={"pk": self.kwargs.get("concertid")})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class RelationConcertMusicbrainzForm(forms.ModelForm):
+class RelationConcertArtistForm(forms.ModelForm):
     class Meta:
-        model = RelationConcertMusicbrainz
-        fields = ['musicbrainz', 'concert']
+        model = RelationConcertArtist
+        fields = ['artist', 'concert', 'artist_credited_as']
         widgets = {
             'concert': autocomplete.ModelSelect2(
                 url='concert_autocomplete'
             ),
-            'musicbrainz': autocomplete.ModelSelect2(
-                url='musicbrainz_autocomplete'
+            'artist': autocomplete.ModelSelect2(
+                url='artist_autocomplete'
             )
         }
 
 
-class RelationConcertMusicbrainzCreate(CreateView):
-    form_class = RelationConcertMusicbrainzForm
-    model = RelationConcertMusicbrainz
+class RelationConcertArtistCreate(CreateView):
+    form_class = RelationConcertArtistForm
+    model = RelationConcertArtist
 
     def get_initial(self):
         concert = get_object_or_404(Concert, pk=self.kwargs.get("pk"))
@@ -667,60 +563,142 @@ class RelationConcertMusicbrainzCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
 
-class RelationConcertMusicbrainzUpdate(UpdateView):
-    form_class = RelationConcertMusicbrainzForm
-    model = RelationConcertMusicbrainz
+class RelationConcertArtistUpdate(UpdateView):
+    form_class = RelationConcertArtistForm
+    model = RelationConcertArtist
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
         return context
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
-        return context
+    def get_success_url(self):
+        relation = get_object_or_404(RelationConcertArtist, pk=self.kwargs.get("pk"))
+        return reverse_lazy('concert_detail', kwargs={"pk": relation.concert.id})
 
 
-class RelationConcertMusicbrainzDelete(DeleteView):
-    model = RelationConcertMusicbrainz
+class RelationConcertArtistDelete(DeleteView):
+    model = RelationConcertArtist
 
     def get_success_url(self):
         return reverse_lazy('concert_detail', kwargs={"pk": self.kwargs.get("concertid")})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.all().count()
-        context['num_artists'] = Musicbrainz.objects.count()
-        context['num_venues'] = Organity.objects.count()
-        context['num_concertannouncements_without_concerts'] = ConcertAnnouncement.objects.filter(concert__isnull=True).count()
-        context['num_concerts_without_artists'] = Concert.objects.filter(relationconcertmusicbrainz__musicbrainz__isnull=True).count()
-        context['num_concerts_without_organities'] = Concert.objects.filter(relationconcertorganity__organity__isnull=True).count()
-        context['num_rawvenues_without_organities'] = RawVenue.objects.filter(venue__isnull=True).count()
-        context['num_organities_without_rawvenues'] = Organity.objects.filter(rawvenue__isnull=True).count()
+        return context
+
+
+class RelationArtistArtistForm(forms.ModelForm):
+    class Meta:
+        model = RelationArtistArtist
+        fields = ['artist_a', 'artist_b', 'start_date', 'end_date', 'relation_type']
+        widgets = {
+            'artist_a': autocomplete.ModelSelect2(
+                url='artist_autocomplete'
+            ),
+            'artist_b': autocomplete.ModelSelect2(
+                url='artist_autocomplete'
+            )
+        }
+
+
+class RelationArtistArtistCreate(CreateView):
+    form_class = RelationArtistArtistForm
+    model = RelationArtistArtist
+
+    def get_initial(self):
+        artist = get_object_or_404(Artist, pk=self.kwargs.get("pk"))
+        return {
+            'artist_a': artist,
+        }
+
+    def get_success_url(self):
+        return reverse_lazy('artist_detail', kwargs={"pk": self.kwargs.get("pk")})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class RelationArtistArtistUpdate(UpdateView):
+    form_class = RelationArtistArtistForm
+    model = RelationArtistArtist
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        relation = get_object_or_404(RelationArtistArtist, pk=self.kwargs.get("pk"))
+        return reverse_lazy('artist_detail', kwargs={"pk": relation.artist_a.id})
+
+
+class RelationArtistArtistDelete(DeleteView):
+    model = RelationArtistArtist
+
+    def get_success_url(self):
+        return reverse_lazy('artist_detail', kwargs={"pk": self.kwargs.get("artistid")})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class RelationOrganisationOrganisationForm(forms.ModelForm):
+    class Meta:
+        model = RelationOrganisationOrganisation
+        fields = ['organisation_a', 'organisation_b', 'start_date', 'end_date', 'relation_type']
+        widgets = {
+            'organisation_a': autocomplete.ModelSelect2(
+                url='organisation_autocomplete',
+                attrs={'data-html': False}
+            ),
+            'organisation_b': autocomplete.ModelSelect2(
+                url='organisation_autocomplete',
+                attrs={'data-html': False}
+            )
+        }
+
+
+class RelationOrganisationOrganisationCreate(CreateView):
+    form_class = RelationOrganisationOrganisationForm
+    model = RelationOrganisationOrganisation
+
+    def get_initial(self):
+        organisation = get_object_or_404(Organisation, pk=self.kwargs.get("pk"))
+        return {
+            'organisation_a': organisation,
+        }
+
+    def get_success_url(self):
+        return reverse_lazy('organisation_detail', kwargs={"pk": self.kwargs.get("pk")})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class RelationOrganisationOrganisationUpdate(UpdateView):
+    form_class = RelationOrganisationOrganisationForm
+    model = RelationOrganisationOrganisation
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        relation = get_object_or_404(RelationOrganisationOrganisation, pk=self.kwargs.get("pk"))
+        return reverse_lazy('organisation_detail', kwargs={"pk": relation.organisation_a.id})
+
+
+class RelationOrganisationOrganisationDelete(DeleteView):
+    model = RelationOrganisationOrganisation
+
+    def get_success_url(self):
+        return reverse_lazy('organisation_detail', kwargs={"pk": self.kwargs.get("organisationid")})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         return context

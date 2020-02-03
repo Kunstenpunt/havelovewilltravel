@@ -1,0 +1,26 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Title: {{ venue.raw_venue }}</h1>
+
+    <p>Clean venue:
+        {% if venue.organisation %}
+            <a href="{% url 'organisation_detail' venue.organisation.id %}">{{ venue.organisation }}</a>
+        {% endif %}
+    </p>
+
+    <h2>Related concert announcements</h2>
+        <ul>
+            {% for announcement in venue.concertannouncement_set.all %}
+                <li>
+                    {{ announcement.title }}, {{ announcement.date }}, {{ announcement.artist }}
+                    {% if perms.hlwtadmin.can_update_concertannouncement %}<a href="{% url 'concertannouncement_update' announcement.id %}">[update concertannouncement]</a>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+
+    <hr>
+    <div style="margin-left:20px;margin-top:20px">
+        {% if perms.hlwtadmin.can_update_venue %}<a href="{% url 'venue_update' venue.id %}">Relate this venue to an organisation</a>{% endif %}
+    </div>
+{% endblock %}

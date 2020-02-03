@@ -1,7 +1,9 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Create/update a Concert</h1>
+  <h1>Relate a venue to an organisation</h1>
+
+  <h2>{{ venue.raw_venue }}</h2>
 
   <form action="" method="post">
     {% csrf_token %}

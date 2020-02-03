@@ -1,0 +1,38 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Artist: {{ artist.name }}</h1>
+
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Concerts</h4>
+        <ul>
+            {% for relation in artist.relationconcertartist_set.all %}
+              <li>
+                  <a href="{% url 'concert_detail' relation.concert.id %}">{{ relation.concert }}</a>
+                  {% if perms.hlwtadmin.can_delete_relationconcertartist %}<a href="{% url 'relationconcertartist_delete' relation.id relation.concert.id %}">[delete relation]</a>{% endif %}
+              </li>
+            {% endfor %}
+        </ul>
+
+        <h4>Related artists</h4>
+        <ul>
+            {% for relation in artist.artista.all %}
+              <li>
+                  {{ artist.name }} {{ relation.relation_type }} <a href="{{ relation.artist_b.mbid }}">{{ relation.artist_b.name }}</a>
+                  {% if perms.hlwtadmin.can_update_relationartistartist %}<a href="{% url 'relationartistartist_update' relation.id %}">[update relation]</a>{% endif %}
+                  {% if perms.hlwtadmin.can_delete_relationartistartist %}<a href="{% url 'relationartistartist_delete' relation.id artist.id %}">[delete relation]</a>{% endif %}
+              </li>
+            {% endfor %}
+            {% for relation in artist.artistb.all %}
+              <li>
+                  Inverted relation: <a href="{{ relation.artist_a.mbid }}">{{ relation.artist_a.name }}</a> {{ relation.relation_type }} {{ artist.name }}
+                  {% if perms.hlwtadmin.can_update_relationartistartist %}<a href="{% url 'relationartistartist_update' relation.id %}">[update relation]</a>{% endif %}
+                  {% if perms.hlwtadmin.can_delete_relationartistartist %}<a href="{% url 'relationartistartist_delete' relation.id artist.id %}">[delete relation]</a>{% endif %}
+              </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if perms.hlwtadmin.can_create_relationartistartist %}<a href="{% url 'relationartistartist_create' artist.mbid %}">Relate artist to another artist</a>{% endif %}
+
+{% endblock %}

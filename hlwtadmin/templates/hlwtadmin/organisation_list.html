@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Organisation List</h1>
+  {% if organisation_list %}
+  <ul>
+    {% for organisation in organisation_list %}
+      <li>
+        <a href="{{ organisation.get_absolute_url }}">{{ organisation.name }}</a> ({{ organisation.location }})
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no organisations in the library.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Venue List</h1>
+  {% if venue_list %}
+  <ul>
+    {% for venue in venue_list %}
+      <li>
+        <a href="{{ venue.get_absolute_url }}">{{ venue.raw_venue }}</a> ({{ venue.organisation }})
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no venues in the library.</p>
+  {% endif %}
+{% endblock %}

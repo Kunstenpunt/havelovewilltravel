@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Location: {{ location.city }}, {{ location.country }}</h1>
+
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Organisations</h4>
+        <ul>
+            {% for relation in location.organisation_set.all %}
+              <li>
+                  <a href="{% url 'organisation_detail' relation.id %}">{{ relation.name }}</a>
+              </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <hr>
+    <div style="margin-left:20px;margin-top:20px">
+        <ul>
+            <li>{% if perms.hlwtadmin.can_update_location %}<a href="{% url 'location_update' location.id %}">Update this location</a>{% endif %}</li>
+        </ul>
+    </div>
+
+{% endblock %}

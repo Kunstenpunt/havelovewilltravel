@@ -35,14 +35,18 @@
                     <ul class="sidebar-nav">
                         <li><a href="{% url 'index' %}">Home</a></li>
                         <li><a href="{% url 'concerts' %}">All master concerts</a></li>
-                        <li><a href="{% url 'organities' %}">All organities</a></li>
+                        <li><a href="{% url 'organisations' %}">All organisations</a></li>
                         <li><a href="{% url 'artists' %}">All artists</a></li>
+                        <li><a href="{% url 'locations' %}">All locations</a></li>
+                        <li><a href="{% url 'venues' %}">All venues</a></li>
+                        <li><a href="{% url 'allconcertannouncements' %}">All concertannouncements</a></li>
                         <hr>
-                        <li><a href="{% url 'concertannouncements' %}">Announcements wo/ master</a> ({{ num_concertannouncements_without_concerts }})</li>
-                        <li><a href="{% url 'venueless_concerts' %}">Concerts wo/ organities</a> ({{ num_concerts_without_organities }})</li>
-                        <li><a href="{% url 'artistless_concerts' %}">Concerts wo/ artists</a> ({{ num_concerts_without_artists }})</li>
-                        <li><a href="{% url 'rawvenues' %}">Raw venues wo/ organity</a> ({{ num_rawvenues_without_organities }})</li>
-                        <li><a href="{% url 'sparse_organities' %}">Organities wo/ raw venues</a> ({{ num_organities_without_rawvenues }})</li>
+                        <li><a href="{% url 'organisation_create' %}">Create organisation</a></li>
+                        <li><a href="{% url 'artist_create' %}">Create artist</a></li>
+                        <li><a href="{% url 'concertannouncement_create' %}">Create concertannouncement</a></li>
+                        <li><a href="{% url 'venue_create' %}">Create venue</a></li>
+                        <li><a href="{% url 'concert_create' %}">Create master concert</a></li>
+                        <li><a href="{% url 'location_create' %}">Create location</a></li>
                         <hr>
                         {% if user.is_authenticated %}
                             <li>User: {{ user.get_username }}</li>
