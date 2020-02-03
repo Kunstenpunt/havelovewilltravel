@@ -13,7 +13,7 @@
         <ul>
             {% for announcement in venue.concertannouncement_set.all %}
                 <li>
-                    {{ announcement.title }}, {{ announcement.date }}, {{ announcement.artist }}
+                    <a href="{% url 'concertannouncement_detail' announcement.id %}">{{ announcement.title }}, {{ announcement.date }}, {{ announcement.artist }}</a>
                     {% if perms.hlwtadmin.can_update_concertannouncement %}<a href="{% url 'concertannouncement_update' announcement.id %}">[update concertannouncement]</a>{% endif %}
                 </li>
             {% endfor %}
