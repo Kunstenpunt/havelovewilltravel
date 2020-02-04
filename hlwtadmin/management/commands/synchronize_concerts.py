@@ -90,6 +90,7 @@ from fake_useragent import UserAgent
 from re import compile
 from codecs import open
 from bs4 import BeautifulSoup
+import os
 
 
 class FacebookScraper(object):
@@ -97,8 +98,11 @@ class FacebookScraper(object):
         self.platform = "facebook"
         self.gf = GigFinder.objects.filter(name="www.facebook.com").first()
         self.ua = UserAgent()
-        with open("hlwtadmin/google_api_places_api_key.txt", "r") as f:
-            self.google_places_api_key = f.read().strip()
+        try:
+            with open("hlwtadmin/google_api_places_api_key.txt", "r") as f:
+                self.google_places_api_key = f.read().strip()
+        except FileNotFoundError:
+            self.google_places_api_key = os.environ.get('GOOGLE_PLACES_API_KEY')
 
     def _get_event_ids(self, url):
         print(url)
