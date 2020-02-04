@@ -15,6 +15,7 @@ urlpatterns = [
     path('artists/', views.ArtistListView.as_view(), name='artists'),
     path('artist/<str:pk>', views.ArtistDetailView.as_view(), name='artist_detail'),
     path('artist/create', views.ArtistCreate.as_view(), name='artist_create'),
+    path('artist/<str:pk>/update', views.ArtistUpdate.as_view(), name='artist_update'),
     # locations
     path('locations/', views.LocationListView.as_view(), name='locations'),
     path('sparselocations/', views.SparseLocationListView.as_view(), name='sparse_locations'),

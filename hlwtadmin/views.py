@@ -182,6 +182,15 @@ class ArtistCreate(CreateView):
         return context
 
 
+class ArtistUpdate(UpdateView):
+    model = Artist
+    fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class ArtistListView(ListView):
     model = Artist
     paginate_by = 15
