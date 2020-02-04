@@ -351,7 +351,7 @@ class OrganisationDelete(DeleteView):
 class VenueForm(forms.ModelForm):
     class Meta:
         model = Venue
-        fields = ['raw_venue', 'raw_location', 'organisation']
+        fields = ['organisation']
         widgets = {
             'organisation': autocomplete.ModelSelect2(
                 url='organisation_autocomplete'
