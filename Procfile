@@ -1,1 +1,1 @@
-web: gunicorn hlwtadmin.wsgi --log-file
+web: gunicorn hlwtadmin.wsgi --log-file -
