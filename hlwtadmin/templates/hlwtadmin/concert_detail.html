@@ -49,6 +49,21 @@
         </ul>
     </div>
 
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Concerts on same day in same organisation</h4>
+        <ul>
+            {% for c in concert.find_concurring_concerts.all %}
+                <li>
+                    {% if perms.hlwtadmin.can_update_concert %}<a href="{% url 'concert_detail' c.id %}">{{ c.title }},
+                    {% for relation in c.relationconcertartist_set.all %}
+                        {{ relation.artist }}
+                    {% endfor %}
+                    </a>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
     <hr>
     <div style="margin-left:20px;margin-top:20px">
         <ul>

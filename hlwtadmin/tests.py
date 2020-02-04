@@ -1,11 +1,42 @@
 from django.test import TestCase
 from .models import ConcertAnnouncement, Concert, Artist, Organisation, Location, Country, RelationConcertArtist, RelationConcertOrganisation, Venue, GigFinder, GigFinderUrl
 
-from havelovewilltravel.hlwtadmin.management.commands.synchronize_with_musicbrainz import synchronize_concerts_per_artist, synchronize_with_musicbrainz
-from background_task.tasks import tasks
+from .management.commands.synchronize_with_musicbrainz import Command
 
 
 # Create your tests here.
+class ConcertTest(TestCase):
+    def setUp(self):
+        self.concert_a = Concert.objects.create(
+            title="test a",
+            date="1985-11-23"
+        )
+        self.concert_a.save()
+        self.organisation = Organisation.objects.create(
+            name="quintenville"
+        )
+        self.organisation.save()
+        self.concert_b = Concert.objects.create(
+            title="test b",
+            date="1985-11-23"
+        )
+        self.concert_b.save()
+        self.rel_a = RelationConcertOrganisation.objects.create(
+            concert=self.concert_a,
+            organisation=self.organisation
+        )
+        self.rel_a.save()
+        self.rel_b = RelationConcertOrganisation.objects.create(
+            concert=self.concert_b,
+            organisation=self.organisation
+        )
+        self.rel_b.save()
+
+    def test_concerts_on_same_day_and_in_same_organisation(self):
+        self.assertEqual(1, len(self.concert_a.find_concurring_concerts()))
+        self.assertIn(self.concert_a, self.concert_b.find_concurring_concerts())
+
+
 class ConcertAnnouncementTest(TestCase):
     def setUp(self):
         self.gigfinder = GigFinder.objects.create(name="songkick",
