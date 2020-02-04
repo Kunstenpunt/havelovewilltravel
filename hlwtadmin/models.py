@@ -15,7 +15,7 @@ class GigFinder(models.Model):
 class Artist(models.Model):
     name = models.CharField(max_length=200)
     disambiguation = models.CharField(max_length=200, blank=True, null=True)
-    mbid = models.CharField(max_length=25, primary_key=True)
+    mbid = models.CharField(max_length=50, primary_key=True)
     include = models.BooleanField(default=False)
     exclude = models.BooleanField(default=False)
 
