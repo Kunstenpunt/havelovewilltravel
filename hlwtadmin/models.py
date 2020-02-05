@@ -217,6 +217,9 @@ class RelationConcertArtist(models.Model):
     def __str__(self):
         return self.concert.title + " - " + self.artist.name
 
+    class Meta:
+        ordering = ['concert']
+
 
 class RelationConcertOrganisation(models.Model):
     concert = models.ForeignKey("Concert", on_delete=models.PROTECT)
@@ -228,6 +231,9 @@ class RelationConcertOrganisation(models.Model):
 
     def __str__(self):
         return self.concert.title + " " + (self.organisation_credited_as  + " (" + self.organisation.name + ")" if self.organisation_credited_as else self.organisation.name)
+
+    class Meta:
+        ordering = ['concert']
 
 
 class RelationConcertOrganisationType(models.Model):
