@@ -3,13 +3,24 @@
 {% block content %}
   <h1>Artist List</h1>
   {% if artist_list %}
-  <ul>
+  <table border="1">
+    <tr>
+      <th>Name</th>
+      <th>Gigfinders</th>
+      <th>Musicbrainz</th>
+    </tr>
     {% for artist in artist_list %}
-      <li>
-        <a href="{{ artist.get_absolute_url }}">{{ artist.name }}</a> <i>{{ artist.disambiguation }}</i> (<a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">link to musicbrainz</a>)
-      </li>
+      <tr>
+        <td><a href="{{ artist.get_absolute_url }}">{{ artist.name }}</a> (<i>{{ artist.disambiguation }}</i>)</td>
+        <td>
+        {% for gf in artist.gigfinderurl_set.all %}
+          <a href="{{ gf.url }}">{{ gf.gigfinder }}</a>
+        {% endfor %}
+        </td>
+        <td><a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">link to musicbrainz</a></td>
+      </tr>
     {% endfor %}
-  </ul>
+  </table>
   {% else %}
     <p>There are no artists in the library.</p>
   {% endif %}

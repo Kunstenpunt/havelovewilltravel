@@ -4,10 +4,12 @@
     <h1>Artist: {{ artist.name }}</h1>
 
     <div style="margin-left:20px;margin-top:20px">
-        <a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">Link to musicbrainz</a>
-        <p>Disambiguation: {{ artist.disambiguation }}</p>
-        <p>Is on include list: {{ artist.include }}</p>
-        <p>Is on exclude list: {{ artist.exclude }}</p>
+        <ul>
+            <li><a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">Link to musicbrainz</a></li>
+            <li>Disambiguation: {{ artist.disambiguation }}</li>
+            <li>Is on include list: {{ artist.include }}</li>
+            <li>Is on exclude list: {{ artist.exclude }}</li>
+        </ul>
     </div>
 
     <div style="margin-left:20px;margin-top:20px">
@@ -16,12 +18,10 @@
             <tr>
                 <th>Date</th>
                 <th>Main organisation</th>
-                <th>Main location</th>
-                <th>Gigfinder</th>
-                <th>Action</th>
+                <th>Announcement</th>
             </tr>
             {% for relation in artist.relationconcertartist_set.all %}
-              <tr>
+              {% if relation.concert.cancelled %}<tr style="text-decoration: line-through;">{% else %} <tr> {% endif %}
                   <td>
                       <a href="{% url 'concert_detail' relation.concert.id %}">{{ relation.concert.date }}</a>
                   </td>
@@ -29,21 +29,17 @@
                       <a href="{% url 'organisation_detail' relation.concert.relationconcertorganisation_set.first.organisation.id %}">
                           {{ relation.concert.relationconcertorganisation_set.first.organisation }}
                       </a>
-                  </td>
-                  <td>
                       {% if relation.concert.relationconcertorganisation_set.first.organisation.location %}
-                        <a href="{% url 'location_detail' relation.concert.relationconcertorganisation_set.first.organisation.location.id %}">
+                        in <a href="{% url 'location_detail' relation.concert.relationconcertorganisation_set.first.organisation.location.id %}">
                             {{ relation.concert.relationconcertorganisation_set.first.organisation.location }}
                         </a>
                       {% endif %}
                   </td>
                   <td>
                       {% for ca in relation.concert.concertannouncement_set.all %}
-                          {{ ca.gigfinder }}
+                          <a href="{% url 'concertannouncement_detail' ca.id %}">{{ ca.title }}</a>
+                          via <a href="{{ ca.gigfinder_concert_id }}">{{ ca.gigfinder }}</a>
                       {% endfor %}
-                  </td>
-                  <td>
-                      {% if perms.hlwtadmin.can_delete_relationconcertartist %}<a href="{% url 'relationconcertartist_delete' relation.id relation.concert.id %}">[delete relation]</a>{% endif %}
                   </td>
               </tr>
             {% endfor %}

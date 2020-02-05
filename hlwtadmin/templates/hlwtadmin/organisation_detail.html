@@ -3,18 +3,37 @@
 {% block content %}
     <h1>Organisation: {{ organisation.name }}</h1>
 
-<p>Location: {% if organisation.location %}<a href="{% url 'location_detail' organisation.location.id %}">{{ organisation.location }}</a>{% endif %}</p>
-    <p>Type: {{ organisation.organisation_type.all|join:"," }}</p>
+    <ul>
+        <li>Location: {% if organisation.location %}<a href="{% url 'location_detail' organisation.location.id %}">{{ organisation.location }}</a>{% endif %}</li>
+        <li>Type: {{ organisation.organisation_type.all|join:"," }}</li>
+        <li>Disambiguation: {{ organisation.disambiguation }}</li>
+    </ul>
 
     <div style="margin-left:20px;margin-top:20px">
         <h4>Related concerts</h4>
-        <ul>
+        <table border="1">
+            <tr>
+                <th>Date</th>
+                <th>Artist</th>
+                <th>Announcement</th>
+            </tr>
             {% for relation in organisation.relationconcertorganisation_set.all %}
-                <li>
-                    <a href="{% url 'concert_detail' relation.concert.id %}">{{ relation.concert }}</a>
-                </li>
+                {% if relation.concert.cancelled %}<tr style="text-decoration: line-through;">{% else %} <tr> {% endif %}
+                    <td><a href="{% url 'concert_detail' relation.concert.id %}">{{ relation.concert.date }}</a></td>
+                    <td>
+                        {% for relationca in relation.concert.relationconcertartist_set.all %}
+                            <a href="{% url 'artist_detail' relationca.artist.mbid %}">{{ relationca.artist }}</a>
+                        {% endfor %}
+                    </td>
+                    <td>
+                      {% for ca in relation.concert.concertannouncement_set.all %}
+                          <a href="{% url 'concertannouncement_detail' ca.id %}">{{ ca.title }}</a>
+                          via <a href="{{ ca.gigfinder_concert_id }}">{{ ca.gigfinder }}</a>
+                      {% endfor %}
+                  </td>
+                </tr>
             {% endfor %}
-        </ul>
+        </table>
     </div>
 
     <div style="margin-left:20px;margin-top:20px">
