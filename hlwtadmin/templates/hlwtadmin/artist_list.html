@@ -7,17 +7,22 @@
     <tr>
       <th>Name</th>
       <th>Gigfinders</th>
-      <th>Musicbrainz</th>
     </tr>
     {% for artist in artist_list %}
       <tr>
-        <td><a href="{{ artist.get_absolute_url }}">{{ artist.name }}</a> (<i>{{ artist.disambiguation }}</i>)</td>
+        <td>
+            <a href="{{ artist.get_absolute_url }}">{{ artist.name }}</a> (<i>{{ artist.disambiguation }}</i>)
+            <a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">
+                {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/musicbrainz.png' %}" alt="{{ artist.name }}" />
+            </a>
+        </td>
         <td>
         {% for gf in artist.gigfinderurl_set.all %}
-          <a href="{{ gf.url }}">{{ gf.gigfinder }}</a>
+          <a href="{{ gf.url }}">
+              {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ gf.gigfinder }}.png" alt="{{ gf.gigfinder }}" />
+          </a>
         {% endfor %}
         </td>
-        <td><a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">link to musicbrainz</a></td>
       </tr>
     {% endfor %}
   </table>

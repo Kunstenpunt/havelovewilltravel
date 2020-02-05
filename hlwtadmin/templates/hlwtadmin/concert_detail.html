@@ -13,8 +13,8 @@
               <li>
                   <a href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a>
                   {% if relation.artist_credited_as %}(credited as "{{ relation.artist_credited_as }}"){% endif %}
-                  {% if perms.hlwtadmin.can_update_relationconcerartist %}<a href="{% url 'relationconcertartist_update' relation.id %}">[update relation]</a>{% endif %}
-                  {% if perms.hlwtadmin.can_delete_relationconcerartist %}<a href="{% url 'relationconcertartist_delete' relation.id concert.id %}">[delete relation]</a>{% endif %}
+                  {% if perms.hlwtadmin.can_update_relationconcerartist %}<a href="{% url 'relationconcertartist_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
+                  {% if perms.hlwtadmin.can_delete_relationconcerartist %}<a href="{% url 'relationconcertartist_delete' relation.id concert.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
               </li>
             {% endfor %}
         </ul>
@@ -29,8 +29,8 @@
                     <a href="{% url 'organisation_detail' relation.organisation.pk %}">{{ relation.organisation.name }}</a>
                     {% if relation.organisation_credited_as %}(credited as "{{ relation.organisation_credited_as }}"){% endif %}
                     {% if relation.organisation.location %} in <a href="{% url 'location_detail' relation.organisation.location.id %}">{{ relation.organisation.location }}</a>{% endif %}
-                    {% if perms.hlwtadmin.can_update_relationconcertorganisation %}<a href="{% url 'relationconcertorganisation_update' relation.id %}">[update relation]</a>{% endif %}
-                    {% if perms.hlwtadmin.can_delete_relationconcertorganisation %}<a href="{% url 'relationconcertorganisation_delete' relation.id concert.id %}">[delete relation]</a>{% endif %}
+                    {% if perms.hlwtadmin.can_update_relationconcertorganisation %}<a href="{% url 'relationconcertorganisation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
+                    {% if perms.hlwtadmin.can_delete_relationconcertorganisation %}<a href="{% url 'relationconcertorganisation_delete' relation.id concert.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
                 </li>
             {% endfor %}
         </ul>
@@ -41,7 +41,7 @@
         <ul>
             {% for relation in concert.concertannouncement_set.all %}
                 <li>
-                    <strong>{{ relation.gigfinder }}</strong>
+                    {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ relation.gigfinder }}.png" alt="{{ relation.gigfinder }}" />
                     {% if perms.hlwtadmin.can_update_concertannouncement %}<a href="{% url 'concertannouncement_update' relation.id %}">{{ relation.title }} ({{ relation.date }}), {{ relation.gigfinder_artist_name }}, {{ relation.gigfinder_concert_id }}</a>{% endif %}
                     {% if perms.hlwtadmin.can_update_venue %}with venue <a href="{% url 'venue_update' relation.raw_venue.id %}">{{ relation.raw_venue }}</a>{% endif %}
                 </li>

@@ -3,13 +3,22 @@
 {% block content %}
   <h1>Organisation List</h1>
   {% if organisation_list %}
-  <ul>
+  <table border="1">
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Location</th>
+    </tr>
     {% for organisation in organisation_list %}
-      <li>
-        <a href="{{ organisation.get_absolute_url }}">{{ organisation.name }}</a> ({{ organisation.location }})
-      </li>
+      <tr>
+        <td>
+          <a href="{{ organisation.get_absolute_url }}">{{ organisation.name }}</a> <i>({{ organisation.disambiguation }})</i>
+        </td>
+        <td>{{ organisation.organisation_type.all|join:"," }}</td>
+        <td>{{ organisation.location }}</td>
+      </tr>
     {% endfor %}
-  </ul>
+  </table>
   {% else %}
     <p>There are no organisations in the library.</p>
   {% endif %}
