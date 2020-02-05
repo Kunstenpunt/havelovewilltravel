@@ -280,3 +280,18 @@ class OrganisationsMerge(models.Model):
 
     def get_absolute_url(self):
         return reverse('organisationsmerge_delete', args=[str(self.id)])
+
+
+class ConcertsMerge(models.Model):
+    primary_object = models.ForeignKey("Concert", on_delete=models.PROTECT, related_name="primary")
+    alias_objects = models.ManyToManyField("Concert", related_name="aliases")
+
+    def __str__(self):
+        return self.primary_object.title + " < " + ", ".join([str(ao.title) for ao in self.alias_objects.all()])
+
+    def delete(self, *args, **kwargs):
+        mmi = MergedModelInstance.create(self.primary_object, [ao for ao in self.alias_objects.all()], keep_old=False)
+        super(ConcertsMerge, self).delete(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('concertsmerge_delete', args=[str(self.id)])

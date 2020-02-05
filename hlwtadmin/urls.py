@@ -69,5 +69,7 @@ urlpatterns = [
     path('venue-autocomplete/', views.VenueAutocomplete.as_view(model=models.Venue, create_field='raw_venue'), name='venue_autocomplete'),
     # merge
     path('organisationsmerge/create/', views.OrganisationsMergeCreate.as_view(model=models.OrganisationsMerge), name='organisationsmerge_create'),
-    path('organisationsmerge/<str:pk>/confirm/', views.OrganisationsMergeDelete.as_view(model=models.OrganisationsMerge), name='organisationsmerge_delete')
+    path('organisationsmerge/<str:pk>/confirm/', views.OrganisationsMergeDelete.as_view(model=models.OrganisationsMerge), name='organisationsmerge_delete'),
+    path('concertsmerge/create/', views.ConcertsMergeCreate.as_view(model=models.ConcertsMerge), name='concertsmerge_create'),
+    path('concertsmerge/<str:pk>/confirm/', views.ConcertsMergeDelete.as_view(model=models.ConcertsMerge), name='concertsmerge_delete')
 ]

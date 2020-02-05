@@ -8,7 +8,7 @@ from django.db.models import Q
 
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
-    RelationArtistArtist, OrganisationsMerge
+    RelationArtistArtist, OrganisationsMerge, ConcertsMerge
 
 
 class ConcertAutocomplete(autocomplete.Select2QuerySetView):
@@ -105,6 +105,38 @@ def index(request):
     return render(request, 'index.html', context=context)
 
 
+class ConcertsMergeForm(forms.ModelForm):
+    class Meta:
+        model = ConcertsMerge
+        fields = ['primary_object', 'alias_objects']
+        widgets = {
+            'primary_object': autocomplete.ModelSelect2(
+                url='concert_autocomplete'
+            ),
+            'alias_objects': autocomplete.ModelSelect2Multiple(
+                url='concert_autocomplete'
+            ),
+        }
+
+
+class ConcertsMergeCreate(CreateView):
+    model = ConcertsMerge
+    form_class = ConcertsMergeForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class ConcertsMergeDelete(DeleteView):
+    model = ConcertsMerge
+    success_url = reverse_lazy('concerts')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class OrganisationsMergeForm(forms.ModelForm):
     class Meta:
         model = OrganisationsMerge
@@ -122,14 +154,6 @@ class OrganisationsMergeForm(forms.ModelForm):
 class OrganisationsMergeCreate(CreateView):
     model = OrganisationsMerge
     form_class = OrganisationsMergeForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
-
-class OrganisationsMergeDetail(DetailView):
-    model = OrganisationsMerge
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

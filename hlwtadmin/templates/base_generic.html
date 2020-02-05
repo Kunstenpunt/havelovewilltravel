@@ -49,6 +49,7 @@
                         <li><a href="{% url 'location_create' %}">Create location</a></li>
                         <hr>
                         <li><a href="{% url 'organisationsmerge_create' %}">Merge organisations</a></li>
+                        <li><a href="{% url 'concertsmerge_create' %}">Merge concerts</a></li>
                         <hr>
                         {% if user.is_authenticated %}
                             <li>User: {{ user.get_username }}</li>
