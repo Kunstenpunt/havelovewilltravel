@@ -51,7 +51,7 @@ class ConcertAnnouncement(models.Model):
     date = models.DateField()
     time = models.TimeField(null=True, blank=True)
     gigfinder = models.ForeignKey("GigFinder", on_delete=models.PROTECT)
-    gigfinder_concert_id = models.URLField()
+    gigfinder_concert_id = models.CharField(max_length=250, blank=True, null=True)
     concert = models.ForeignKey("Concert", on_delete=models.PROTECT, blank=True, null=True)
     last_seen_on = models.DateField(auto_now=True)
     raw_venue = models.ForeignKey("Venue", on_delete=models.PROTECT, blank=True, null=True)
@@ -141,6 +141,7 @@ class Concert(models.Model):
     time = models.TimeField(blank=True, null=True)
     cancelled = models.BooleanField(default=False, blank=True, null=True)
     verified = models.BooleanField(default=False, blank=True, null=True)
+    ignore = models.BooleanField(default=False, blank=True, null=True)
     history = HistoricalRecords()
 
     def __str__(self):
@@ -166,6 +167,7 @@ class Organisation(models.Model):
     organisation_type = models.ManyToManyField("OrganisationType", blank=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
     history = HistoricalRecords()
 
     def __str__(self):
