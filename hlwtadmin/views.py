@@ -259,8 +259,16 @@ class ArtistListView(ListView):
     model = Artist
     paginate_by = 15
 
+    def get_queryset(self):
+        filter_val = self.request.GET.get('filter', '')
+        new_context = Artist.objects.filter(
+            name__istartswith=filter_val
+        )
+        return new_context
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter'] = self.request.GET.get('filter', '')
         return context
 
 
