@@ -54,12 +54,13 @@ class Command(BaseCommand):
                 if not gf:
                     gf = GigFinder.objects.create(name=gigfindername)
                     gf.save()
-                gfurl = GigFinderUrl.objects.create(
-                    artist=artistobject,
-                    gigfinder=gf,
-                    url=url
-                )
-                gfurl.save()
+                if GigFinderUrl.objects.filter(url=url).filter(artist=artistobject).first() is None:
+                    gfurl = GigFinderUrl.objects.create(
+                        artist=artistobject,
+                        gigfinder=gf,
+                        url=url
+                    )
+                    gfurl.save()
 
     def handle(self, *args, **options):
         # get new artists or updates from musicbrainz
@@ -70,7 +71,7 @@ class Command(BaseCommand):
         limit = 25
         total_search_results = 1
         while offset < total_search_results:
-            search_results = self.__search_artists_in_area("Antwerpen", limit, offset)
+            search_results = self.__search_artists_in_area("Antwerp", limit, offset)
             for hit in list(search_results["artist-list"]):
                 artist = self.__obtain_a_specific_mb_artist(hit["id"])
                 self.__create_or_update_artist(artist)

@@ -2,7 +2,7 @@ from django.test import TestCase
 from .models import ConcertAnnouncement, Concert, Artist, Organisation, Location, Country, RelationConcertArtist, \
     RelationConcertOrganisation, Venue, GigFinder, GigFinderUrl, OrganisationsMerge, RelationOrganisationOrganisation
 
-from .management.commands.synchronize_with_musicbrainz import Command
+from .management.commands.synchronize_with_musicbrainz import Command as SyncMB
 
 
 # Create your tests here.
@@ -244,6 +244,10 @@ class ConcertAnnouncementTest(TestCase):
         self.assertEqual(ca.concert.title, ca.title)
 
 
+from io import StringIO
+from django.core.management import call_command
+
+
 class MyBackgroundTaskTestCase(TestCase):
     def setUp(self):
         self.artist = Artist.objects.create(name="Rebirth",
@@ -262,8 +266,9 @@ class MyBackgroundTaskTestCase(TestCase):
         self.gfurl.save()
 
     def test_synchronize_with_musicbrainz(self):
-        synchronize_with_musicbrainz()
-        tasks.run_next_task()
+        out = StringIO()
+        call_command("synchronize_with_musicbrainz", stdout=out)
+        call_command("synchronize_with_musicbrainz", stdout=out)
         self.assertEqual(Artist.objects.count(), 9)
         self.assertEqual(GigFinderUrl.objects.count(), 7)
         self.assertTrue(Artist.objects.filter(name="Rebirth Collective").first().include)
