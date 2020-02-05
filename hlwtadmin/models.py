@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from simple_history.models import HistoricalRecords
 
 
 # Create your models here.
@@ -134,6 +135,7 @@ class Concert(models.Model):
     time = models.TimeField(blank=True, null=True)
     cancelled = models.BooleanField(default=False, blank=True, null=True)
     verified = models.BooleanField(default=False, blank=True, null=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.title
@@ -158,6 +160,7 @@ class Organisation(models.Model):
     organisation_type = models.ManyToManyField("OrganisationType", blank=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -203,6 +206,7 @@ class RelationConcertArtist(models.Model):
     artist = models.ForeignKey("Artist", on_delete=models.PROTECT)
     artist_credited_as = models.CharField(max_length=200, blank=True, null=True)
     concert = models.ForeignKey("Concert", on_delete=models.PROTECT)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.concert.title + " - " + self.artist.name
@@ -214,6 +218,7 @@ class RelationConcertOrganisation(models.Model):
     organisation_credited_as = models.CharField(max_length=200, blank=True, null=True)
     relation_type = models.ManyToManyField("RelationConcertOrganisationType", blank=True)
     unverified = models.BooleanField(blank=True, default=False)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.concert.title + " " + (self.organisation_credited_as  + " (" + self.organisation.name + ")" if self.organisation_credited_as else self.organisation.name)
@@ -232,6 +237,7 @@ class RelationOrganisationOrganisation(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     relation_type = models.CharField(max_length=200)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.organisation_a.name + " " + self.relation_type + " " + self.organisation_b.name + " (" + self.start_date.isoformat() + "-" + self.end_date.isoformat() + ")"
@@ -246,6 +252,7 @@ class RelationArtistArtist(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     relation_type = models.CharField(max_length=200)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.artist_a.name + " " + self.relation_type + " " + self.artist_b.name + " (" + self.start_date.isoformat() + "-" + self.end_date.isoformat() + ")"
