@@ -14,7 +14,7 @@ urlpatterns = [
     # artists
     path('artists/', views.ArtistListView.as_view(), name='artists'),
     path('artist/<str:pk>', views.ArtistDetailView.as_view(), name='artist_detail'),
-    path('artist/create', views.ArtistCreate.as_view(), name='artist_create'),
+    path('artist/create/', views.ArtistCreate.as_view(), name='artist_create'),
     path('artist/<str:pk>/update', views.ArtistUpdate.as_view(), name='artist_update'),
     # locations
     path('locations/', views.LocationListView.as_view(), name='locations'),
@@ -67,4 +67,7 @@ urlpatterns = [
     path('location-autocomplete/', views.LocationAutocomplete.as_view(model=models.Location, create_field='city'), name='location_autocomplete'),
     path('country-autocomplete/', views.CountryAutocomplete.as_view(model=models.Country, create_field='name'), name='country_autocomplete'),
     path('venue-autocomplete/', views.VenueAutocomplete.as_view(model=models.Venue, create_field='raw_venue'), name='venue_autocomplete'),
+    # merge
+    path('organisationsmerge/create/', views.OrganisationsMergeCreate.as_view(model=models.OrganisationsMerge), name='organisationsmerge_create'),
+    path('organisationsmerge/<str:pk>/confirm/', views.OrganisationsMergeDelete.as_view(model=models.OrganisationsMerge), name='organisationsmerge_delete')
 ]

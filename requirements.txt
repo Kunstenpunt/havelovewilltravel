@@ -8,6 +8,7 @@ Django==3.0
 django-autocomplete-light==3.5.0
 django-compat==1.0.15
 django-simple-history==2.8.0
+django-super-deduper==0.1.2
 fake-useragent==0.1.11
 gunicorn==20.0.4
 idna==2.8

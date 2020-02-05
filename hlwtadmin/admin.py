@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, \
-    Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, OrganisationType
+    Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
+    OrganisationType, OrganisationsMerge, GigFinder, GigFinderUrl, RelationArtistArtist, RelationConcertOrganisationType
 
 from simple_history.admin import SimpleHistoryAdmin
 
@@ -18,3 +19,8 @@ admin.site.register(RelationOrganisationOrganisation, SimpleHistoryAdmin)
 admin.site.register(RelationConcertArtist, SimpleHistoryAdmin)
 admin.site.register(Venue)
 admin.site.register(OrganisationType)
+admin.site.register(OrganisationsMerge)
+admin.site.register(GigFinderUrl)
+admin.site.register(GigFinder)
+admin.site.register(RelationArtistArtist)
+admin.site.register(RelationConcertOrganisationType)

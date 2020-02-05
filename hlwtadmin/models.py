@@ -2,6 +2,12 @@ from django.db import models
 from django.urls import reverse
 from simple_history.models import HistoricalRecords
 
+from typing import List, Tuple
+from django.core.exceptions import ValidationError
+from django.db.models import Field, Model
+
+from django_super_deduper.merge import MergedModelInstance
+
 
 # Create your models here.
 class GigFinder(models.Model):
@@ -259,3 +265,18 @@ class RelationArtistArtist(models.Model):
 
     def get_absolute_url(self):
         return reverse('relationartistartist_update', args=[str(self.id)])
+
+
+class OrganisationsMerge(models.Model):
+    primary_object = models.ForeignKey("Organisation", on_delete=models.PROTECT, related_name="primary")
+    alias_objects = models.ManyToManyField("Organisation", related_name="aliases")
+
+    def __str__(self):
+        return self.primary_object.name + " < " + ", ".join([str(ao.name) for ao in self.alias_objects.all()])
+
+    def delete(self, *args, **kwargs):
+        mmi = MergedModelInstance.create(self.primary_object, [ao for ao in self.alias_objects.all()], keep_old=False)
+        super(OrganisationsMerge, self).delete(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('organisationsmerge_delete', args=[str(self.id)])

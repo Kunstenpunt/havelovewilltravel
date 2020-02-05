@@ -8,7 +8,7 @@ from django.db.models import Q
 
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
-    RelationArtistArtist
+    RelationArtistArtist, OrganisationsMerge
 
 
 class ConcertAutocomplete(autocomplete.Select2QuerySetView):
@@ -103,6 +103,46 @@ def index(request):
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
+
+
+class OrganisationsMergeForm(forms.ModelForm):
+    class Meta:
+        model = OrganisationsMerge
+        fields = ['primary_object', 'alias_objects']
+        widgets = {
+            'primary_object': autocomplete.ModelSelect2(
+                url='organisation_autocomplete'
+            ),
+            'alias_objects': autocomplete.ModelSelect2Multiple(
+                url='organisation_autocomplete'
+            ),
+        }
+
+
+class OrganisationsMergeCreate(CreateView):
+    model = OrganisationsMerge
+    form_class = OrganisationsMergeForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class OrganisationsMergeDetail(DetailView):
+    model = OrganisationsMerge
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class OrganisationsMergeDelete(DeleteView):
+    model = OrganisationsMerge
+    success_url = reverse_lazy('organisations')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
 
 class ConcertListView(ListView):

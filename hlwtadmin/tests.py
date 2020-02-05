@@ -1,10 +1,77 @@
 from django.test import TestCase
-from .models import ConcertAnnouncement, Concert, Artist, Organisation, Location, Country, RelationConcertArtist, RelationConcertOrganisation, Venue, GigFinder, GigFinderUrl
+from .models import ConcertAnnouncement, Concert, Artist, Organisation, Location, Country, RelationConcertArtist, \
+    RelationConcertOrganisation, Venue, GigFinder, GigFinderUrl, OrganisationsMerge, RelationOrganisationOrganisation
 
 from .management.commands.synchronize_with_musicbrainz import Command
 
 
 # Create your tests here.
+class OrganisationsMergeTest(TestCase):
+    def setUp(self):
+        self.concert = Concert(
+            title="testconcert"
+        )
+        self.concert.save()
+
+        self.organisation_a = Organisation.objects.create(
+            name="quintenville1"
+        )
+        self.organisation_a.save()
+        self.organisation_b = Organisation.objects.create(
+            name="quintenville2"
+        )
+        self.organisation_b.save()
+        self.organisation_c = Organisation.objects.create(
+            name="quintenville3"
+        )
+        self.organisation_c.save()
+        self.organisation_d = Organisation.objects.create(
+            name="quintenville4"
+        )
+        self.organisation_d.save()
+
+        self.relationorgorg = RelationOrganisationOrganisation.objects.create(
+            organisation_a=self.organisation_b,
+            organisation_b=self.organisation_d
+        )
+
+        self.relationconcertorganisation = RelationConcertOrganisation.objects.create(
+            organisation=self.organisation_b,
+            concert=self.concert
+        )
+        self.relationconcertorganisation.save()
+
+        self.location = Location.objects.create(
+            city="teststad"
+        )
+        self.location.save()
+        self.organisation_b.location = self.location
+
+        self.organisationsmerge = OrganisationsMerge(primary_object=self.organisation_a)
+        self.organisationsmerge.save()
+        self.organisationsmerge.alias_objects.add(self.organisation_b)
+        self.organisationsmerge.alias_objects.add(self.organisation_c)
+
+    def test_primary_object_is_only_object_that_remains(self):
+        self.organisationsmerge.delete()
+        self.assertIsNone(OrganisationsMerge.objects.first())
+        self.assertEqual(len(Organisation.objects.all()), 2)
+
+    # def test_primary_object_without_location_receives_location_from_alias(self):
+    #     self.organisationsmerge.delete()
+    #     self.assertEqual(Organisation.objects.filter(name=self.organisation_a.name).first().location, self.organisation_b.location)
+
+    def test_relation_org_org_is_inherited(self):
+        self.assertIsNone(RelationOrganisationOrganisation.objects.filter(organisation_a=self.organisation_a).first())
+        self.organisationsmerge.delete()
+        self.assertEqual(RelationOrganisationOrganisation.objects.filter(organisation_a=self.organisation_a).first().organisation_b, self.organisation_d)
+
+    def test_concert_of_organisation_b_is_inherited_by_organisation_a(self):
+        self.assertIsNone(RelationConcertOrganisation.objects.filter(organisation=self.organisation_a).first())
+        self.organisationsmerge.delete()
+        self.assertEqual(RelationConcertOrganisation.objects.filter(organisation=self.organisation_a).first().concert, self.concert)
+
+
 class ConcertTest(TestCase):
     def setUp(self):
         self.concert_a = Concert.objects.create(
