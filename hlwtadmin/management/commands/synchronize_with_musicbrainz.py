@@ -63,6 +63,8 @@ class Command(BaseCommand):
                     gfurl.save()
 
     def handle(self, *args, **options):
+        # delete all gigfinder
+        GigFinderUrl.objects.all().delete()
         # get new artists or updates from musicbrainz
         updated = []
         set_useragent("kunstenpunt", "0.1", "github.com/kunstenpunt")
