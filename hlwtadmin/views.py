@@ -287,6 +287,21 @@ class IncludeArtistListView(ListView):
         return context
 
 
+class ExcludeArtistListView(ListView):
+    model = Artist
+    paginate_by = 15
+
+    def get_queryset(self):
+        new_context = Artist.objects.filter(
+            exclude=True
+        )
+        return new_context
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class ArtistDetailView(DetailView):
     model = Artist
     fields = '__all__'
