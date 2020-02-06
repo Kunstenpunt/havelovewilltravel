@@ -3,6 +3,17 @@
 {% block content %}
   <h1>Update a Concert Announcement</h1>
 
+  <ul>
+    <li>Title: {{ concertannouncement.title }}</li>
+    <li>Artist: <a href="{% url 'artist_detail' concertannouncement.artist.mbid %}">{{ concertannouncement.artist }}</a></li>
+    <li>Date: {{ concertannouncement.date }}</li>
+    <li>Time: {{ concertannouncement.time }}</li>
+    <li>Gigfinder: {{ concertannouncement.gigfinder }}</li>
+      <li>Gigfinder id: <a href="https://www.facebook.com/events/{{ concertannouncement.gigfinder_concert_id }}">{{ concertannouncement.gigfinder_concert_id }}</a></li>
+    <li>Last seen on: {{ concertannouncement.last_seen_on }}</li>
+    <li>Venue: <a href="{% url 'venue_detail' concertannouncement.raw_venue.id %}">{{ concertannouncement.raw_venue }}</a></li>
+  </ul>
+
   <form action="" method="post">
     {% csrf_token %}
     <table>

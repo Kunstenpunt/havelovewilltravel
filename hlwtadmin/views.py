@@ -498,7 +498,7 @@ class VenueDelete(DeleteView):
 class ConcertAnnouncementForm(forms.ModelForm):
     class Meta:
         model = ConcertAnnouncement
-        fields = ['title', 'artist', 'date', 'time', 'gigfinder', 'gigfinder_concert_id', 'concert', 'raw_venue', 'ignore']
+        fields = ['concert', 'ignore']
         widgets = {
             'artist': autocomplete.ModelSelect2(
                 url='artist_autocomplete'
