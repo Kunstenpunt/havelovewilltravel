@@ -7,6 +7,7 @@ urlpatterns = [
     path('concerts/', views.ConcertListView.as_view(), name='concerts'),
     path('organisationless_concerts/', views.OrganisationlessConcertListView.as_view(), name='organisationless_concerts'),
     path('artistless_concerts/', views.ArtistlessConcertListView.as_view(), name='artistless_concerts'),
+    path('recently_added_concerts/', views.RecentlyAddedConcertListView.as_view(), name='recently_added_concerts'),
     path('concert/<int:pk>', views.ConcertDetailView.as_view(), name='concert_detail'),
     path('concert/create/', views.ConcertCreate.as_view(), name='concert_create'),
     path('concert/<int:pk>/update/', views.ConcertUpdate.as_view(), name='concert_update'),

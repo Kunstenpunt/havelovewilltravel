@@ -178,6 +178,16 @@ class ConcertListView(ListView):
         return context
 
 
+class RecentlyAddedConcertListView(ListView):
+    model = Concert
+    paginate_by = 15
+    ordering = ['-created_at']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class ArtistlessConcertListView(ListView):
     model = Concert
     paginate_by = 15

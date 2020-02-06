@@ -1,10 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from simple_history.models import HistoricalRecords
-
-from typing import List, Tuple
-from django.core.exceptions import ValidationError
-from django.db.models import Field, Model
+from datetime import datetime
 
 from django_super_deduper.merge import MergedModelInstance
 
@@ -143,6 +140,8 @@ class Concert(models.Model):
     verified = models.BooleanField(default=False, blank=True, null=True)
     ignore = models.BooleanField(default=False, blank=True, null=True)
     history = HistoricalRecords()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
