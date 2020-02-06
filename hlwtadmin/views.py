@@ -95,7 +95,7 @@ def index(request):
         'num_concertannouncements_without_concerts': ConcertAnnouncement.objects.filter(concert__isnull=True).count(),
         'num_concerts_without_artists': Concert.objects.filter(relationconcertartist__artist__isnull=True).count(),
         'num_concerts_without_organities': Concert.objects.filter(relationconcertorganisation__organisation__isnull=True).count(),
-        'num_rawvenues_without_organities': Venue.objects.filter(organisation__isnull=True).count(),
+        'num_rawvenues_without_organities': Venue.objects.filter(organisation__isnull=True).filter(non_assignable=False).count(),
         'num_organities_without_rawvenues': Organisation.objects.filter(venue__isnull=True).count(),
         'num_organities_without_locations': Organisation.objects.filter(location__isnull=True).count(),
         'num_cities_without_countries': Location.objects.filter(country__isnull=True).count()
@@ -471,7 +471,7 @@ class OrganisationDelete(DeleteView):
 class VenueForm(forms.ModelForm):
     class Meta:
         model = Venue
-        fields = ['organisation']
+        fields = ['organisation', 'non_assignable']
         widgets = {
             'organisation': autocomplete.ModelSelect2(
                 url='organisation_autocomplete'
@@ -484,7 +484,7 @@ class SparseVenueListView(ListView):
     paginate_by = 15
 
     def get_queryset(self):
-        return Venue.objects.filter(organisation__isnull=True)
+        return Venue.objects.filter(organisation__isnull=True).filter(non_assignable=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

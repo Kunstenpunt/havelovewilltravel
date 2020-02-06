@@ -121,6 +121,7 @@ class Venue(models.Model):
     raw_venue = models.CharField(max_length=200)
     raw_location = models.CharField(max_length=200, blank=True, null=True)
     organisation = models.ForeignKey("Organisation", on_delete=models.PROTECT, blank=True, null=True)
+    non_assignable = models.BooleanField(default=False)
 
     def __str__(self):
         return self.raw_venue
