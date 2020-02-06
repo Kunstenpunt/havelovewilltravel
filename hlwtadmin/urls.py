@@ -13,6 +13,7 @@ urlpatterns = [
     path('concert/<int:pk>/delete/', views.ConcertDelete.as_view(), name='concert_delete'),
     # artists
     path('artists/', views.ArtistListView.as_view(), name='artists'),
+    path('includeartists/', views.IncludeArtistListView.as_view(), name='includeartists'),
     path('artist/<str:pk>', views.ArtistDetailView.as_view(), name='artist_detail'),
     path('artist/create/', views.ArtistCreate.as_view(), name='artist_create'),
     path('artist/<str:pk>/update', views.ArtistUpdate.as_view(), name='artist_update'),
