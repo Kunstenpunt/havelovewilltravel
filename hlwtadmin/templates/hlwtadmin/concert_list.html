@@ -25,7 +25,7 @@
         </td>
         <td>
           {% for ca in concert.concertannouncement_set.all %}
-            <a href="https://www.facebook.com/events/{{ ca.gigfinder_concert_id }}">
+            <a href="{{ ca.gigfinder.base_url }}{{ ca.gigfinder_concert_id }}">
                 {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
             </a>
           {% endfor %}
