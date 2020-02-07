@@ -53,6 +53,8 @@ class ConcertAnnouncement(models.Model):
     last_seen_on = models.DateField(auto_now=True)
     raw_venue = models.ForeignKey("Venue", on_delete=models.PROTECT, blank=True, null=True)
     ignore = models.BooleanField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
@@ -104,7 +106,7 @@ class ConcertAnnouncement(models.Model):
     def _create_new_unverified_organisation_and_relate_to_venue(self):
         name_prop, stad, land, bron = self.raw_venue.raw_venue.split("|")
         name = name_prop if len(name_prop.strip()) > 0 else self.raw_venue.raw_venue
-        loc = Location.objects.filter(city__icontains=stad).first()
+        loc = Location.objects.filter(city__istartswith=stad).first()
         org = Organisation.objects.create(name=name,
                                           disambiguation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
                                           location=loc, unverified=True)
