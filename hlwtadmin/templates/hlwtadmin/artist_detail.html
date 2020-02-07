@@ -8,12 +8,10 @@
     </h1>
 
     <div style="margin-left:20px;margin-top:20px">
-        <ul>
-            <li>Disambiguation: {{ artist.disambiguation }}</li>
-            <li>Genre: {{ artist.genre.all|join:"," }}</li>
-            <li>Is on include list: {{ artist.include }}</li>
-            <li>Is on exclude list: {{ artist.exclude }}</li>
-        </ul>
+        <p>Disambiguation: {{ artist.disambiguation }}</p>
+        <p>Genre: {{ artist.genre.all|join:"," }}</p>
+        <p>Is on include list: {{ artist.include }}</p>
+        <p>Is on exclude list: {{ artist.exclude }}</p>
     </div>
 
     <div style="margin-left:20px;margin-top:20px">
@@ -42,7 +40,7 @@
                   <td>
                       {% for ca in relation.concert.concertannouncement_set.all %}
                           <a href="{% url 'concertannouncement_detail' ca.id %}">{{ ca.title }}</a>
-                          <a href="https://facebook.com/events/{{ ca.gigfinder_concert_id }}">
+                          <a target="_blank" href="{{ ca.gigfinder.base_url }}{{ ca.gigfinder_concert_id }}">
                           {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" /></a>
                       {% endfor %}
                   </td>
@@ -51,6 +49,8 @@
         </table>
 
     </div>
+
+    {% if artist.artista.all or artist.artistb.all %}
     <div style="margin-left:20px;margin-top:20px">
 
         <h4>Related artists</h4>
@@ -71,13 +71,14 @@
             {% endfor %}
         </ul>
     </div>
+    {% endif %}
 
     <hr>
 
     <div style="margin-left:20px;margin-top:20px">
         <ul>
-            <li>{% if perms.hlwtadmin.can_create_relationartistartist %}<a href="{% url 'relationartistartist_create' artist.mbid %}">Relate artist to another artist</a>{% endif %}</li>
-            <li>{% if perms.hlwtadmin.can_update_artist %}<a href="{% url 'artist_update' artist.mbid %}">Update artist</a>{% endif %}</li>
+            {% if perms.hlwtadmin.can_create_relationartistartist %}<li><a href="{% url 'relationartistartist_create' artist.mbid %}">Relate artist to another artist</a></li>{% endif %}
+            {% if perms.hlwtadmin.can_update_artist %}<li><a href="{% url 'artist_update' artist.mbid %}">Update artist</a></li>{% endif %}
         </ul>
     </div>
 {% endblock %}

@@ -3,9 +3,11 @@
 {% block content %}
     <h1>Concert: {{ concert.title }}</h1>
 
-    <p>Datum: {{ concert.date }}</p>
-    <p>Genre: {{ concert.genre.all|join:","}}</p>
-    <p>Cancelled: {{ concert.cancelled }}</p>
+    <div style="margin-left:20px;margin-top:20px">
+        <p>Datum: {{ concert.date }}</p>
+        <p>Genre: {{ concert.genre.all|join:","}}</p>
+        <p>Cancelled: {{ concert.cancelled }}</p>
+    </div>
 
     <div style="margin-left:20px;margin-top:20px">
         <h4>Artists</h4>
@@ -37,19 +39,27 @@
         </ul>
     </div>
 
+    {% if concert.concertannouncement_set.all %}
     <div style="margin-left:20px;margin-top:20px">
         <h4>Based on</h4>
         <ul>
             {% for relation in concert.concertannouncement_set.all %}
                 <li>
-                    {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ relation.gigfinder }}.png" alt="{{ relation.gigfinder }}" />
-                    {% if perms.hlwtadmin.can_update_concertannouncement %}<a href="{% url 'concertannouncement_update' relation.id %}">{{ relation.title }} ({{ relation.date }}), {{ relation.gigfinder_artist_name }}, {{ relation.gigfinder_concert_id }}</a>{% endif %}
-                    {% if perms.hlwtadmin.can_update_venue %}with venue <a href="{% url 'venue_update' relation.raw_venue.id %}">{{ relation.raw_venue }}</a>{% endif %}
+                    <a target="_blank" href="{{ relation.gigfinder.base_url}}{{ relation.gigfinder_concert_id }}">
+                        {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ relation.gigfinder }}.png" alt="{{ relation.gigfinder }}" />
+                    </a>
+                    <a href="{% url 'concertannouncement_detail' relation.id %}">
+                        {{ relation.title }} ({{ relation.date }}), {{ relation.gigfinder_artist_name }}, {{ relation.gigfinder_concert_id }}
+                    </a>
+                    with venue
+                    <a href="{% url 'venue_detail' relation.raw_venue.id %}">{{ relation.raw_venue }}</a>
                 </li>
             {% endfor %}
         </ul>
     </div>
+    {% endif %}
 
+    {% if concert.find_concurring_concerts.all %}
     <div style="margin-left:20px;margin-top:20px">
         <h4>Concerts on same day in same organisation</h4>
         <ul>
@@ -64,7 +74,9 @@
             {% endfor %}
         </ul>
     </div>
+    {% endif %}
 
+    {% if concert.concerta.all or concert.concertb.all %}
     <div style="margin-left:20px;margin-top:20px">
 
         <h4>Related concerts</h4>
@@ -85,14 +97,16 @@
             {% endfor %}
         </ul>
     </div>
+    {% endif %}
 
     <hr>
+
     <div style="margin-left:20px;margin-top:20px">
         <ul>
-            <li>{% if perms.hlwtadmin.can_update_concert %}<a href="{% url 'concert_update' concert.id %}">Update this concert</a>{% endif %}</li>
-            <li>{% if perms.hlwtadmin.can_create_relationconcertorganisation %}<a href="{% url 'relationconcertorganisation_create' concert.id %}">Relate this concert to an organisation</a>{% endif %}</li>
-            <li>{% if perms.hlwtadmin.can_create_relationconcertartist %}<a href="{% url 'relationconcertartist_create' concert.id %}">Relate this concert to an artist</a>{% endif %}</li>
-            <li>{% if perms.hlwtadmin.can_create_relationartistartist %}<a href="{% url 'relationconcertconcert_create' concert.id %}">Relate concert to another concert</a>{% endif %}</li>
+            {% if perms.hlwtadmin.can_update_concert %}<li><a href="{% url 'concert_update' concert.id %}">Update this concert</a></li>{% endif %}
+            {% if perms.hlwtadmin.can_create_relationconcertorganisation %}<li><a href="{% url 'relationconcertorganisation_create' concert.id %}">Relate this concert to an organisation</a></li>{% endif %}
+            {% if perms.hlwtadmin.can_create_relationconcertartist %}<li><a href="{% url 'relationconcertartist_create' concert.id %}">Relate this concert to an artist</a></li>{% endif %}
+            {% if perms.hlwtadmin.can_create_relationartistartist %}<li><a href="{% url 'relationconcertconcert_create' concert.id %}">Relate concert to another concert</a></li>{% endif %}
         </ul>
     </div>
 {% endblock %}
