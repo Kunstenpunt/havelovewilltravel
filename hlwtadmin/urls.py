@@ -60,6 +60,12 @@ urlpatterns = [
     path('relationartistartist/create/<str:pk>', views.RelationArtistArtistCreate.as_view(), name='relationartistartist_create'),
     path('relationartistartist/<str:pk>/update/', views.RelationArtistArtistUpdate.as_view(), name='relationartistartist_update'),
     path('relationartistartist/<str:pk>/delete/<str:artistid>', views.RelationArtistArtistDelete.as_view(), name='relationartistartist_delete'),
+
+    # relationconcertconcert
+    path('relationconcertconcert/create/<str:pk>', views.RelationConcertConcertCreate.as_view(), name='relationconcertconcert_create'),
+    path('relationconcertconcert/<str:pk>/update/', views.RelationConcertConcertUpdate.as_view(), name='relationconcertconcert_update'),
+    path('relationconcertconcert/<str:pk>/delete/<str:concertid>', views.RelationConcertConcertDelete.as_view(), name='relationconcertconcert_delete'),
+
     # relationorganisationorganisation
     path('relationorganisationorganisation/create/<int:pk>', views.RelationOrganisationOrganisationCreate.as_view(), name='relationorganisationorganisation_create'),
     path('relationorganisationorganisation/<int:pk>/update/', views.RelationOrganisationOrganisationUpdate.as_view(), name='relationorganisationorganisation_update'),

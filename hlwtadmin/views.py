@@ -6,7 +6,7 @@ from django import forms
 from dal import autocomplete
 from django.db.models import Q
 
-from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, \
+from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, RelationConcertConcert, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
     RelationArtistArtist, OrganisationsMerge, ConcertsMerge
 
@@ -842,6 +842,62 @@ class RelationOrganisationOrganisationDelete(DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('organisation_detail', kwargs={"pk": self.kwargs.get("organisationid")})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class RelationConcertConcertForm(forms.ModelForm):
+    class Meta:
+        model = RelationConcertConcert
+        fields = ['concert_a', 'relation_type', 'concert_b']
+        widgets = {
+            'concert_a': autocomplete.ModelSelect2(
+                url='concert_autocomplete'
+            ),
+            'concert_b': autocomplete.ModelSelect2(
+                url='concert_autocomplete'
+            )
+        }
+
+
+class RelationConcertConcertCreate(CreateView):
+    form_class = RelationConcertConcertForm
+    model = RelationConcertConcert
+
+    def get_initial(self):
+        concert = get_object_or_404(Concert, pk=self.kwargs.get("pk"))
+        return {
+            'concert_a': concert,
+        }
+
+    def get_success_url(self):
+        return reverse_lazy('concert_detail', kwargs={"pk": self.kwargs.get("pk")})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class RelationConcertConcertUpdate(UpdateView):
+    form_class = RelationConcertConcertForm
+    model = RelationConcertConcert
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        relation = get_object_or_404(RelationConcertConcert, pk=self.kwargs.get("pk"))
+        return reverse_lazy('concert_detail', kwargs={"pk": relation.concert_a.id})
+
+
+class RelationConcertConcertDelete(DeleteView):
+    model = RelationConcertConcert
+
+    def get_success_url(self):
+        return reverse_lazy('concert_detail', kwargs={"pk": self.kwargs.get("concertid")})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

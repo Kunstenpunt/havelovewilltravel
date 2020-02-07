@@ -323,3 +323,15 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class RelationConcertConcert(models.Model):
+    concert_a = models.ForeignKey("Concert", on_delete=models.PROTECT, related_name='concerta')
+    concert_b = models.ForeignKey("Concert", on_delete=models.PROTECT, related_name='concertb')
+    relation_type = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.concert_a.title + " " + self.relation_type + " " + self.concert_b.title
+
+    def get_absolute_url(self):
+        return reverse('relationconcertconcert_update', args=[str(self.id)])
