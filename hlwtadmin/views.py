@@ -6,7 +6,7 @@ from django import forms
 from dal import autocomplete
 from django.db.models import Q
 
-from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, \
+from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
     RelationArtistArtist, OrganisationsMerge, ConcertsMerge
 
@@ -383,7 +383,7 @@ class LocationDetailView(DetailView):
 class OrganisationForm(forms.ModelForm):
     class Meta:
         model = Organisation
-        fields = ['name', 'disambiguation', 'organisation_type', 'location']
+        fields = ['name', 'disambiguation', 'organisation_type', 'genre', 'location']
         widgets = {
             'location': autocomplete.ModelSelect2(
                 url='location_autocomplete'

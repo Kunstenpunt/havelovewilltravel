@@ -6,6 +6,7 @@
   <table border="1">
     <tr>
       <th>Name</th>
+      <th>Genre</th>
       <th>Gigfinders</th>
     </tr>
     {% for artist in artist_list %}
@@ -16,6 +17,7 @@
                 {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/musicbrainz.png' %}" alt="{{ artist.name }}" />
             </a>
         </td>
+        <td>{{ artist.genre.all|join:"," }}</td>
         <td>
         {% for gf in artist.gigfinderurl_set.all %}
           <a href="{{ gf.url }}">

@@ -21,6 +21,7 @@ class Artist(models.Model):
     mbid = models.CharField(max_length=50, primary_key=True)
     include = models.BooleanField(default=False)
     exclude = models.BooleanField(default=False)
+    genre = models.ManyToManyField("Genre", blank=True)
 
     def __str__(self):
         return self.name
@@ -114,6 +115,8 @@ class ConcertAnnouncement(models.Model):
     def _create_new_masterconcert_with_concertannouncement_organisation_artist(self):
         mc = Concert.objects.create(title=self.title, date=self.date)
         mc.save()
+        for genre in self.artist.genre.all():
+            mc.genre.add(genre)
         relco = RelationConcertOrganisation(concert=mc, organisation=self.raw_venue.organisation, unverified=True)
         relco.save()
         relca = RelationConcertArtist(concert=mc, artist=self.artist)
@@ -147,6 +150,7 @@ class Concert(models.Model):
     history = HistoricalRecords()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    genre = models.ManyToManyField("Genre", blank=True)
 
     def __str__(self):
         return self.title
@@ -173,6 +177,7 @@ class Organisation(models.Model):
     end_date = models.DateField(blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     unverified = models.BooleanField(default=False, blank=True, null=True)
+    genre = models.ManyToManyField("Genre", blank=True)
     history = HistoricalRecords()
 
     def __str__(self):
@@ -311,3 +316,10 @@ class ConcertsMerge(models.Model):
 
     def get_absolute_url(self):
         return reverse('concertsmerge_delete', args=[str(self.id)])
+
+
+class Genre(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name

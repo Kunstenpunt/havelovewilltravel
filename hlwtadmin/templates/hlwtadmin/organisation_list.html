@@ -7,6 +7,7 @@
     <tr>
       <th>Name</th>
       <th>Type</th>
+      <th>Genre</th>
       <th>Location</th>
     </tr>
     {% for organisation in organisation_list %}
@@ -15,6 +16,7 @@
           <a href="{{ organisation.get_absolute_url }}">{{ organisation.name }}</a> <i>({{ organisation.disambiguation }})</i>
         </td>
         <td>{{ organisation.organisation_type.all|join:"," }}</td>
+        <td>{{ organisation.genre.all|join:"," }}</td>
         <td>{{ organisation.location }}</td>
       </tr>
     {% endfor %}

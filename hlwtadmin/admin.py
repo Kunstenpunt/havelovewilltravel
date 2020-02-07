@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, \
+from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, ConcertsMerge,\
     OrganisationType, OrganisationsMerge, GigFinder, GigFinderUrl, RelationArtistArtist, RelationConcertOrganisationType
 
@@ -25,3 +25,4 @@ admin.site.register(GigFinderUrl)
 admin.site.register(GigFinder)
 admin.site.register(RelationArtistArtist)
 admin.site.register(RelationConcertOrganisationType)
+admin.site.register(Genre)

@@ -6,6 +6,7 @@
     <ul>
         <li>Location: {% if organisation.location %}<a href="{% url 'location_detail' organisation.location.id %}">{{ organisation.location }}</a>{% endif %}</li>
         <li>Type: {{ organisation.organisation_type.all|join:"," }}</li>
+        <li>Genre: {{ organisation.genre.all|join:"," }}</li>
         <li>Disambiguation: {{ organisation.disambiguation }}</li>
     </ul>
 

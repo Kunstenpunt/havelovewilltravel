@@ -8,6 +8,7 @@
       <th>Date</th>
       <th>Artist</th>
       <th>Organisation</th>
+      <th>Genre</th>
       <th>Gigfinders</th>
     </tr>
     {% for concert in concert_list %}
@@ -23,6 +24,7 @@
             <a href="{% url 'organisation_detail' relation.organisation.id %}">{{ relation.organisation.name }}</a> ({{ relation.organisation.location }})
           {% endfor %}
         </td>
+        <td>{{ concert.genre.all|join:"," }}</td>
         <td>
           {% for ca in concert.concertannouncement_set.all %}
             <a href="{{ ca.gigfinder.base_url }}{{ ca.gigfinder_concert_id }}">

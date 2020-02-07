@@ -1,6 +1,6 @@
 from django.test import TestCase
 from .models import ConcertAnnouncement, Concert, Artist, Organisation, Location, Country, RelationConcertArtist, \
-    RelationConcertOrganisation, Venue, GigFinder, GigFinderUrl, OrganisationsMerge, RelationOrganisationOrganisation
+    RelationConcertOrganisation, Venue, GigFinder, GigFinderUrl, OrganisationsMerge, RelationOrganisationOrganisation, Genre
 
 from .management.commands.synchronize_with_musicbrainz import Command as SyncMB
 
@@ -110,10 +110,13 @@ class ConcertAnnouncementTest(TestCase):
                                                   base_url="http://www.songkick.com",
                                                   api_key="1234")
         self.gigfinder.save()
+        self.genre = Genre.objects.create(name="testgenre")
+        self.genre.save()
         self.artist = Artist.objects.create(name="testmans",
                                             disambiguation="een test artiest",
                                             mbid="mbid")
         self.artist.save()
+        self.artist.genre.add(self.genre)
         self.gigfinderurl = GigFinderUrl.objects.create(artist=self.artist,
                                                         gigfinder=self.gigfinder,
                                                         url="http://www.songkick.com/a/1234")
@@ -227,6 +230,8 @@ class ConcertAnnouncementTest(TestCase):
         self.assertEqual(RelationConcertOrganisation.objects.filter(concert=ca.concert)[0].organisation, ca.raw_venue.organisation)
         # concert artist should be artist of announcement
         self.assertEqual(RelationConcertArtist.objects.filter(concert=ca.concert)[0].artist, ca.artist)
+        # concert genre should be genre of artist
+        self.assertIn(self.genre, RelationConcertArtist.objects.filter(concert=ca.concert).first().concert.genre.all())
 
     def test_concertannouncement_with_raw_venue_without_organisation_and_without_existing_concert(self):
         ca = ConcertAnnouncement(title="test concert announcement without nothing",

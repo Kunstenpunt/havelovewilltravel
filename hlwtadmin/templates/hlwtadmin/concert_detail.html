@@ -4,6 +4,7 @@
     <h1>Concert: {{ concert.title }}</h1>
 
     <p>Datum: {{ concert.date }}</p>
+    <p>Genre: {{ concert.genre.all|join:","}}</p>
     <p>Cancelled: {{ concert.cancelled }}</p>
 
     <div style="margin-left:20px;margin-top:20px">

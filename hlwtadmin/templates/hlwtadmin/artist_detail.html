@@ -10,6 +10,7 @@
     <div style="margin-left:20px;margin-top:20px">
         <ul>
             <li>Disambiguation: {{ artist.disambiguation }}</li>
+            <li>Genre: {{ artist.genre.all|join:"," }}</li>
             <li>Is on include list: {{ artist.include }}</li>
             <li>Is on exclude list: {{ artist.exclude }}</li>
         </ul>
