@@ -1,7 +1,6 @@
 from django.db import models
 from django.urls import reverse
 from simple_history.models import HistoricalRecords
-from datetime import datetime
 
 from django_super_deduper.merge import MergedModelInstance
 
@@ -102,7 +101,12 @@ class ConcertAnnouncement(models.Model):
         return self.raw_venue.organisation is None
 
     def _create_new_unverified_organisation_and_relate_to_venue(self):
-        org = Organisation.objects.create(name=self.raw_venue.raw_venue)
+        name_prop, stad, land, bron = self.raw_venue.raw_venue.split("|")
+        name = name_prop if len(name_prop.strip()) > 0 else self.raw_venue.raw_venue
+        loc = Location.objects.filter(city__icontains=stad).first()
+        org = Organisation.objects.create(name=name,
+                                          disambiguation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
+                                          location=loc, unverified=True)
         org.save()
         self.raw_venue.organisation = org
         self.raw_venue.save()
@@ -168,6 +172,7 @@ class Organisation(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     website = models.URLField(blank=True, null=True)
+    unverified = models.BooleanField(default=False, blank=True, null=True)
     history = HistoricalRecords()
 
     def __str__(self):

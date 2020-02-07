@@ -120,7 +120,7 @@ class ConcertAnnouncementTest(TestCase):
         self.gigfinderurl.save()
         self.country = Country.objects.create(name="testland")
         self.country.save()
-        self.location = Location.objects.create(city="teststad",
+        self.location = Location.objects.create(city="brussel",
                                                 country=self.country,
                                                 latitude=0,
                                                 longitude=0)
@@ -143,17 +143,17 @@ class ConcertAnnouncementTest(TestCase):
                                                         end_date="2020-01-01")
         self.organisation2.save()
 
-        self.venue = Venue.objects.create(raw_venue="testvenue | songkick",
+        self.venue = Venue.objects.create(raw_venue="testvenue | brussel | belgique | songkick",
                                           raw_location="brussel, belgique",
                                           organisation=self.organisation)
         self.venue.save()
 
-        self.venue2 = Venue.objects.create(raw_venue="testvenue2 | songkick",
+        self.venue2 = Venue.objects.create(raw_venue="testvenue2 | brussel | belgique | songkick",
                                           raw_location="brussel, belgique",
                                           organisation=self.organisation2)
         self.venue2.save()
 
-        self.venue_without_organisation = Venue.objects.create(raw_venue="testvenue zonder org | songkick",
+        self.venue_without_organisation = Venue.objects.create(raw_venue="testvenue zonder org | brussel | belgique | songkick",
                                                                raw_location="brussel, belgique")
         self.venue_without_organisation.save()
         self.concert = Concert.objects.create(title="testconcert",
@@ -198,6 +198,7 @@ class ConcertAnnouncementTest(TestCase):
         ca.save()
         self.assertEqual(self.concert, ca.concert)
         self.assertEqual(self.rel_concert_organisation.organisation, ca.raw_venue.organisation)
+        self.assertEqual(ca.raw_venue.organisation.location, self.location)
 
     def test_concertannouncement_with_different_organisation_and_existing_concert(self):
         ca = ConcertAnnouncement(title="test concert announcement",
