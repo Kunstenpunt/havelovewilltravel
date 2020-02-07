@@ -21,5 +21,6 @@
     <li><strong><a href="{% url 'sparse_organisations' %}">Organisations wo/ venues</a>:</strong> {{ num_organities_without_rawvenues }}</li>
     <li><strong><a href="{% url 'sparse_organisations2' %}">Organisations without locations</a>:</strong> {{ num_organities_without_locations }}</li>
     <li><strong><a href="{% url 'sparse_locations' %}">Cities without countries</a>:</strong> {{ num_cities_without_countries }}</li>
+    <li><strong><a href="{% url 'unverified_organisations' %}">Unverified organisations</a>:</strong> {{ num_unverified_organisations }}</li>
   </ul>
 {% endblock %}

@@ -28,6 +28,7 @@ urlpatterns = [
     # organisations
     path('sparseorganisation/', views.OrganisationListView.as_view(), name='sparse_organisations'),
     path('sparseorganisation2/', views.OrganisationListView2.as_view(), name='sparse_organisations2'),
+    path('unverified_organisations/', views.UnverifiedOrganisationListView.as_view(), name='unverified_organisations'),
     path('organisations/', views.FullOrganisationListView.as_view(), name='organisations'),
     path('organisation/<int:pk>', views.OrganisationDetailView.as_view(), name='organisation_detail'),
     path('organisation/create/', views.OrganisationCreate.as_view(), name='organisation_create'),

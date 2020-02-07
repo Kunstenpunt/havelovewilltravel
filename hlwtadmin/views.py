@@ -98,7 +98,8 @@ def index(request):
         'num_rawvenues_without_organities': Venue.objects.filter(organisation__isnull=True).filter(non_assignable=False).count(),
         'num_organities_without_rawvenues': Organisation.objects.filter(venue__isnull=True).count(),
         'num_organities_without_locations': Organisation.objects.filter(location__isnull=True).count(),
-        'num_cities_without_countries': Location.objects.filter(country__isnull=True).count()
+        'num_cities_without_countries': Location.objects.filter(country__isnull=True).count(),
+        'num_unverified_organisations': Organisation.objects.filter(unverified=True).count()
     }
 
     # Render the HTML template index.html with the data in the context variable
@@ -383,7 +384,7 @@ class LocationDetailView(DetailView):
 class OrganisationForm(forms.ModelForm):
     class Meta:
         model = Organisation
-        fields = ['name', 'disambiguation', 'organisation_type', 'genre', 'location']
+        fields = ['name', 'disambiguation', 'organisation_type', 'genre', 'location', 'unverified']
         widgets = {
             'location': autocomplete.ModelSelect2(
                 url='location_autocomplete'
@@ -409,6 +410,18 @@ class OrganisationListView2(ListView):
 
     def get_queryset(self):
         return Organisation.objects.filter(location__isnull=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class UnverifiedOrganisationListView(ListView):
+    model = Organisation
+    paginate_by = 15
+
+    def get_queryset(self):
+        return Organisation.objects.filter(unverified=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
