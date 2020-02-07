@@ -27,6 +27,7 @@
                   <td>
                       <a href="{% url 'concert_detail' relation.concert.id %}">{{ relation.concert.date }}</a>
                   </td>
+                  {% if relation.concert.relationconcertorganisation_set.first %}
                   <td>
                       <a href="{% url 'organisation_detail' relation.concert.relationconcertorganisation_set.first.organisation.id %}">
                           {{ relation.concert.relationconcertorganisation_set.first.organisation }}
@@ -37,6 +38,8 @@
                         </a>
                       {% endif %}
                   </td>
+                  {% else %} <td>Missing organisation</td>
+                  {% endif %}
                   <td>
                       {% for ca in relation.concert.concertannouncement_set.all %}
                           <a href="{% url 'concertannouncement_detail' ca.id %}">{{ ca.title }}</a>
