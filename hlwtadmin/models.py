@@ -161,8 +161,9 @@ class Concert(models.Model):
         return reverse('concert_detail', args=[str(self.id)])
 
     def find_concurring_concerts(self):
-        this_org = RelationConcertOrganisation.objects.filter(concert__id=self.id).first().organisation
-        return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation=this_org).exclude(id=self.id)
+        this_org = RelationConcertOrganisation.objects.filter(concert__id=self.id).first()
+        if this_org:
+            return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation=this_org.organisation).exclude(id=self.id)
 
     class Meta:
         ordering = ['-date']
