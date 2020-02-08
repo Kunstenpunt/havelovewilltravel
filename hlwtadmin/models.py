@@ -96,7 +96,7 @@ class ConcertAnnouncement(models.Model):
         self.concert = self.masterconcert
 
     def _relate_organisation_related_to_venue_also_to_the_masterconcert(self):
-        RelationConcertOrganisation.objects.create(concert=self.masterconcert, organisation=self.raw_venue.organisation, unverified=True)
+        RelationConcertOrganisation.objects.create(concert=self.masterconcert, organisation=self.raw_venue.organisation, verified=False)
 
     def _relate_organisation_related_to_masterconcert_to_venue(self):
         org = RelationConcertOrganisation.objects.filter(concert=self.masterconcert)[0].organisation  # TODO what if several organisations connected to masterconcert?
@@ -111,7 +111,7 @@ class ConcertAnnouncement(models.Model):
         loc = Location.objects.filter(city__istartswith=stad).first()
         org = Organisation.objects.create(name=name,
                                           disambiguation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
-                                          location=loc, unverified=True)
+                                          location=loc, verified=False)
         org.save()
         self.raw_venue.organisation = org
         self.raw_venue.save()
@@ -121,7 +121,7 @@ class ConcertAnnouncement(models.Model):
         mc.save()
         for genre in self.artist.genre.all():
             mc.genre.add(genre)
-        relco = RelationConcertOrganisation(concert=mc, organisation=self.raw_venue.organisation, unverified=True)
+        relco = RelationConcertOrganisation(concert=mc, organisation=self.raw_venue.organisation, verified=False)
         relco.save()
         relca = RelationConcertArtist(concert=mc, artist=self.artist)
         relca.save()
@@ -183,7 +183,7 @@ class Organisation(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     website = models.URLField(blank=True, null=True)
-    unverified = models.BooleanField(default=False, blank=True, null=True)
+    verified = models.BooleanField(default=True, blank=True, null=True)
     genre = models.ManyToManyField("Genre", blank=True)
     history = HistoricalRecords()
 
@@ -248,7 +248,7 @@ class RelationConcertOrganisation(models.Model):
     organisation = models.ForeignKey("Organisation", on_delete=models.PROTECT, blank=True, null=True)
     organisation_credited_as = models.CharField(max_length=200, blank=True, null=True)
     relation_type = models.ManyToManyField("RelationConcertOrganisationType", blank=True)
-    unverified = models.BooleanField(blank=True, default=False)
+    verified = models.BooleanField(blank=True, default=False)
     history = HistoricalRecords()
 
     def __str__(self):
