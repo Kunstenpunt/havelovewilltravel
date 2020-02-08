@@ -61,7 +61,7 @@
             {% for relation in organisation.organisationa.all %}
                 <li>
                     {{ organisation.name }}
-                    {% if {{ relation.organisation_a.name }} %}
+                    {% if relation.organisation_a.name %}
                         {{ relation.relation_type }}
                     {% else %}
                         is related to
@@ -74,7 +74,7 @@
             {% for relation in organisation.organisationb.all %}
                 <li>
                     <a href="{% url 'organisation_detail' relation.organisation_a.id %}">{{ relation.organisation_a.name }}</a>
-                    {% if {{ relation.organisation_a.name }} %}
+                    {% if relation.organisation_a.name %}
                         {{ relation.relation_type }}
                     {% else %}
                         is related to
