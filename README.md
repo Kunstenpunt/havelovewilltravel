@@ -3,6 +3,8 @@ A data management environment for havelovewilltravel.be
 
 ## Data structure
 
+A more complete description of the data structure is provided in the Wiki [https://github.com/Kunstenpunt/havelovewilltravel/wiki].
+
 ## Deploy on heroku
 
 - pip freeze > requirements.txt
