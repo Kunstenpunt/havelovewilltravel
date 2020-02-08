@@ -235,12 +235,20 @@ class RelationConcertArtist(models.Model):
     artist_credited_as = models.CharField(max_length=200, blank=True, null=True)
     concert = models.ForeignKey("Concert", on_delete=models.PROTECT)
     history = HistoricalRecords()
+    relation_type = models.ManyToManyField("RelationConcertArtistType", blank=True)
 
     def __str__(self):
         return self.concert.title + " - " + self.artist.name
 
     class Meta:
         ordering = ['concert']
+
+
+class RelationConcertArtistType(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
 
 
 class RelationConcertOrganisation(models.Model):
