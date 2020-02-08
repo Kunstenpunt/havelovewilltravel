@@ -8,8 +8,9 @@
         <p>Type: {{ organisation.organisation_type.all|join:"," }}</p>
         <p>Genre: {{ organisation.genre.all|join:"," }}</p>
         <p>Disambiguation: {{ organisation.disambiguation }}</p>
-        <p>Website: {{ organisation.website }}</p>
+        <p>Website: <a href="{{ organisation.website }}">{{ organisation.website }}</a></p>
         <p>Verified: {{ organisation.verified }}</p>
+        <p>GPS: {{ organisation.latitude }}, {{ organisation.longitude }}</p>
     </div>
 
     <div style="margin-left:20px;margin-top:20px">
@@ -31,7 +32,7 @@
                     <td>
                       {% for ca in relation.concert.concertannouncement_set.all %}
                           <a href="{% url 'concertannouncement_detail' ca.id %}">{{ ca.title }}</a>
-                          <a href="{{ ca.gigfinder.base_url}}{{ ca.gigfinder_concert_id }}">
+                          <a target="_blank" href="{{ ca.gigfinder.base_url}}{{ ca.gigfinder_concert_id }}">
                           {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" /></a>
                       {% endfor %}
                   </td>
@@ -59,16 +60,28 @@
         <ul>
             {% for relation in organisation.organisationa.all %}
                 <li>
-                    {{ organisation.name }} {{ relation.relation_type }} <a href="{% url 'organisation_detail' relation.organisation_b.id %}">{{ relation.organisation_b.name }}</a>
-                    {% if perms.hlwtadmin.can_update_relationorganisationorganisation %}[<a href="{% url 'relationorganisationorganisation_update' relation.id %}">Update this relation</a>]{% endif %}
-                    {% if perms.hlwtadmin.can_delete_relationorganisationorganisation %}[<a href="{% url 'relationorganisationorganisation_delete' relation.id organisation.id %}">Delete this relation</a>]{% endif %}
+                    {{ organisation.name }}
+                    {% if {{ relation.organisation_a.name }} %}
+                        {{ relation.relation_type }}
+                    {% else %}
+                        is related to
+                    {% endif %}
+                    <a href="{% url 'organisation_detail' relation.organisation_b.id %}">{{ relation.organisation_b.name }}</a>
+                    {% if perms.hlwtadmin.can_update_relationorganisationorganisation %}<a href="{% url 'relationorganisationorganisation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
+                    {% if perms.hlwtadmin.can_delete_relationorganisationorganisation %}<a href="{% url 'relationorganisationorganisation_delete' relation.id organisation.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
                 </li>
             {% endfor %}
             {% for relation in organisation.organisationb.all %}
                 <li>
-                    <a href="{% url 'organisation_detail' relation.organisation_a.id %}">{{ relation.organisation_a.name }}</a> {{ relation.relation_type }} {{ organisation.name }}
-                    {% if perms.hlwtadmin.can_update_relationorganisationorganisation %}[<a href="{% url 'relationorganisationorganisation_update' relation.id %}">Update this relation</a>]{% endif %}
-                    {% if perms.hlwtadmin.can_delete_relationorganisationorganisation %}[<a href="{% url 'relationorganisationorganisation_delete' relation.id organisation.id %}">Delete this relation</a>]{% endif %}
+                    <a href="{% url 'organisation_detail' relation.organisation_a.id %}">{{ relation.organisation_a.name }}</a>
+                    {% if {{ relation.organisation_a.name }} %}
+                        {{ relation.relation_type }}
+                    {% else %}
+                        is related to
+                    {% endif %}
+                    {{ organisation.name }}
+                    {% if perms.hlwtadmin.can_update_relationorganisationorganisation %}<a href="{% url 'relationorganisationorganisation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
+                    {% if perms.hlwtadmin.can_delete_relationorganisationorganisation %}<a href="{% url 'relationorganisationorganisation_delete' relation.id organisation.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
                 </li>
             {% endfor %}
         </ul>
