@@ -131,10 +131,10 @@ class FacebookScraper(PlatformLeecher):
                 "datum": datum,
                 "land": location["country"][0],
                 "stad": location["city"][0],
-                "venue": location["venue"],
+                "venue": location["venue"][0:199],
                 "latitude": location["lat"],
                 "longitude": location["lng"],
-                "titel": titel
+                "titel": titel[0:199]
             }
             print(event_data)
         except AttributeError:
@@ -155,9 +155,9 @@ class FacebookScraper(PlatformLeecher):
         except KeyError:
             location_country = ""
         loc_info = self.get_lat_lon_for_venue(location_name, location_street, location_country)
-        loc_info["venue"] = location_name
-        loc_info["city"] = location_street,
-        loc_info["country"] = location_country,
+        loc_info["venue"] = location_name[0:199]
+        loc_info["city"] = location_street[0:199],
+        loc_info["country"] = location_country[0:199],
         return loc_info
 
     def set_events_for_identifier(self, band, mbid, url):
@@ -241,13 +241,13 @@ class BandsInTownLeecher(PlatformLeecher):
                         venue = Venue.objects.filter(raw_venue=venue_name).first()
                         if not venue:
                             venue = Venue.objects.create(
-                                raw_venue=venue_name,
-                                raw_location="|".join([concert["stad"], concert["land"], self.platform])
+                                raw_venue=venue_name[0:199],
+                                raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
                             )
                             venue.save()
 
                         ca = ConcertAnnouncement.objects.create(
-                            title=concert["titel"],
+                            title=concert["titel"][0:199],
                             artist=Artist.objects.filter(mbid=mbid).first(),
                             date=concert["datum"].isoformat(),
                             gigfinder=self.gf,
