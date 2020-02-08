@@ -195,7 +195,9 @@ class FacebookScraper(PlatformLeecher):
                                 gigfinder_concert_id=concert["event_id"],
                                 last_seen_on=datetime.now(),
                                 raw_venue=venue,
-                                ignore=False
+                                ignore=False,
+                                latitude=concert["latitude"],
+                                longitude=concert["longitude"]
                             )
                             ca.save()
 
@@ -254,7 +256,9 @@ class BandsInTownLeecher(PlatformLeecher):
                             gigfinder_concert_id=concert["event_id"],
                             last_seen_on=datetime.now(),
                             raw_venue=venue,
-                            ignore=False
+                            ignore=False,
+                            latitude=concert["latitude"],
+                            longitude=concert["longitude"]
                         )
                         ca.save()
 
