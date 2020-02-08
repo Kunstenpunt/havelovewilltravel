@@ -7,6 +7,11 @@
         <p>Datum: {{ concert.date }}</p>
         <p>Genre: {{ concert.genre.all|join:","}}</p>
         <p>Cancelled: {{ concert.cancelled }}</p>
+        <p>Ignore: {{ concert.ignore }}</p>
+        <p>Verified: {{ concert.verified }}</p>
+        <p>GPS: {{ concert.latitude }}, {{ concert.longitude }}</p>
+        <p>Created at: {{ concert.created_at }}</p>
+        <p>Updated at: {{ concert.updated_at }}</p>
     </div>
 
     <div style="margin-left:20px;margin-top:20px">

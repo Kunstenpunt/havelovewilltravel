@@ -384,7 +384,7 @@ class LocationDetailView(DetailView):
 class OrganisationForm(forms.ModelForm):
     class Meta:
         model = Organisation
-        fields = ['name', 'disambiguation', 'organisation_type', 'genre', 'location', 'verified']
+        fields = ['name', 'disambiguation', 'website', 'organisation_type', 'genre', 'location', 'verified']
         widgets = {
             'location': autocomplete.ModelSelect2(
                 url='location_autocomplete'
@@ -624,7 +624,7 @@ class ConcertAnnouncementDelete(DeleteView):
 class RelationConcertOrganisationForm(forms.ModelForm):
     class Meta:
         model = RelationConcertOrganisation
-        fields = ['concert', 'organisation', 'organisation_credited_as', 'relation_type']
+        fields = ['concert', 'organisation', 'verified', 'organisation_credited_as', 'relation_type']
         widgets = {
             'concert': autocomplete.ModelSelect2(
                 url='concert_autocomplete'

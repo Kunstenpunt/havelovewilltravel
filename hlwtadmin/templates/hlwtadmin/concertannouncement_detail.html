@@ -8,8 +8,11 @@
         <p>Date: {{ concertannouncement.date }}, Time: {{ concertannouncement.time }}</p>
         <p>Gigfinder: {{ concertannouncement.gigfinder }}, {{ concertannouncement.gigfinder_artist_name }}, {{ concertannouncement.gigfinder_concert_id }}</p>
         <p>Last seen on: {{ concertannouncement.last_seen_on }}</p>
+        <p>Created at: {{ concertannouncement.created_at }}</p>
+        <p>Updated at: {{ concertannouncement.updated_at }}</p>
         <p>Ignore: {{ concertannouncement.ignore }}</p>
         <p>Venue: {% if concertannouncement.raw_venue %} <a href="{% url 'venue_detail' concertannouncement.raw_venue.id %}">{{ concertannouncement.raw_venue }} </a> {% endif %}</p>
+        <p>GPS: {{ concertannouncement.latitude }}, {{ concertannouncement.longitude }}</p>
     </div>
 
     <div style="margin-left:20px;margin-top:20px">
