@@ -278,7 +278,7 @@ class RelationOrganisationOrganisation(models.Model):
     organisation_b = models.ForeignKey("Organisation", on_delete=models.PROTECT, related_name='organisationb')
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
-    relation_type = models.CharField(max_length=200)
+    relation_type = models.ManyToManyField("RelationOrganisationOrganisationType", blank=True)
     history = HistoricalRecords()
 
     def __str__(self):
@@ -288,12 +288,19 @@ class RelationOrganisationOrganisation(models.Model):
         return reverse('relationorganisationorganisation_update', args=[str(self.id)])
 
 
+class RelationOrganisationOrganisationType(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
 class RelationArtistArtist(models.Model):
     artist_a = models.ForeignKey("Artist", on_delete=models.PROTECT, related_name='artista')
     artist_b = models.ForeignKey("Artist", on_delete=models.PROTECT, related_name='artistb')
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
-    relation_type = models.CharField(max_length=200)
+    relation_type = models.ManyToManyField("RelationArtistArtistType", blank=True)
     history = HistoricalRecords()
 
     def __str__(self):
@@ -301,6 +308,13 @@ class RelationArtistArtist(models.Model):
 
     def get_absolute_url(self):
         return reverse('relationartistartist_update', args=[str(self.id)])
+
+
+class RelationArtistArtistType(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
 
 
 class OrganisationsMerge(models.Model):
@@ -343,10 +357,17 @@ class Genre(models.Model):
 class RelationConcertConcert(models.Model):
     concert_a = models.ForeignKey("Concert", on_delete=models.PROTECT, related_name='concerta')
     concert_b = models.ForeignKey("Concert", on_delete=models.PROTECT, related_name='concertb')
-    relation_type = models.CharField(max_length=200)
+    relation_type = models.ManyToManyField("RelationConcertConcertType", blank=True)
 
     def __str__(self):
         return self.concert_a.title + " " + self.relation_type + " " + self.concert_b.title
 
     def get_absolute_url(self):
         return reverse('relationconcertconcert_update', args=[str(self.id)])
+
+
+class RelationConcertConcertType(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
