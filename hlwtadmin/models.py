@@ -10,7 +10,7 @@ from datetime import datetime
 # Create your models here.
 class GigFinder(models.Model):
     name = models.CharField(max_length=200)
-    base_url = models.URLField()
+    base_url = models.URLField() # base url setlist = www.setlist.fm/a/0/b-
     api_key = models.CharField(max_length=500)
 
     def __str__(self):

@@ -35,12 +35,15 @@ class Command(BaseCommand):
         set_useragent("kunstenpunt", "0.1", "github.com/kunstenpunt")
         leecher_fb = FacebookScraper()
         leecher_bit = BandsInTownLeecher()
+        leecher_setlist = SetlistFmLeecher()
         for gfurl in GigFinderUrl.objects.all():
             print(gfurl.artist, gfurl.artist.mbid, gfurl.url, gfurl.gigfinder.name)
             if gfurl.gigfinder.name == "www.facebook.com" and gfurl.artist.exclude is not True:
                 leecher_fb.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
             if gfurl.gigfinder.name == "bandsintown.com" and gfurl.artist.exclude is not True:
                 leecher_bit.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
+            if gfurl.gigfinder.name == "www.setlist.fm" and gfurl.artist.exclude is not True:
+                leecher_setlist.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
 
 
 class PlatformLeecher(object):
@@ -218,9 +221,9 @@ class FacebookScraper(PlatformLeecher):
 
 class BandsInTownLeecher(PlatformLeecher):
     def __init__(self):
-        super().__init__()
+        super(BandsInTownLeecher, self).__init__()
         self.bitc = bandsintown.Client("kunstenpunt")
-        self.platform = "bandsintown"
+        self.platform = "bandsintown.com"
         self.gf = GigFinder.objects.filter(name="bandsintown.com").first()
 
     def set_events_for_identifier(self, band, mbid, url):
@@ -313,3 +316,100 @@ class BandsInTownLeecher(PlatformLeecher):
         for artist in concert["artists"]:
             if artist["id"] == concert["artist_id"]:
                 return artist["name"]
+
+
+class SetlistFmLeecher(PlatformLeecher):
+    def __init__(self):
+        super(SetlistFmLeecher, self).__init__()
+        self.gf = GigFinder.objects.filter(name="www.setlist.fm").first()
+        try:
+            with open("hlwtadmin/setlist_api_key.txt", "r") as f:
+                self.platform_access_granter = f.read()
+        except FileNotFoundError:
+            try:
+                self.platform_access_granter = os.environ.get("SETLIST_API_KEY")
+            except Exception as e:
+                self.platform_access_granter = self.gf.api_key
+        self.platform = "www.setlist.fm" # base_url is www.setlist.fm/a/0/b-
+
+    def set_events_for_identifier(self, band, mbid, url):
+        events = []
+        total_hits = 1
+        p = 1
+        retrieved_hits = 0
+        while retrieved_hits < total_hits:
+            headers = {"x-api-key": self.platform_access_granter, "Accept": "application/json"}
+            r = get("https://api.setlist.fm/rest/1.0/artist/{1}/setlists?p={0}".format(p, mbid), headers=headers)
+            try:
+                response = loads(r.text)
+            except decoder.JSONDecodeError:
+                response = {}
+            if "setlist" in response:
+                for concert in response["setlist"]:
+                    events.append(self.map_platform_to_schema(concert, band, mbid, {}))
+                total_hits = int(response["total"])
+                retrieved_hits += int(response["itemsPerPage"])
+            else:
+                total_hits = 0
+            p += 1
+
+        if events:
+            for concert in events:
+                if isinstance(concert, dict):
+                    print("setlist", concert)
+                    concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
+                    if not concertannouncement:
+                        venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
+                        venue = Venue.objects.filter(raw_venue=venue_name).first()
+                        if not venue:
+                            venue = Venue.objects.create(
+                                raw_venue=venue_name[0:199],
+                                raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
+                            )
+                            venue.save()
+
+                        ca = ConcertAnnouncement.objects.create(
+                            title=concert["titel"][0:199],
+                            artist=Artist.objects.filter(mbid=mbid).first(),
+                            date=concert["datum"].isoformat(),
+                            gigfinder=self.gf,
+                            gigfinder_concert_id=concert["event_id"],
+                            last_seen_on=datetime.now(),
+                            raw_venue=venue,
+                            ignore=False,
+                            latitude=concert["latitude"],
+                            longitude=concert["longitude"]
+                        )
+                        ca.save()
+                    else:
+                        if concert["titel"] != concertannouncement.title:
+                            concertannouncement.title = concert["titel"]
+                        if concert["datum"] != concertannouncement.date:
+                            concertannouncement.date = concert["datum"]
+                        if concert["latitude"] != concertannouncement.latitude:
+                            concertannouncement.latitude = concert["latitude"]
+                        if concert["longitude"] != concertannouncement.longitude:
+                            concertannouncement.longitude = concert["longitude"]
+                        concertannouncement.last_seen_on = datetime.now()
+                        concertannouncement.save()
+
+    def map_platform_to_schema(self, concert, band, mbid, other):
+        stad = concert["venue"]["city"]["name"]
+        state = concert["venue"]["city"]["stateCode"] if "stateCode" in concert["venue"]["city"] else None
+        if state is not None and concert["venue"]["city"]["country"]["code"] in ["US", "Brazil", "Australia", "Canada"]:
+            stad = stad + ", " + state
+        return {
+            "titel": concert["info"] if "info" in concert else band.name + " @ " + concert["venue"]["name"] + " in " + concert["venue"]["city"]["name"] + ", " + concert["venue"]["city"]["country"]["code"],
+            "datum": dateparse(concert["eventDate"], ["%d-%m-%Y"]).date(),
+            "artiest": concert["artist"]["name"],
+            "artiest_id": concert["artist"]["url"],
+            "artiest_mb_naam": band.name,
+            "artiest_mb_id": mbid,
+            "stad": stad,
+            "land": concert["venue"]["city"]["country"]["code"],
+            "venue": concert["venue"]["name"],
+            "latitude": concert["venue"]["city"]["coords"]["lat"] if "lat" in concert["venue"]["city"]["coords"] else None,
+            "longitude": concert["venue"]["city"]["coords"]["long"] if "long" in concert["venue"]["city"]["coords"] else None,
+            "source": self.platform,
+            "event_id": concert["id"]
+        }

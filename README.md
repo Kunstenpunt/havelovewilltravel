@@ -14,6 +14,9 @@ A more complete description of the data structure is provided in the Wiki [https
 - heroku run python manage.py createsuperuser
 - heroku run python manage.py loaddata citycountries.json
 
+## Settings
+- 'provide api keys and base_urls in /admin for gigfinders'
+
 
 ## Schedule background tasks via Heroku Scheduler
 - python manage.py synchronize_with_musicbrainz
