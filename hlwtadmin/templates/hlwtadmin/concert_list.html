@@ -27,7 +27,7 @@
         <td>{{ concert.genre.all|join:"," }}</td>
         <td>
           {% for ca in concert.concertannouncement_set.all %}
-            <a href="{{ ca.gigfinder.base_url }}{{ ca.gigfinder_concert_id }}">
+            <a target="_blank" href="{{ ca.gigfinder.base_url }}{{ ca.gigfinder_concert_id }}">
                 {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
             </a>
           {% endfor %}
