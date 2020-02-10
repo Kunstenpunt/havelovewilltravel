@@ -57,7 +57,7 @@ class PlatformLeecher(object):
             with open("hlwtadmin/google_api_places_api_key.txt", "r") as f:
                 self.google_places_api_key = f.read().strip()
         except FileNotFoundError:
-            self.google_places_api_key = os.environ.get('GOOGLE_PLACES_API_KEY')
+            self.google_places_api_key = os.environ.get('GOOGLE_PLACES_API_KEY').strip("'")
         print("platform leecher api key google places", self.google_places_api_key)
 
     def get_lat_lon_for_venue(self, venue, city, country):
