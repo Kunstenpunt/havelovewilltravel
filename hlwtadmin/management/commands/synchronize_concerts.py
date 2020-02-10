@@ -58,6 +58,7 @@ class PlatformLeecher(object):
         try:
             result = loads(get(url.format(venue_search, self.google_places_api_key)).text)
         except Exception as e:
+            print("exception", e)
             result = {"status": "ZERO_RESULTS"}
         if result["status"] == "ZERO_RESULTS":
             try:
@@ -84,12 +85,12 @@ class PlatformLeecher(object):
 
 class FacebookScraper(PlatformLeecher):
     def __init__(self):
+        super(FacebookScraper, self).__init__()
         self.platform = "facebook"
         self.gf = GigFinder.objects.filter(name="www.facebook.com").first()
         self.ua = UserAgent()
 
     def _get_event_ids(self, url):
-        print(url)
         regex = compile('href="/events/(\d+?)\?')
         headers = {'user-agent': self.ua.random}
         sleep(10.0)
@@ -129,15 +130,16 @@ class FacebookScraper(PlatformLeecher):
             event_data = {
                 "event_id": event_id,
                 "datum": datum,
-                "land": location["country"][0],
-                "stad": location["city"][0],
-                "venue": location["venue"][0:199],
+                "land": location["country"],
+                "stad": location["city"],
+                "venue": location["venue"],
                 "latitude": location["lat"],
                 "longitude": location["lng"],
                 "titel": titel[0:199]
             }
-            print(event_data)
-        except AttributeError:
+            print("event data", event_data)
+        except AttributeError as e:
+            print("error", e)
             event_data = {}
         return event_data
 
@@ -156,8 +158,8 @@ class FacebookScraper(PlatformLeecher):
             location_country = ""
         loc_info = self.get_lat_lon_for_venue(location_name, location_street, location_country)
         loc_info["venue"] = location_name[0:199]
-        loc_info["city"] = location_street[0:199],
-        loc_info["country"] = location_country[0:199],
+        loc_info["city"] = location_street[0:199]
+        loc_info["country"] = location_country[0:199]
         return loc_info
 
     def set_events_for_identifier(self, band, mbid, url):
@@ -177,7 +179,8 @@ class FacebookScraper(PlatformLeecher):
             if events:
                 for concert in events:
                     if isinstance(concert, dict) and "event_id" in concert:
-                        if not ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first():
+                        concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
+                        if not concertannouncement:
                             venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
                             venue = Venue.objects.filter(raw_venue=venue_name).first()
                             if not venue:
@@ -200,6 +203,17 @@ class FacebookScraper(PlatformLeecher):
                                 longitude=concert["longitude"]
                             )
                             ca.save()
+                        else:
+                            if concert["titel"] != concertannouncement.title:
+                                concertannouncement.title = concert["titel"]
+                            if concert["datum"] != concertannouncement.date:
+                                concertannouncement.date = concert["datum"]
+                            if concert["latitude"] != concertannouncement.latitude:
+                                concertannouncement.latitude = concert["latitude"]
+                            if concert["longitude"] != concertannouncement.longitude:
+                                concertannouncement.longitude = concert["longitude"]
+                            concertannouncement.last_seen_on = datetime.now()
+                            concertannouncement.save()
 
 
 class BandsInTownLeecher(PlatformLeecher):
@@ -237,8 +251,8 @@ class BandsInTownLeecher(PlatformLeecher):
             for concert in events:
                 if isinstance(concert, dict):
                     concert = self.map_platform_to_schema(concert, band, mbid, {})
-                    print(concert)
-                    if not ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first():
+                    concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
+                    if not concertannouncement:
                         venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
                         venue = Venue.objects.filter(raw_venue=venue_name).first()
                         if not venue:
@@ -261,6 +275,17 @@ class BandsInTownLeecher(PlatformLeecher):
                             longitude=concert["longitude"]
                         )
                         ca.save()
+                    else:
+                        if concert["titel"] != concertannouncement.title:
+                            concertannouncement.title = concert["titel"]
+                        if concert["datum"] != concertannouncement.date:
+                            concertannouncement.date = concert["datum"]
+                        if concert["latitude"] != concertannouncement.latitude:
+                            concertannouncement.latitude = concert["latitude"]
+                        if concert["longitude"] != concertannouncement.longitude:
+                            concertannouncement.longitude = concert["longitude"]
+                        concertannouncement.last_seen_on = datetime.now()
+                        concertannouncement.save()
 
     def map_platform_to_schema(self, concert, band, mbid, other):
         region = concert["venue"]["region"].strip() if "region" in concert["venue"] else None

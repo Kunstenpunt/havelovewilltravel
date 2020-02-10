@@ -4,6 +4,8 @@ from simple_history.models import HistoricalRecords
 
 from django_super_deduper.merge import MergedModelInstance
 
+from datetime import datetime
+
 
 # Create your models here.
 class GigFinder(models.Model):
@@ -77,6 +79,11 @@ class ConcertAnnouncement(models.Model):
                 if self._venue_is_not_related_to_organisation():
                     self._create_new_unverified_organisation_and_relate_to_venue()
                 self._create_new_masterconcert_with_concertannouncement_organisation_artist()
+        if self.id:
+            if self.concert and not self.concert.verified:
+                self.concert.updated_at = datetime.now()
+                self.concert.latitude = self.latitude
+                self.concert.longitude = self.longitude
         super(ConcertAnnouncement, self).save(*args, **kwargs)
 
     class Meta:
