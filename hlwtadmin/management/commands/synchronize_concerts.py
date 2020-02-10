@@ -61,9 +61,11 @@ class PlatformLeecher(object):
         print("platform leecher api key google places", self.google_places_api_key)
 
     def get_lat_lon_for_venue(self, venue, city, country):
+        print("init locsearch", venue, city, country)
         url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}"
         venue_search = " ".join([venue, city, country])
         city_search = " ".join([city, country])
+        print("locsearch", url.format(venue_search, self.google_places_api_key))
         try:
             result = loads(get(url.format(venue_search, self.google_places_api_key)).text)
         except Exception as e:
@@ -73,6 +75,7 @@ class PlatformLeecher(object):
             try:
                 result = loads(get(url.format(city_search, self.google_places_api_key)).text)
             except Exception as e:
+                print("exception", e)
                 result = {"results": []}
         if len(result["results"]) > 0:
             if "types" in result["results"][0]:
@@ -132,8 +135,10 @@ class FacebookScraper(PlatformLeecher):
                 r = f.read()
         soup = BeautifulSoup(r, 'html.parser')
         try:
+            print("looking for json ld")
             ld = loads(soup.find("script", {"type": "application/ld+json"}).text)
             datum = dateparse(ld["startDate"]).date()
+            print("moving to locsearch")
             location = self._get_location(ld)
             titel = ld["name"]
             event_data = {
