@@ -94,7 +94,7 @@ class PlatformLeecher(object):
                 "country": country
             }
         else:
-            print("nothing found")
+            print("nothing found", result)
             return {"lat": None, "lng": None, "city": None, "country": None}
 
 
