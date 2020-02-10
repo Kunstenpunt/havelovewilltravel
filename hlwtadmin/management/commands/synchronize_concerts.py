@@ -26,6 +26,8 @@ from dateparser import parse as dateparse
 from datetime import datetime
 import requests
 
+from math import ceil
+
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
@@ -36,6 +38,7 @@ class Command(BaseCommand):
         leecher_fb = FacebookScraper()
         leecher_bit = BandsInTownLeecher()
         leecher_setlist = SetlistFmLeecher()
+        leecher_songkick = SongkickLeecher()
         for gfurl in GigFinderUrl.objects.all():
             print(gfurl.artist, gfurl.artist.mbid, gfurl.url, gfurl.gigfinder.name)
             if gfurl.gigfinder.name == "www.facebook.com" and gfurl.artist.exclude is not True:
@@ -44,6 +47,8 @@ class Command(BaseCommand):
                 leecher_bit.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
             if gfurl.gigfinder.name == "www.setlist.fm" and gfurl.artist.exclude is not True:
                 leecher_setlist.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
+            if gfurl.gigfinder.name == "www.songkick.com" and gfurl.artist.exclude is not True:
+                leecher_songkick.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
 
 
 class PlatformLeecher(object):
@@ -412,4 +417,111 @@ class SetlistFmLeecher(PlatformLeecher):
             "longitude": concert["venue"]["city"]["coords"]["long"] if "long" in concert["venue"]["city"]["coords"] else None,
             "source": self.platform,
             "event_id": concert["id"]
+        }
+
+
+class SongkickLeecher(PlatformLeecher):
+    def __init__(self):
+        super().__init__()
+        self.gf = GigFinder.objects.filter(name="www.songkick.com").first()
+        try:
+            with open("hlwtadmin/songkick_api_key.txt", "r") as f:
+                self.platform_access_granter = f.read()
+        except FileNotFoundError:
+            try:
+                self.platform_access_granter = os.environ.get("SONGKICK_API_KEY")
+            except Exception as e:
+                self.platform_access_granter = self.gf.api_key
+        self.platform = "www.songkick.com"
+        self.past_events_url = "http://api.songkick.com/api/3.0/artists/{0}/gigography.json?apikey={1}&page={2}"
+        self.future_events_url = "http://api.songkick.com/api/3.0/artists/{0}/calendar.json?apikey={1}&page={2}"
+
+    def set_events_for_identifier(self, band, mbid, url):
+        artist_id, artist_name = url.split("/")[-1].split("-")[0], " ".join(url.split("/")[-1].split("-")[1:])
+        self.get_events(self.past_events_url, artist_id, artist_name, band, mbid)
+        self.get_events(self.future_events_url, artist_id, artist_name, band, mbid)
+
+    def get_events(self, base_url, artistid, artistname, band, mbid):
+        page = 1
+        url = base_url.format(artistid, self.platform_access_granter, page)
+        html = get(url).text
+        events = []
+        try:
+            json_response = loads(html) if html is not None else {}
+        except decoder.JSONDecodeError:
+            json_response = {}
+        if "resultsPage" in json_response:
+            resultspage = json_response["resultsPage"]
+            amount_events = resultspage["totalEntries"] if "totalEntries" in resultspage else 0
+            amount_pages = ceil(amount_events / 50.0)
+            while page <= amount_pages:
+                if resultspage["status"] == "ok":
+                    for event in resultspage["results"]["event"]:
+                        events.append(self.map_platform_to_schema(event, band, mbid, {"artist_id": artistid, "artist_name": artistname}))
+                    page += 1
+                    url = base_url.format(artistid, self.platform_access_granter, page)
+                    html = get(url).text
+                    try:
+                        resultspage = loads(html)["resultsPage"]
+                    except decoder.JSONDecodeError:
+                        print("decoder error")
+                        resultspage = {"status": "nok"}
+
+        if events:
+            for concert in events:
+                if isinstance(concert, dict):
+                    print("songkick", concert)
+                    concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
+                    if not concertannouncement:
+                        venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
+                        venue = Venue.objects.filter(raw_venue=venue_name).first()
+                        if not venue:
+                            venue = Venue.objects.create(
+                                raw_venue=venue_name[0:199],
+                                raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
+                            )
+                            venue.save()
+
+                        ca = ConcertAnnouncement.objects.create(
+                            title=concert["titel"][0:199],
+                            artist=Artist.objects.filter(mbid=mbid).first(),
+                            date=concert["datum"].isoformat(),
+                            gigfinder=self.gf,
+                            gigfinder_concert_id=concert["event_id"],
+                            last_seen_on=datetime.now(),
+                            raw_venue=venue,
+                            ignore=False,
+                            latitude=concert["latitude"],
+                            longitude=concert["longitude"]
+                        )
+                        ca.save()
+                    else:
+                        if concert["titel"] != concertannouncement.title:
+                            concertannouncement.title = concert["titel"]
+                        if concert["datum"] != concertannouncement.date:
+                            concertannouncement.date = concert["datum"]
+                        if concert["latitude"] != concertannouncement.latitude:
+                            concertannouncement.latitude = concert["latitude"]
+                        if concert["longitude"] != concertannouncement.longitude:
+                            concertannouncement.longitude = concert["longitude"]
+                        concertannouncement.last_seen_on = datetime.now()
+                        concertannouncement.save()
+
+    def map_platform_to_schema(self, event, band, mbid, other):
+        concertdate = dateparse(event["start"]["date"]).date()
+        return {
+            "titel": event["displayName"].strip().rstrip(concertdate.strftime("%B %d, %Y")),
+            "datum": concertdate,
+            "artiest": other["artist_name"],
+            "artiest_id": str(other["artist_id"]),
+            "artiest_mb_naam": band,
+            "artiest_mb_id": mbid,
+            "stad": ",".join([i.strip() for i in event["location"]["city"].split(",")[0:-1]]),
+            "land": event["location"]["city"].split(",")[-1].strip(),
+            "venue": event["displayName"].strip() if event["type"] == "Festival" else event["venue"]["displayName"].strip(),
+            "latitude": event["venue"]["lat"],
+            "longitude": event["venue"]["lng"],
+            "source": self.platform,
+            "event_id": str(event["id"]),
+            "event_type": event["type"].lower()
         }
