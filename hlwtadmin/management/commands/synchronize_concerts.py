@@ -78,6 +78,7 @@ class PlatformLeecher(object):
                 print("exception", e)
                 result = {"results": []}
         if len(result["results"]) > 0:
+            print("result found", result)
             if "types" in result["results"][0]:
                 if "locality" in result["results"][0]["types"] or "postal_code" in result["results"][0]["types"]:
                     city = result["results"][0]["name"]
@@ -85,6 +86,7 @@ class PlatformLeecher(object):
             else:
                 city = ", ".join(result["results"][0]["formatted_address"].split(", ")[1:-1])
                 country = result["results"][0]["formatted_address"].split(", ")[-1]
+            print("ready to send back")
             return {
                 "lat": result["results"][0]["geometry"]["location"]["lat"],
                 "lng": result["results"][0]["geometry"]["location"]["lng"],
@@ -92,6 +94,7 @@ class PlatformLeecher(object):
                 "country": country
             }
         else:
+            print("nothing found")
             return {"lat": None, "lng": None, "city": None, "country": None}
 
 
@@ -140,6 +143,7 @@ class FacebookScraper(PlatformLeecher):
             datum = dateparse(ld["startDate"]).date()
             print("moving to locsearch")
             location = self._get_location(ld)
+            print("location is", location)
             titel = ld["name"]
             event_data = {
                 "event_id": event_id,
