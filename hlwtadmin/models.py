@@ -31,6 +31,22 @@ class Artist(models.Model):
     def get_absolute_url(self):
         return reverse('artist_detail', args=[str(self.mbid)])
 
+    def concert_count(self):
+        return RelationConcertArtist.objects.filter(artist=self).count()
+
+    def concerts_in_countries(self):
+        locations = set()
+        for relation_concert_artist in RelationConcertArtist.objects.filter(artist=self):
+            for relation_concert_organisation in RelationConcertOrganisation.objects.filter(concert=relation_concert_artist.concert):
+                locations.add(relation_concert_organisation.organisation.location)
+        return len(set([loc.country for loc in locations if loc]))
+
+    def period(self):
+        years = set()
+        for relation_concert_artist in RelationConcertArtist.objects.filter(artist=self):
+            years.add(relation_concert_artist.concert.date.year)
+        return "-".join([str(min(years)), str(max(years))]) if years else None
+
     class Meta:
         ordering = ['name']
 

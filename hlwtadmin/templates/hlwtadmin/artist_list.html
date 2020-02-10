@@ -7,6 +7,7 @@
     <tr>
       <th>Name</th>
       <th>Genre</th>
+      <th>Concerts/countries (period)</th>
       <th>Gigfinders</th>
     </tr>
     {% for artist in artist_list %}
@@ -18,6 +19,9 @@
             </a>
         </td>
         <td>{{ artist.genre.all|join:"," }}</td>
+        <td>
+          {{ artist.concert_count }} / {{ artist.concerts_in_countries }} ({{ artist.period }})
+        </td>
         <td>
         {% for gf in artist.gigfinderurl_set.all %}
           <a href="{{ gf.url }}">
