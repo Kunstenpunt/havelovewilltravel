@@ -16,6 +16,7 @@ A more complete description of the data structure is provided in the Wiki [https
 
 ## Settings
 - 'provide api keys and base_urls in /admin for gigfinders'
+- set GOOGLE_PLACES_API_KEY in environment variable
 
 
 ## Schedule background tasks via Heroku Scheduler

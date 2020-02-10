@@ -58,6 +58,7 @@ class PlatformLeecher(object):
                 self.google_places_api_key = f.read().strip()
         except FileNotFoundError:
             self.google_places_api_key = os.environ.get('GOOGLE_PLACES_API_KEY')
+        print("platform leecher api key google places", self.google_places_api_key)
 
     def get_lat_lon_for_venue(self, venue, city, country):
         url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}"
@@ -331,11 +332,9 @@ class SetlistFmLeecher(PlatformLeecher):
             with open("hlwtadmin/setlist_api_key.txt", "r") as f:
                 self.platform_access_granter = f.read()
         except FileNotFoundError:
-            try:
-                self.platform_access_granter = os.environ.get("SETLIST_API_KEY")
-            except Exception as e:
-                self.platform_access_granter = self.gf.api_key
+            self.platform_access_granter = self.gf.api_key
         self.platform = "www.setlist.fm" # base_url is www.setlist.fm/a/0/b-
+        print("setlistfm api", self.platform_access_granter)
 
     def set_events_for_identifier(self, band, mbid, url):
         events = []
@@ -428,13 +427,12 @@ class SongkickLeecher(PlatformLeecher):
             with open("hlwtadmin/songkick_api_key.txt", "r") as f:
                 self.platform_access_granter = f.read()
         except FileNotFoundError:
-            try:
-                self.platform_access_granter = os.environ.get("SONGKICK_API_KEY")
-            except Exception as e:
-                self.platform_access_granter = self.gf.api_key
+            self.platform_access_granter = self.gf.api_key
         self.platform = "www.songkick.com"
         self.past_events_url = "http://api.songkick.com/api/3.0/artists/{0}/gigography.json?apikey={1}&page={2}"
         self.future_events_url = "http://api.songkick.com/api/3.0/artists/{0}/calendar.json?apikey={1}&page={2}"
+        print("songkick api", self.platform_access_granter)
+
 
     def set_events_for_identifier(self, band, mbid, url):
         artist_id, artist_name = url.split("/")[-1].split("-")[0], " ".join(url.split("/")[-1].split("-")[1:])
