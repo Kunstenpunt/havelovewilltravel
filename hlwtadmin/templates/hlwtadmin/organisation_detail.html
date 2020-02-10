@@ -8,7 +8,7 @@
         <p>Type: {{ organisation.organisation_type.all|join:"," }}</p>
         <p>Genre: {{ organisation.genre.all|join:"," }}</p>
         <p>Disambiguation: {{ organisation.disambiguation }}</p>
-        <p>Website: {% if organisation.website %}<a href="{{ organisation.website }}">{{ organisation.website }}</a>{% endif %}</p>
+        <p>Website: {% if organisation.website %}<a target="_blank" href="{{ organisation.website }}">{{ organisation.website }}</a>{% endif %}</p>
         <p>Verified: {{ organisation.verified }}</p>
         <p>GPS: {{ organisation.latitude }}, {{ organisation.longitude }}</p>
     </div>
