@@ -1,8 +1,14 @@
 from pandas import read_excel, isnull
 from json import dump
 from codecs import open
+from sys import argv
 
 latest = read_excel("citycountries.xlsx")
+filename = "citycountries.json"
+
+if len(argv) == 2 and argv[1] == "test":
+    latest = latest[latest["test"] == True]
+    filename = "citycountries_test.json"
 
 fixture = []
 
@@ -41,5 +47,5 @@ for location in latest[["name", "country"]].itertuples():
         i += 1
         fixture.append(data)
 
-with open("citycountries.json", "w", "utf-8") as f:
+with open(filename, "w", "utf-8") as f:
     dump(fixture, f, indent=4)
