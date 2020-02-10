@@ -96,8 +96,8 @@ def index(request):
         'num_concerts_without_artists': Concert.objects.filter(relationconcertartist__artist__isnull=True).count(),
         'num_concerts_without_organities': Concert.objects.filter(relationconcertorganisation__organisation__isnull=True).count(),
         'num_rawvenues_without_organities': Venue.objects.filter(organisation__isnull=True).filter(non_assignable=False).count(),
-        'num_organities_without_rawvenues': Organisation.objects.filter(venue__isnull=True).count(),
-        'num_organities_without_locations': Organisation.objects.filter(location__isnull=True).count(),
+        'num_organities_without_rawvenues': Organisation.objects.filter(venue__isnull=True).filter(verified=False).count(),
+        'num_organities_without_locations': Organisation.objects.filter(location__isnull=True).filter(verified=False).count(),
         'num_cities_without_countries': Location.objects.filter(country__isnull=True).count(),
         'num_unverified_organisations': Organisation.objects.filter(verified=False).count()
     }
@@ -397,7 +397,7 @@ class OrganisationListView(ListView):
     paginate_by = 15
 
     def get_queryset(self):
-        return Organisation.objects.filter(venue__isnull=True)
+        return Organisation.objects.filter(venue__isnull=True).filter(verified=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -409,7 +409,7 @@ class OrganisationListView2(ListView):
     paginate_by = 15
 
     def get_queryset(self):
-        return Organisation.objects.filter(location__isnull=True)
+        return Organisation.objects.filter(location__isnull=True).filter(verified=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
