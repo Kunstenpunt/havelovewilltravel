@@ -11,7 +11,7 @@ import hashlib
 import hmac
 
 from requests import post, exceptions
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from time import sleep
 
 import os
@@ -56,6 +56,10 @@ class Artist(models.Model):
         for relation_concert_artist in RelationConcertArtist.objects.filter(artist=self):
             years.add(relation_concert_artist.concert.date.year)
         return "-".join([str(min(years)), str(max(years))]) if years else None
+
+    def concerts(self):
+        today = datetime.now().date()
+        return [rel.concert for rel in RelationConcertArtist.objects.filter(artist=self)]
 
     class Meta:
         ordering = ['name']
@@ -194,6 +198,12 @@ class Concert(models.Model):
 
     def __str__(self):
         return self.title
+
+    def is_upcoming(self):
+        return self.date >= datetime.now().date()
+
+    def is_new(self):
+        return self.created_at.date() > (datetime.now() - timedelta(days=14)).date()
 
     def get_absolute_url(self):
         return reverse('concert_detail', args=[str(self.id)])

@@ -13,7 +13,12 @@
     </tr>
     {% for concert in concert_list %}
       <tr>
-        <td><a href="{{ concert.get_absolute_url }}">{{ concert.date }}</a></td>
+        <td>
+          {% if concert.is_new %}
+            {% load static %}<img style="border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/new.gif' %}" />
+          {% endif %}
+          <a href="{{ concert.get_absolute_url }}">{{ concert.date }}</a>
+        </td>
         <td>
           {% for relation in concert.relationconcertartist_set.all %}
             <a href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a>
