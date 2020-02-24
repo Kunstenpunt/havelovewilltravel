@@ -44,7 +44,7 @@
                         </a>
                       {% endif %}
                   </td>
-                  {% else %} <td>Missing organisation</td>
+                  {% else %} <td>{% load static %}<img style="width: 36px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" />Missing organisation{% load static %}<img style="width: 36px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" /></td>
                   {% endif %}
                   <td>
                       {% for ca in concert.concertannouncement_set.all %}

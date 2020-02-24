@@ -6,6 +6,8 @@ from django import forms
 from dal import autocomplete
 from django.db.models import Q
 
+from datetime import datetime
+
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, RelationConcertConcert, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
     RelationArtistArtist, OrganisationsMerge, ConcertsMerge
@@ -183,6 +185,18 @@ class RecentlyAddedConcertListView(ListView):
     model = Concert
     paginate_by = 15
     ordering = ['-created_at']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class UpcomingConcertListView(ListView):
+    model = Concert
+    paginate_by = 15
+
+    def get_queryset(self):
+        return Concert.objects.filter(date__gte=datetime.now().date()).order_by('date', 'relationconcertorganisation__organisation__location__country')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
