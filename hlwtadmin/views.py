@@ -398,7 +398,7 @@ class LocationDetailView(DetailView):
 class OrganisationForm(forms.ModelForm):
     class Meta:
         model = Organisation
-        fields = ['name', 'disambiguation', 'website', 'organisation_type', 'genre', 'location', 'verified', 'start_date', 'end_date', 'latitude', 'longitude']
+        fields = ['name', 'disambiguation', 'website', 'organisation_type', 'genre', 'location', 'verified', 'start_date', 'end_date', 'latitude', 'longitude', 'annotation', 'active', 'capacity']
         widgets = {
             'location': autocomplete.ModelSelect2(
                 url='location_autocomplete'

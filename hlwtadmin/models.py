@@ -148,7 +148,7 @@ class ConcertAnnouncement(models.Model):
         name = name_prop if len(name_prop.strip()) > 0 else self.raw_venue.raw_venue
         loc = Location.objects.filter(city__istartswith=stad).first()
         org = Organisation.objects.create(name=name,
-                                          disambiguation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
+                                          annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
                                           location=loc, verified=False)
         org.save()
         self.raw_venue.organisation = org
@@ -287,6 +287,9 @@ class Organisation(models.Model):
     website = models.URLField(blank=True, null=True)
     verified = models.BooleanField(default=True, blank=True, null=True)
     genre = models.ManyToManyField("Genre", blank=True)
+    active = models.BooleanField(default=True, blank=True, null=True)
+    capacity = models.CharField(max_length=250, null=True, blank=True)
+    annotation = models.CharField(max_length=500, null=True, blank=True)
     history = HistoricalRecords()
 
     def __str__(self):
