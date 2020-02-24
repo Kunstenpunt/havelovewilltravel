@@ -21,7 +21,12 @@
         </td>
         <td>
           {% for relation in concert.relationconcertorganisation_set.all %}
-            <a href="{% url 'organisation_detail' relation.organisation.id %}">{{ relation.organisation.name }}</a> ({{ relation.organisation.location }})
+            <a href="{% url 'organisation_detail' relation.organisation.id %}">{{ relation.organisation.name }}</a>
+            ({{ relation.organisation.location }}
+            {% if relation.organisation.location %}
+              {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ relation.organisation.location.country.iso_code }}.png" />
+            {% endif %}
+            )
           {% endfor %}
         </td>
         <td>{{ concert.genre.all|join:"," }}</td>

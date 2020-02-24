@@ -3,1708 +3,1952 @@
         "pk": 1,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Andorra"
+            "name": "Andorra",
+            "iso_code": "AD"
         }
     },
     {
         "pk": 2,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "United Arab Emirates"
+            "name": "United Arab Emirates",
+            "iso_code": "AE"
         }
     },
     {
         "pk": 3,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Afghanistan"
+            "name": "Afghanistan",
+            "iso_code": "AF"
         }
     },
     {
         "pk": 4,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Antigua and Barbuda"
+            "name": "Antigua and Barbuda",
+            "iso_code": "AG"
         }
     },
     {
         "pk": 5,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Anguilla"
+            "name": "Anguilla",
+            "iso_code": "AI"
         }
     },
     {
         "pk": 6,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Albania"
+            "name": "Albania",
+            "iso_code": "AL"
         }
     },
     {
         "pk": 7,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Armenia"
+            "name": "Armenia",
+            "iso_code": "AM"
         }
     },
     {
         "pk": 8,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Angola"
+            "name": "Angola",
+            "iso_code": "AO"
         }
     },
     {
         "pk": 9,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Argentina"
+            "name": "Argentina",
+            "iso_code": "AR"
         }
     },
     {
         "pk": 10,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "American Samoa"
+            "name": "American Samoa",
+            "iso_code": "AS"
         }
     },
     {
         "pk": 11,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Austria"
+            "name": "Austria",
+            "iso_code": "AT"
         }
     },
     {
         "pk": 12,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Australia"
+            "name": "Australia",
+            "iso_code": "AU"
         }
     },
     {
         "pk": 13,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Aruba"
+            "name": "Aruba",
+            "iso_code": "AW"
         }
     },
     {
         "pk": 14,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Aland Islands"
+            "name": "Aland Islands",
+            "iso_code": "AX"
         }
     },
     {
         "pk": 15,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Azerbaijan"
+            "name": "Azerbaijan",
+            "iso_code": "AZ"
         }
     },
     {
         "pk": 16,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Bosnia and Herzegovina"
+            "name": "Bosnia and Herzegovina",
+            "iso_code": "BA"
         }
     },
     {
         "pk": 17,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Barbados"
+            "name": "Barbados",
+            "iso_code": "BB"
         }
     },
     {
         "pk": 18,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Bangladesh"
+            "name": "Bangladesh",
+            "iso_code": "BD"
         }
     },
     {
         "pk": 19,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Belgium"
+            "name": "Belgium",
+            "iso_code": "BE"
         }
     },
     {
         "pk": 20,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Burkina Faso"
+            "name": "Burkina Faso",
+            "iso_code": "BF"
         }
     },
     {
         "pk": 21,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Bulgaria"
+            "name": "Bulgaria",
+            "iso_code": "BG"
         }
     },
     {
         "pk": 22,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Bahrain"
+            "name": "Bahrain",
+            "iso_code": "BH"
         }
     },
     {
         "pk": 23,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Burundi"
+            "name": "Burundi",
+            "iso_code": "BI"
         }
     },
     {
         "pk": 24,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Benin"
+            "name": "Benin",
+            "iso_code": "BJ"
         }
     },
     {
         "pk": 25,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Saint Barthelemy"
+            "name": "Saint Barthelemy",
+            "iso_code": "RW"
         }
     },
     {
         "pk": 26,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Bermuda"
+            "name": "Bermuda",
+            "iso_code": "BM"
         }
     },
     {
         "pk": 27,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Brunei"
+            "name": "Brunei",
+            "iso_code": "IO"
         }
     },
     {
         "pk": 28,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Bolivia"
+            "name": "Bolivia",
+            "iso_code": "BO"
         }
     },
     {
         "pk": 29,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Bonaire, Saint Eustatius and Saba"
+            "name": "Bonaire, Saint Eustatius and Saba",
+            "iso_code": "BO"
         }
     },
     {
         "pk": 30,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Brazil"
+            "name": "Brazil",
+            "iso_code": "BR"
         }
     },
     {
         "pk": 31,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Bahamas"
+            "name": "Bahamas",
+            "iso_code": "BS"
         }
     },
     {
         "pk": 32,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Bhutan"
+            "name": "Bhutan",
+            "iso_code": "BT"
         }
     },
     {
         "pk": 33,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Botswana"
+            "name": "Botswana",
+            "iso_code": "BW"
         }
     },
     {
         "pk": 34,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Belarus"
+            "name": "Belarus",
+            "iso_code": "BY"
         }
     },
     {
         "pk": 35,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Belize"
+            "name": "Belize",
+            "iso_code": "BZ"
         }
     },
     {
         "pk": 36,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Canada"
+            "name": "Canada",
+            "iso_code": "CA"
         }
     },
     {
         "pk": 37,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Cocos Islands"
+            "name": "Cocos Islands",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 38,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Democratic Republic of the Congo"
+            "name": "Democratic Republic of the Congo",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 39,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Central African Republic"
+            "name": "Central African Republic",
+            "iso_code": "CF"
         }
     },
     {
         "pk": 40,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Republic of the Congo"
+            "name": "Republic of the Congo",
+            "iso_code": "QA"
         }
     },
     {
         "pk": 41,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Switzerland"
+            "name": "Switzerland",
+            "iso_code": "CH"
         }
     },
     {
         "pk": 42,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Ivory Coast"
+            "name": "Ivory Coast",
+            "iso_code": "IT"
         }
     },
     {
         "pk": 43,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Cook Islands"
+            "name": "Cook Islands",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 44,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Chile"
+            "name": "Chile",
+            "iso_code": "CL"
         }
     },
     {
         "pk": 45,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Cameroon"
+            "name": "Cameroon",
+            "iso_code": "CM"
         }
     },
     {
         "pk": 46,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "China"
+            "name": "China",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 47,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Colombia"
+            "name": "Colombia",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 48,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Costa Rica"
+            "name": "Costa Rica",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 49,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Cuba"
+            "name": "Cuba",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 50,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Cape Verde"
+            "name": "Cape Verde",
+            "iso_code": "CV"
         }
     },
     {
         "pk": 51,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Curacao"
+            "name": "Curacao",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 52,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Christmas Island"
+            "name": "Christmas Island",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 53,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Cyprus"
+            "name": "Cyprus",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 54,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Czech Republic"
+            "name": "Czech Republic",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 55,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Germany"
+            "name": "Germany",
+            "iso_code": "DE"
         }
     },
     {
         "pk": 56,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Djibouti"
+            "name": "Djibouti",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 57,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Denmark"
+            "name": "Denmark",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 58,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Dominica"
+            "name": "Dominica",
+            "iso_code": "DM"
         }
     },
     {
         "pk": 59,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Dominican Republic"
+            "name": "Dominican Republic",
+            "iso_code": "DO"
         }
     },
     {
         "pk": 60,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Algeria"
+            "name": "Algeria",
+            "iso_code": "DZ"
         }
     },
     {
         "pk": 61,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Ecuador"
+            "name": "Ecuador",
+            "iso_code": "EC"
         }
     },
     {
         "pk": 62,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Estonia"
+            "name": "Estonia",
+            "iso_code": "EE"
         }
     },
     {
         "pk": 63,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Egypt"
+            "name": "Egypt",
+            "iso_code": "EG"
         }
     },
     {
         "pk": 64,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Western Sahara"
+            "name": "Western Sahara",
+            "iso_code": "EH"
         }
     },
     {
         "pk": 65,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Eritrea"
+            "name": "Eritrea",
+            "iso_code": "ER"
         }
     },
     {
         "pk": 66,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Spain"
+            "name": "Spain",
+            "iso_code": "ES"
         }
     },
     {
         "pk": 67,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Ethiopia"
+            "name": "Ethiopia",
+            "iso_code": "ET"
         }
     },
     {
         "pk": 68,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Finland"
+            "name": "Finland",
+            "iso_code": "FI"
         }
     },
     {
         "pk": 69,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Fiji"
+            "name": "Fiji",
+            "iso_code": "FJ"
         }
     },
     {
         "pk": 70,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Falkland Islands"
+            "name": "Falkland Islands",
+            "iso_code": "ET"
         }
     },
     {
         "pk": 71,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Micronesia"
+            "name": "Micronesia",
+            "iso_code": "MX"
         }
     },
     {
         "pk": 72,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Faroe Islands"
+            "name": "Faroe Islands",
+            "iso_code": "FO"
         }
     },
     {
         "pk": 73,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "France"
+            "name": "France",
+            "iso_code": "FR"
         }
     },
     {
         "pk": 74,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Gabon"
+            "name": "Gabon",
+            "iso_code": "GA"
         }
     },
     {
         "pk": 75,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "United Kingdom"
+            "name": "United Kingdom",
+            "iso_code": "GB"
         }
     },
     {
         "pk": 76,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Grenada"
+            "name": "Grenada",
+            "iso_code": "GD"
         }
     },
     {
         "pk": 77,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Georgia"
+            "name": "Georgia",
+            "iso_code": "GE"
         }
     },
     {
         "pk": 78,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "French Guiana"
+            "name": "French Guiana",
+            "iso_code": "GF"
         }
     },
     {
         "pk": 79,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Guernsey"
+            "name": "Guernsey",
+            "iso_code": "GG"
         }
     },
     {
         "pk": 80,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Ghana"
+            "name": "Ghana",
+            "iso_code": "GH"
         }
     },
     {
         "pk": 81,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Gibraltar"
+            "name": "Gibraltar",
+            "iso_code": "GI"
         }
     },
     {
         "pk": 82,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Greenland"
+            "name": "Greenland",
+            "iso_code": "GL"
         }
     },
     {
         "pk": 83,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Gambia"
+            "name": "Gambia",
+            "iso_code": "GM"
         }
     },
     {
         "pk": 84,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Guinea"
+            "name": "Guinea",
+            "iso_code": "GN"
         }
     },
     {
         "pk": 85,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Guadeloupe"
+            "name": "Guadeloupe",
+            "iso_code": "GP"
         }
     },
     {
         "pk": 86,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Equatorial Guinea"
+            "name": "Equatorial Guinea",
+            "iso_code": "GQ"
         }
     },
     {
         "pk": 87,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Greece"
+            "name": "Greece",
+            "iso_code": "GR"
         }
     },
     {
         "pk": 88,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "South Georgia and the South Sandwich Islands"
+            "name": "South Georgia and the South Sandwich Islands",
+            "iso_code": "GS"
         }
     },
     {
         "pk": 89,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Guatemala"
+            "name": "Guatemala",
+            "iso_code": "GT"
         }
     },
     {
         "pk": 90,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Guam"
+            "name": "Guam",
+            "iso_code": "GU"
         }
     },
     {
         "pk": 91,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Guinea-Bissau"
+            "name": "Guinea-Bissau",
+            "iso_code": "GW"
         }
     },
     {
         "pk": 92,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Guyana"
+            "name": "Guyana",
+            "iso_code": "GY"
         }
     },
     {
         "pk": 93,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Hong Kong"
+            "name": "Hong Kong",
+            "iso_code": "HN"
         }
     },
     {
         "pk": 94,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Honduras"
+            "name": "Honduras",
+            "iso_code": "HN"
         }
     },
     {
         "pk": 95,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Croatia"
+            "name": "Croatia",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 96,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Haiti"
+            "name": "Haiti",
+            "iso_code": "HT"
         }
     },
     {
         "pk": 97,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Hungary"
+            "name": "Hungary",
+            "iso_code": "HU"
         }
     },
     {
         "pk": 98,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Indonesia"
+            "name": "Indonesia",
+            "iso_code": "ID"
         }
     },
     {
         "pk": 99,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Ireland"
+            "name": "Ireland",
+            "iso_code": "IE"
         }
     },
     {
         "pk": 100,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Israel"
+            "name": "Israel",
+            "iso_code": "IL"
         }
     },
     {
         "pk": 101,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Isle of Man"
+            "name": "Isle of Man",
+            "iso_code": "IM"
         }
     },
     {
         "pk": 102,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "India"
+            "name": "India",
+            "iso_code": "IN"
         }
     },
     {
         "pk": 103,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Iraq"
+            "name": "Iraq",
+            "iso_code": "IQ"
         }
     },
     {
         "pk": 104,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Iran"
+            "name": "Iran",
+            "iso_code": "ID"
         }
     },
     {
         "pk": 105,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Iceland"
+            "name": "Iceland",
+            "iso_code": "IS"
         }
     },
     {
         "pk": 106,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Italy"
+            "name": "Italy",
+            "iso_code": "IT"
         }
     },
     {
         "pk": 107,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Jersey"
+            "name": "Jersey",
+            "iso_code": "JE"
         }
     },
     {
         "pk": 108,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Jamaica"
+            "name": "Jamaica",
+            "iso_code": "JM"
         }
     },
     {
         "pk": 109,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Jordan"
+            "name": "Jordan",
+            "iso_code": "JO"
         }
     },
     {
         "pk": 110,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Japan"
+            "name": "Japan",
+            "iso_code": "JP"
         }
     },
     {
         "pk": 111,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Kenya"
+            "name": "Kenya",
+            "iso_code": "KE"
         }
     },
     {
         "pk": 112,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Kyrgyzstan"
+            "name": "Kyrgyzstan",
+            "iso_code": "KG"
         }
     },
     {
         "pk": 113,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Cambodia"
+            "name": "Cambodia",
+            "iso_code": "KH"
         }
     },
     {
         "pk": 114,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Kiribati"
+            "name": "Kiribati",
+            "iso_code": "KI"
         }
     },
     {
         "pk": 115,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Comoros"
+            "name": "Comoros",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 116,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Saint Kitts and Nevis"
+            "name": "Saint Kitts and Nevis",
+            "iso_code": "KN"
         }
     },
     {
         "pk": 117,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "North Korea"
+            "name": "North Korea",
+            "iso_code": "NF"
         }
     },
     {
         "pk": 118,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "South Korea"
+            "name": "South Korea",
+            "iso_code": "GS"
         }
     },
     {
         "pk": 119,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Kuwait"
+            "name": "Kuwait",
+            "iso_code": "KW"
         }
     },
     {
         "pk": 120,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Cayman Islands"
+            "name": "Cayman Islands",
+            "iso_code": "KY"
         }
     },
     {
         "pk": 121,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Kazakhstan"
+            "name": "Kazakhstan",
+            "iso_code": "KZ"
         }
     },
     {
         "pk": 122,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Laos"
+            "name": "Laos",
+            "iso_code": "LA"
         }
     },
     {
         "pk": 123,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Lebanon"
+            "name": "Lebanon",
+            "iso_code": "LB"
         }
     },
     {
         "pk": 124,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Saint Lucia"
+            "name": "Saint Lucia",
+            "iso_code": "LC"
         }
     },
     {
         "pk": 125,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Liechtenstein"
+            "name": "Liechtenstein",
+            "iso_code": "LI"
         }
     },
     {
         "pk": 126,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Sri Lanka"
+            "name": "Sri Lanka",
+            "iso_code": "LK"
         }
     },
     {
         "pk": 127,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Liberia"
+            "name": "Liberia",
+            "iso_code": "LR"
         }
     },
     {
         "pk": 128,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Lesotho"
+            "name": "Lesotho",
+            "iso_code": "LS"
         }
     },
     {
         "pk": 129,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Lithuania"
+            "name": "Lithuania",
+            "iso_code": "LT"
         }
     },
     {
         "pk": 130,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Luxembourg"
+            "name": "Luxembourg",
+            "iso_code": "LU"
         }
     },
     {
         "pk": 131,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Latvia"
+            "name": "Latvia",
+            "iso_code": "LV"
         }
     },
     {
         "pk": 132,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Libya"
+            "name": "Libya",
+            "iso_code": "LY"
         }
     },
     {
         "pk": 133,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Morocco"
+            "name": "Morocco",
+            "iso_code": "MA"
         }
     },
     {
         "pk": 134,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Monaco"
+            "name": "Monaco",
+            "iso_code": "MC"
         }
     },
     {
         "pk": 135,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Moldova"
+            "name": "Moldova",
+            "iso_code": "MD"
         }
     },
     {
         "pk": 136,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Montenegro"
+            "name": "Montenegro",
+            "iso_code": "ME"
         }
     },
     {
         "pk": 137,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Saint Martin"
+            "name": "Saint Martin",
+            "iso_code": "LC"
         }
     },
     {
         "pk": 138,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Madagascar"
+            "name": "Madagascar",
+            "iso_code": "MG"
         }
     },
     {
         "pk": 139,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Marshall Islands"
+            "name": "Marshall Islands",
+            "iso_code": "MH"
         }
     },
     {
         "pk": 140,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Macedonia"
+            "name": "Macedonia",
+            "iso_code": "LU"
         }
     },
     {
         "pk": 141,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Mali"
+            "name": "Mali",
+            "iso_code": "ML"
         }
     },
     {
         "pk": 142,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Myanmar"
+            "name": "Myanmar",
+            "iso_code": "MM"
         }
     },
     {
         "pk": 143,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Mongolia"
+            "name": "Mongolia",
+            "iso_code": "MN"
         }
     },
     {
         "pk": 144,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Macao"
+            "name": "Macao",
+            "iso_code": "LU"
         }
     },
     {
         "pk": 145,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Northern Mariana Islands"
+            "name": "Northern Mariana Islands",
+            "iso_code": "MP"
         }
     },
     {
         "pk": 146,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Martinique"
+            "name": "Martinique",
+            "iso_code": "MQ"
         }
     },
     {
         "pk": 147,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Mauritania"
+            "name": "Mauritania",
+            "iso_code": "MR"
         }
     },
     {
         "pk": 148,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Montserrat"
+            "name": "Montserrat",
+            "iso_code": "MS"
         }
     },
     {
         "pk": 149,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Malta"
+            "name": "Malta",
+            "iso_code": "MT"
         }
     },
     {
         "pk": 150,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Mauritius"
+            "name": "Mauritius",
+            "iso_code": "MU"
         }
     },
     {
         "pk": 151,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Maldives"
+            "name": "Maldives",
+            "iso_code": "MV"
         }
     },
     {
         "pk": 152,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Malawi"
+            "name": "Malawi",
+            "iso_code": "MW"
         }
     },
     {
         "pk": 153,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Mexico"
+            "name": "Mexico",
+            "iso_code": "MX"
         }
     },
     {
         "pk": 154,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Malaysia"
+            "name": "Malaysia",
+            "iso_code": "MY"
         }
     },
     {
         "pk": 155,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Mozambique"
+            "name": "Mozambique",
+            "iso_code": "MZ"
         }
     },
     {
         "pk": 156,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Namibia"
+            "name": "Namibia",
+            "iso_code": NaN
         }
     },
     {
         "pk": 157,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "New Caledonia"
+            "name": "New Caledonia",
+            "iso_code": "NC"
         }
     },
     {
         "pk": 158,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Niger"
+            "name": "Niger",
+            "iso_code": "NE"
         }
     },
     {
         "pk": 159,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Norfolk Island"
+            "name": "Norfolk Island",
+            "iso_code": "NF"
         }
     },
     {
         "pk": 160,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Nigeria"
+            "name": "Nigeria",
+            "iso_code": "NG"
         }
     },
     {
         "pk": 161,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Nicaragua"
+            "name": "Nicaragua",
+            "iso_code": "NI"
         }
     },
     {
         "pk": 162,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Netherlands"
+            "name": "Netherlands",
+            "iso_code": "NL"
         }
     },
     {
         "pk": 163,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Norway"
+            "name": "Norway",
+            "iso_code": "NO"
         }
     },
     {
         "pk": 164,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Nepal"
+            "name": "Nepal",
+            "iso_code": "NP"
         }
     },
     {
         "pk": 165,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Nauru"
+            "name": "Nauru",
+            "iso_code": "NR"
         }
     },
     {
         "pk": 166,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Niue"
+            "name": "Niue",
+            "iso_code": "NU"
         }
     },
     {
         "pk": 167,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "New Zealand"
+            "name": "New Zealand",
+            "iso_code": "NZ"
         }
     },
     {
         "pk": 168,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Oman"
+            "name": "Oman",
+            "iso_code": "OM"
         }
     },
     {
         "pk": 169,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Panama"
+            "name": "Panama",
+            "iso_code": "PA"
         }
     },
     {
         "pk": 170,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Peru"
+            "name": "Peru",
+            "iso_code": "PE"
         }
     },
     {
         "pk": 171,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "French Polynesia"
+            "name": "French Polynesia",
+            "iso_code": "PF"
         }
     },
     {
         "pk": 172,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Papua New Guinea"
+            "name": "Papua New Guinea",
+            "iso_code": "PG"
         }
     },
     {
         "pk": 173,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Philippines"
+            "name": "Philippines",
+            "iso_code": "PH"
         }
     },
     {
         "pk": 174,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Pakistan"
+            "name": "Pakistan",
+            "iso_code": "PK"
         }
     },
     {
         "pk": 175,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Poland"
+            "name": "Poland",
+            "iso_code": "PL"
         }
     },
     {
         "pk": 176,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Saint Pierre and Miquelon"
+            "name": "Saint Pierre and Miquelon",
+            "iso_code": "PM"
         }
     },
     {
         "pk": 177,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Pitcairn"
+            "name": "Pitcairn",
+            "iso_code": "PN"
         }
     },
     {
         "pk": 178,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Puerto Rico"
+            "name": "Puerto Rico",
+            "iso_code": "PR"
         }
     },
     {
         "pk": 179,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Palestinian Territory"
+            "name": "Palestinian Territory",
+            "iso_code": "PS"
         }
     },
     {
         "pk": 180,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Portugal"
+            "name": "Portugal",
+            "iso_code": "PT"
         }
     },
     {
         "pk": 181,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Palau"
+            "name": "Palau",
+            "iso_code": "PW"
         }
     },
     {
         "pk": 182,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Paraguay"
+            "name": "Paraguay",
+            "iso_code": "PY"
         }
     },
     {
         "pk": 183,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Qatar"
+            "name": "Qatar",
+            "iso_code": "QA"
         }
     },
     {
         "pk": 184,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Reunion"
+            "name": "Reunion",
+            "iso_code": "QA"
         }
     },
     {
         "pk": 185,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Romania"
+            "name": "Romania",
+            "iso_code": "RO"
         }
     },
     {
         "pk": 186,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Serbia"
+            "name": "Serbia",
+            "iso_code": "RS"
         }
     },
     {
         "pk": 187,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Russia"
+            "name": "Russia",
+            "iso_code": "RO"
         }
     },
     {
         "pk": 188,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Rwanda"
+            "name": "Rwanda",
+            "iso_code": "RW"
         }
     },
     {
         "pk": 189,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Saudi Arabia"
+            "name": "Saudi Arabia",
+            "iso_code": "SA"
         }
     },
     {
         "pk": 190,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Solomon Islands"
+            "name": "Solomon Islands",
+            "iso_code": "SB"
         }
     },
     {
         "pk": 191,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Seychelles"
+            "name": "Seychelles",
+            "iso_code": "SC"
         }
     },
     {
         "pk": 192,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Sudan"
+            "name": "Sudan",
+            "iso_code": "SD"
         }
     },
     {
         "pk": 193,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Sweden"
+            "name": "Sweden",
+            "iso_code": "SE"
         }
     },
     {
         "pk": 194,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Singapore"
+            "name": "Singapore",
+            "iso_code": "SG"
         }
     },
     {
         "pk": 195,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Saint Helena"
+            "name": "Saint Helena",
+            "iso_code": "SH"
         }
     },
     {
         "pk": 196,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Slovenia"
+            "name": "Slovenia",
+            "iso_code": "SI"
         }
     },
     {
         "pk": 197,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Svalbard and Jan Mayen"
+            "name": "Svalbard and Jan Mayen",
+            "iso_code": "SR"
         }
     },
     {
         "pk": 198,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Slovakia"
+            "name": "Slovakia",
+            "iso_code": "SK"
         }
     },
     {
         "pk": 199,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Sierra Leone"
+            "name": "Sierra Leone",
+            "iso_code": "SL"
         }
     },
     {
         "pk": 200,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "San Marino"
+            "name": "San Marino",
+            "iso_code": "SM"
         }
     },
     {
         "pk": 201,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Senegal"
+            "name": "Senegal",
+            "iso_code": "SN"
         }
     },
     {
         "pk": 202,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Somalia"
+            "name": "Somalia",
+            "iso_code": "SO"
         }
     },
     {
         "pk": 203,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Suriname"
+            "name": "Suriname",
+            "iso_code": "SR"
         }
     },
     {
         "pk": 204,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "South Sudan"
+            "name": "South Sudan",
+            "iso_code": "SS"
         }
     },
     {
         "pk": 205,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Sao Tome and Principe"
+            "name": "Sao Tome and Principe",
+            "iso_code": "ST"
         }
     },
     {
         "pk": 206,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "El Salvador"
+            "name": "El Salvador",
+            "iso_code": "SV"
         }
     },
     {
         "pk": 207,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Sint Maarten"
+            "name": "Sint Maarten",
+            "iso_code": "SG"
         }
     },
     {
         "pk": 208,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Syria"
+            "name": "Syria",
+            "iso_code": "CH"
         }
     },
     {
         "pk": 209,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Swaziland"
+            "name": "Swaziland",
+            "iso_code": "SZ"
         }
     },
     {
         "pk": 210,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Turks and Caicos Islands"
+            "name": "Turks and Caicos Islands",
+            "iso_code": "TC"
         }
     },
     {
         "pk": 211,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Chad"
+            "name": "Chad",
+            "iso_code": "TD"
         }
     },
     {
         "pk": 212,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "French Southern Territories"
+            "name": "French Southern Territories",
+            "iso_code": "TF"
         }
     },
     {
         "pk": 213,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Togo"
+            "name": "Togo",
+            "iso_code": "TG"
         }
     },
     {
         "pk": 214,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Thailand"
+            "name": "Thailand",
+            "iso_code": "TH"
         }
     },
     {
         "pk": 215,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Tajikistan"
+            "name": "Tajikistan",
+            "iso_code": "TJ"
         }
     },
     {
         "pk": 216,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "East Timor"
+            "name": "East Timor",
+            "iso_code": "DO"
         }
     },
     {
         "pk": 217,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Turkmenistan"
+            "name": "Turkmenistan",
+            "iso_code": "TM"
         }
     },
     {
         "pk": 218,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Tunisia"
+            "name": "Tunisia",
+            "iso_code": "TN"
         }
     },
     {
         "pk": 219,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Tonga"
+            "name": "Tonga",
+            "iso_code": "TO"
         }
     },
     {
         "pk": 220,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Turkey"
+            "name": "Turkey",
+            "iso_code": "TR"
         }
     },
     {
         "pk": 221,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Trinidad and Tobago"
+            "name": "Trinidad and Tobago",
+            "iso_code": "TT"
         }
     },
     {
         "pk": 222,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Tuvalu"
+            "name": "Tuvalu",
+            "iso_code": "TV"
         }
     },
     {
         "pk": 223,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Taiwan"
+            "name": "Taiwan",
+            "iso_code": "SY"
         }
     },
     {
         "pk": 224,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Tanzania"
+            "name": "Tanzania",
+            "iso_code": "TJ"
         }
     },
     {
         "pk": 225,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Ukraine"
+            "name": "Ukraine",
+            "iso_code": "UA"
         }
     },
     {
         "pk": 226,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Uganda"
+            "name": "Uganda",
+            "iso_code": "UG"
         }
     },
     {
         "pk": 227,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "United States"
+            "name": "United States",
+            "iso_code": "GB"
         }
     },
     {
         "pk": 228,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Uruguay"
+            "name": "Uruguay",
+            "iso_code": "US"
         }
     },
     {
         "pk": 229,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Uzbekistan"
+            "name": "Uzbekistan",
+            "iso_code": "UZ"
         }
     },
     {
         "pk": 230,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Vatican"
+            "name": "Vatican",
+            "iso_code": "VU"
         }
     },
     {
         "pk": 231,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Saint Vincent and the Grenadines"
+            "name": "Saint Vincent and the Grenadines",
+            "iso_code": "VC"
         }
     },
     {
         "pk": 232,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Venezuela"
+            "name": "Venezuela",
+            "iso_code": "VU"
         }
     },
     {
         "pk": 233,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "British Virgin Islands"
+            "name": "British Virgin Islands",
+            "iso_code": "VG"
         }
     },
     {
         "pk": 234,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "U.S. Virgin Islands"
+            "name": "U.S. Virgin Islands",
+            "iso_code": "TV"
         }
     },
     {
         "pk": 235,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Vietnam"
+            "name": "Vietnam",
+            "iso_code": "VN"
         }
     },
     {
         "pk": 236,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Vanuatu"
+            "name": "Vanuatu",
+            "iso_code": "VU"
         }
     },
     {
         "pk": 237,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Wallis and Futuna"
+            "name": "Wallis and Futuna",
+            "iso_code": "VI"
         }
     },
     {
         "pk": 238,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Samoa"
+            "name": "Samoa",
+            "iso_code": "WS"
         }
     },
     {
         "pk": 239,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Kosovo"
+            "name": "Kosovo",
+            "iso_code": "KR"
         }
     },
     {
         "pk": 240,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Yemen"
+            "name": "Yemen",
+            "iso_code": "YE"
         }
     },
     {
         "pk": 241,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Mayotte"
+            "name": "Mayotte",
+            "iso_code": "YT"
         }
     },
     {
         "pk": 242,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "South Africa"
+            "name": "South Africa",
+            "iso_code": "ZA"
         }
     },
     {
         "pk": 243,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Zambia"
+            "name": "Zambia",
+            "iso_code": "ZM"
         }
     },
     {
         "pk": 244,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Zimbabwe"
+            "name": "Zimbabwe",
+            "iso_code": "ZW"
         }
     },
     {

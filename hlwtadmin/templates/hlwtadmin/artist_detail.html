@@ -35,6 +35,9 @@
                       {% if relation.concert.relationconcertorganisation_set.first.organisation.location %}
                         in <a href="{% url 'location_detail' relation.concert.relationconcertorganisation_set.first.organisation.location.id %}">
                             {{ relation.concert.relationconcertorganisation_set.first.organisation.location }}
+                            {% if relation.concert.relationconcertorganisation_set.first.organisation.location %}
+                                {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ relation.concert.relationconcertorganisation_set.first.organisation.location.country.iso_code }}.png" />
+                            {% endif %}
                         </a>
                       {% endif %}
                   </td>

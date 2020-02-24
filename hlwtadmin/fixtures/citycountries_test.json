@@ -3,224 +3,256 @@
         "pk": 1,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Austria"
+            "name": "Austria",
+            "iso_code": "AT"
         }
     },
     {
         "pk": 2,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Belgium"
+            "name": "Belgium",
+            "iso_code": "BE"
         }
     },
     {
         "pk": 3,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Switzerland"
+            "name": "Switzerland",
+            "iso_code": "CH"
         }
     },
     {
         "pk": 4,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Czech Republic"
+            "name": "Czech Republic",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 5,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Germany"
+            "name": "Germany",
+            "iso_code": "DE"
         }
     },
     {
         "pk": 6,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Djibouti"
+            "name": "Djibouti",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 7,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Denmark"
+            "name": "Denmark",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 8,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Dominica"
+            "name": "Dominica",
+            "iso_code": "DM"
         }
     },
     {
         "pk": 9,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Spain"
+            "name": "Spain",
+            "iso_code": "ES"
         }
     },
     {
         "pk": 10,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Finland"
+            "name": "Finland",
+            "iso_code": "FI"
         }
     },
     {
         "pk": 11,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "France"
+            "name": "France",
+            "iso_code": "FR"
         }
     },
     {
         "pk": 12,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Gabon"
+            "name": "Gabon",
+            "iso_code": "GA"
         }
     },
     {
         "pk": 13,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "United Kingdom"
+            "name": "United Kingdom",
+            "iso_code": "GB"
         }
     },
     {
         "pk": 14,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Greece"
+            "name": "Greece",
+            "iso_code": "GR"
         }
     },
     {
         "pk": 15,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Croatia"
+            "name": "Croatia",
+            "iso_code": "CN"
         }
     },
     {
         "pk": 16,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Hungary"
+            "name": "Hungary",
+            "iso_code": "HU"
         }
     },
     {
         "pk": 17,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Ireland"
+            "name": "Ireland",
+            "iso_code": "IE"
         }
     },
     {
         "pk": 18,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Italy"
+            "name": "Italy",
+            "iso_code": "IT"
         }
     },
     {
         "pk": 19,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Japan"
+            "name": "Japan",
+            "iso_code": "JP"
         }
     },
     {
         "pk": 20,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Lithuania"
+            "name": "Lithuania",
+            "iso_code": "LT"
         }
     },
     {
         "pk": 21,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Luxembourg"
+            "name": "Luxembourg",
+            "iso_code": "LU"
         }
     },
     {
         "pk": 22,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Latvia"
+            "name": "Latvia",
+            "iso_code": "LV"
         }
     },
     {
         "pk": 23,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Netherlands"
+            "name": "Netherlands",
+            "iso_code": "NL"
         }
     },
     {
         "pk": 24,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Norway"
+            "name": "Norway",
+            "iso_code": "NO"
         }
     },
     {
         "pk": 25,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Poland"
+            "name": "Poland",
+            "iso_code": "PL"
         }
     },
     {
         "pk": 26,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Portugal"
+            "name": "Portugal",
+            "iso_code": "PT"
         }
     },
     {
         "pk": 27,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Sweden"
+            "name": "Sweden",
+            "iso_code": "SE"
         }
     },
     {
         "pk": 28,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Singapore"
+            "name": "Singapore",
+            "iso_code": "SG"
         }
     },
     {
         "pk": 29,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Saint Helena"
+            "name": "Saint Helena",
+            "iso_code": "SH"
         }
     },
     {
         "pk": 30,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Slovenia"
+            "name": "Slovenia",
+            "iso_code": "SI"
         }
     },
     {
         "pk": 31,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Svalbard and Jan Mayen"
+            "name": "Svalbard and Jan Mayen",
+            "iso_code": "SR"
         }
     },
     {
         "pk": 32,
         "model": "hlwtadmin.Country",
         "fields": {
-            "name": "Slovakia"
+            "name": "Slovakia",
+            "iso_code": "SK"
         }
     },
     {

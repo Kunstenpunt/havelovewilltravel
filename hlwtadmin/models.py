@@ -1,16 +1,26 @@
+import binascii
+
 from django.db import models
 from django.urls import reverse
 from simple_history.models import HistoricalRecords
 
 from django_super_deduper.merge import MergedModelInstance
 
+from json import dumps
+import hashlib
+import hmac
+
+from requests import post, exceptions
 from datetime import datetime
+from time import sleep
+
+import os
 
 
 # Create your models here.
 class GigFinder(models.Model):
     name = models.CharField(max_length=200)
-    base_url = models.URLField() # base url setlist = www.setlist.fm/a/0/b-
+    base_url = models.URLField()
     api_key = models.CharField(max_length=500)
 
     def __str__(self):
@@ -100,7 +110,7 @@ class ConcertAnnouncement(models.Model):
                 self.concert.updated_at = datetime.now()
                 self.concert.latitude = self.latitude
                 self.concert.longitude = self.longitude
-                self.concert.save()
+                self.concert.save(args)
         super(ConcertAnnouncement, self).save(*args, **kwargs)
 
     class Meta:
@@ -141,7 +151,7 @@ class ConcertAnnouncement(models.Model):
         self.raw_venue.save()
 
     def _create_new_masterconcert_with_concertannouncement_organisation_artist(self):
-        mc = Concert.objects.create(title=self.title, date=self.date)
+        mc = Concert.objects.create(title=self.title, date=self.date, latitude=self.latitude, longitude=self.longitude)
         mc.save()
         for genre in self.artist.genre.all():
             mc.genre.add(genre)
@@ -192,6 +202,64 @@ class Concert(models.Model):
         this_org = RelationConcertOrganisation.objects.filter(concert__id=self.id).first()
         if this_org:
             return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation=this_org.organisation).exclude(id=self.id)
+
+    def save(self, *args, **kwargs):
+        rel_artiest = RelationConcertArtist.objects.filter(concert__id=self.id).first()
+        rel_organisation = RelationConcertOrganisation.objects.filter(concert__id=self.id).first()
+        data = {
+            "event_id": str(self.id),
+            "titel": self.title,
+            "titel_generated": self.title,
+            "datum": self.date.strftime("%Y/%m/%d"),
+            "artiest": rel_artiest.artist.name,
+            "artiest_merge_naam": rel_artiest.artist.name,
+            "artiest_mb_id": rel_artiest.artist.mbid,
+            "cancelled": self.cancelled,
+            "ignore": self.ignore,
+            "latitude": self.latitude,
+            "longitude": self.longitude
+        }
+
+        if rel_organisation:
+            if rel_organisation.organisation:
+                if rel_organisation.organisation.location:
+                    data["stad_clean"] = rel_organisation.organisation.location.city
+                    data["land_clean"] = rel_organisation.organisation.location.country.name
+                    data["iso_code_clean"] = rel_organisation.organisation.location.country.iso_code
+                data["venue_clean"] = rel_organisation.organisation.name
+
+        for i, ca in enumerate(ConcertAnnouncement.objects.filter(concert_id=self.id)):
+            source = ca.gigfinder.name
+            source_link = ca.gigfinder.base_url + ca.gigfinder_concert_id
+            data["source_" + str(i)] = source
+            data["source_link_" + str(i)] = source_link
+
+        message = bytes(dumps(data), "utf-8")
+
+        print(message)
+
+        try:
+            with open("hlwtadmin/mrhenrysecret.txt", "rb") as f:
+                secret = bytes(f.read().strip())
+        except FileNotFoundError:
+            secret = os.environ.get('MR_HENRY_API_KEY').strip("'")
+
+        signature = binascii.b2a_hex(hmac.new(secret, message, digestmod=hashlib.sha256).digest())
+
+        base_url = "https://have-love-will-travel.herokuapp.com/"
+        url = base_url + "import-json"
+
+        params = {"signature": signature, "test": "test" in args}
+        headers = {"Content-Type": "application/json"}
+
+        r = None
+        try:
+            r = post(url, data=message, params=params, headers=headers)
+            if r.status_code != 200:
+                print("issue with sending this record to the api", message, r.status_code, r.headers)
+        except Exception as e:
+            print(e)
+        super(Concert, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['-date']
@@ -246,6 +314,7 @@ class Location(models.Model):
 
 class Country(models.Model):
     name = models.CharField(max_length=200)
+    iso_code = models.CharField(max_length=2, blank=True, null=True)
 
     def __str__(self):
         return self.name

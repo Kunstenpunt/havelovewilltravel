@@ -161,10 +161,10 @@ class ConcertAnnouncementTest(TestCase):
         self.venue_without_organisation.save()
         self.concert = Concert.objects.create(title="testconcert",
                                               date="1985-11-23")
-        self.concert.save()
+        self.concert.save("test")
         self.cancelled_concert = Concert.objects.create(title="gecancelled testconcert",
                                                         date="1985-11-23")
-        self.cancelled_concert.save()
+        self.cancelled_concert.save("test")
         self.rel_concert_artist = RelationConcertArtist(artist=self.artist,
                                                         concert=self.concert)
         self.rel_concert_artist.save()
@@ -187,7 +187,7 @@ class ConcertAnnouncementTest(TestCase):
                                  gigfinder_concert_id="123",
                                  raw_venue=self.venue,
                                  ignore=False)
-        ca.save()
+        ca.save("test")
         self.assertEqual(self.concert, ca.concert)
 
     def test_concertannouncement_without_organisation_and_existing_concert(self):
@@ -198,7 +198,7 @@ class ConcertAnnouncementTest(TestCase):
                                  gigfinder_concert_id="123",
                                  raw_venue=self.venue_without_organisation,
                                  ignore=False)
-        ca.save()
+        ca.save("test")
         self.assertEqual(self.concert, ca.concert)
         self.assertEqual(self.rel_concert_organisation.organisation, ca.raw_venue.organisation)
         self.assertEqual(ca.raw_venue.organisation.location, self.location)
@@ -211,7 +211,7 @@ class ConcertAnnouncementTest(TestCase):
                                  gigfinder_concert_id="123",
                                  raw_venue=self.venue2,
                                  ignore=False)
-        ca.save()
+        ca.save("test")
         # concert should have 2 related organisations
         self.assertEqual(2, RelationConcertOrganisation.objects.filter(concert=self.concert).count())
 
@@ -223,7 +223,7 @@ class ConcertAnnouncementTest(TestCase):
                                  gigfinder_concert_id="123",
                                  raw_venue=self.venue2,
                                  ignore=False)
-        ca.save()
+        ca.save("test")
         # concert date should be date of announcement
         self.assertEqual("1995-11-24", ca.concert.date)
         # concert organisation should be organisation of raw venue of announcement
@@ -241,7 +241,7 @@ class ConcertAnnouncementTest(TestCase):
                                  gigfinder_concert_id="123",
                                  raw_venue=self.venue_without_organisation,
                                  ignore=False)
-        ca.save()
+        ca.save("test")
         # there should now be a new organisation, so 3
         self.assertEqual(3, Organisation.objects.all().count())
         # there should be a new masterconcert, so 3

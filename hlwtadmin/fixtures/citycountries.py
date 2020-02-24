@@ -20,7 +20,8 @@ for country in latest["country"].unique():
             "pk": i,
             "model": "hlwtadmin.Country",
             "fields": {
-                "name": country
+                "name": country,
+                "iso_code": latest[latest["country"] == country]["iso_code"].values[0]
             }
         }
         country_pk[country] = i
