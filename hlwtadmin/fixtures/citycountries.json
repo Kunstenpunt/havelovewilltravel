@@ -1244,7 +1244,7 @@
         "model": "hlwtadmin.Country",
         "fields": {
             "name": "Namibia",
-            "iso_code": NaN
+            "iso_code": "NA"
         }
     },
     {
