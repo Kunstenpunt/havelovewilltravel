@@ -73,7 +73,7 @@ class Command(BaseCommand):
         limit = 25
         total_search_results = 1
         while offset < total_search_results:
-            search_results = self.__search_artists_in_area("Eeklo", limit, offset)
+            search_results = self.__search_artists_in_area("Belgium", limit, offset)
             for hit in list(search_results["artist-list"]):
                 artist = self.__obtain_a_specific_mb_artist(hit["id"])
                 self.__create_or_update_artist(artist)

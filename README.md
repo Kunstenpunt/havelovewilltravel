@@ -14,10 +14,10 @@ A more complete description of the data structure is provided in the Wiki [https
 
 - push to github
 
-- heroku run python manage.py migrate
-- heroku run python manage.py createsuperuser
-- heroku run python manage.py loaddata citycountries.json
-- heroku run python manage.py loaddata gigfinders.json
+- heroku run python manage.py migrate -a hlwtadmin
+- heroku run python manage.py createsuperuser -a hlwtadmin
+- heroku run python manage.py loaddata citycountries.json -a hlwtadmin # (check if Namibia has not become NaN)
+- heroku run python manage.py loaddata gigfinders.json -a hlwtadmin
 
 ## Settings
 - 'provide api keys and base_urls in /admin for gigfinders'
