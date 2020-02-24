@@ -5,8 +5,8 @@
 
     <div style="margin-left:20px;margin-top:20px">
         <p>Location: {% if organisation.location %}<a href="{% url 'location_detail' organisation.location.id %}">{{ organisation.location }}</a>{% endif %}</p>
-        <p>Type: {{ organisation.organisation_type.all|join:"," }}</p>
-        <p>Genre: {{ organisation.genre.all|join:"," }}</p>
+        <p>Type: {{ organisation.organisation_type.all|join:", " }}</p>
+        <p>Genre: {{ organisation.genre.all|join:", " }}</p>
         <p>Disambiguation: {{ organisation.disambiguation }}</p>
         <p>Annotation: {{ organisation.annotation }}</p>
         <p>Website: {% if organisation.website %}<a target="_blank" href="{{ organisation.website }}">{{ organisation.website }}</a>{% endif %}</p>
@@ -59,7 +59,7 @@
     </div>
     {% endif %}
 
-    {% if organisation.organisationa.all %}
+    {% if organisation.organisationa.all or organisation.organisationb.all %}
     <div style="margin-left:20px;margin-top:20px">
         <h4>Related organisations</h4>
         <ul>
@@ -67,7 +67,7 @@
                 <li>
                     {{ organisation.name }}
                     {% if relation.organisation_a.name %}
-                        {{ relation.relation_type }}
+                        {{ relation.relation_type.all|join:", " }}
                     {% else %}
                         is related to
                     {% endif %}
@@ -80,7 +80,7 @@
                 <li>
                     <a href="{% url 'organisation_detail' relation.organisation_a.id %}">{{ relation.organisation_a.name }}</a>
                     {% if relation.organisation_a.name %}
-                        {{ relation.relation_type }}
+                        {{ relation.relation_type.all|join:", " }}
                     {% else %}
                         is related to
                     {% endif %}

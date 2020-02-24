@@ -18,6 +18,8 @@ A more complete description of the data structure is provided in the Wiki [https
 - heroku run python manage.py createsuperuser -a hlwtadmin
 - heroku run python manage.py loaddata citycountries.json -a hlwtadmin # (check if Namibia has not become NaN)
 - heroku run python manage.py loaddata gigfinders.json -a hlwtadmin
+- heroku run python manage.py loaddata organisation_types.json -a hlwtadmin
+- heroku run python manage.py loaddata organisation_organisation_relation_types.json -a hlwtadmin
 
 ## Settings
 - 'provide api keys and base_urls in /admin for gigfinders'
