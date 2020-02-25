@@ -101,7 +101,7 @@ def index(request):
         'num_organities_without_rawvenues': Organisation.objects.filter(venue__isnull=True).filter(verified=False).count(),
         'num_organities_without_locations': Organisation.objects.filter(location__isnull=True).filter(verified=False).count(),
         'num_cities_without_countries': Location.objects.filter(country__isnull=True).count(),
-        'num_unverified_organisations': Organisation.objects.filter(verified=False).count()
+        'num_unverified_organisations': Organisation.objects.exclude(verified=True).count()
     }
 
     # Render the HTML template index.html with the data in the context variable
@@ -435,7 +435,7 @@ class UnverifiedOrganisationListView(ListView):
     paginate_by = 15
 
     def get_queryset(self):
-        return Organisation.objects.filter(verified=False)
+        return Organisation.objects.exclude(verified=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
