@@ -59,7 +59,6 @@ class Artist(models.Model):
         return "-".join([str(min(years)), str(max(years))]) if years else None
 
     def concerts(self):
-        today = datetime.now().date()
         return [rel.concert for rel in RelationConcertArtist.objects.filter(artist=self)]
 
     class Meta:
@@ -217,7 +216,7 @@ class Concert(models.Model):
 
     def find_concurring_concerts(self):
         this_org = RelationConcertOrganisation.objects.filter(concert__id=self.id).first()
-        if this_org:
+        if this_org.organisation:
             return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation=this_org.organisation).exclude(id=self.id)
 
     def save(self, *args, **kwargs):
