@@ -200,6 +200,12 @@ class Concert(models.Model):
     def __str__(self):
         return self.title
 
+    def artists(self):
+        return ", ".join([rel.artist.name for rel in RelationConcertArtist.objects.filter(concert__id=self.id)])
+
+    def organisations(self):
+        return ", ".join([rel.organisation.name for rel in RelationConcertOrganisation.objects.filter(concert__id=self.id) if rel.organisation])
+
     def is_upcoming(self):
         return self.date >= datetime.now().date()
 

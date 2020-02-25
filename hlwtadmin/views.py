@@ -21,10 +21,8 @@ class ConcertAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     def get_result_label(self, item):
-        item_artist = item.relationconcertartist_set.first().artist.name
-        item_org = item.relationconcertorganisation_set.first().organisation.name
         if item.date:
-            return item.title + " (" + item.date.isoformat() + ", " + item_artist + ", " + item_org + ")"
+            return item.title + " (" + item.date.isoformat() + ", " + item.artists() + ", " + item.organisations() + ")"
         else:
             return item.title
 
