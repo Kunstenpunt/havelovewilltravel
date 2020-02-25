@@ -24,7 +24,7 @@
         </td>
         <td>
         {% for gf in artist.gigfinderurl_set.all %}
-          <a href="{{ gf.url }}">
+          <a target="_blank" href="{{ gf.url }}">
               {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ gf.gigfinder }}.png" alt="{{ gf.gigfinder }}" />
           </a>
         {% endfor %}
