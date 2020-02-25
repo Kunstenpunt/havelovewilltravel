@@ -48,7 +48,8 @@ class Artist(models.Model):
         locations = set()
         for relation_concert_artist in RelationConcertArtist.objects.filter(artist=self):
             for relation_concert_organisation in RelationConcertOrganisation.objects.filter(concert=relation_concert_artist.concert):
-                locations.add(relation_concert_organisation.organisation.location)
+                if relation_concert_organisation.organisation:
+                    locations.add(relation_concert_organisation.organisation.location)
         return len(set([loc.country for loc in locations if loc]))
 
     def period(self):

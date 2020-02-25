@@ -20,6 +20,7 @@ A more complete description of the data structure is provided in the Wiki [https
 - heroku run python manage.py loaddata gigfinders.json -a hlwtadmin
 - heroku run python manage.py loaddata organisation_types.json -a hlwtadmin
 - heroku run python manage.py loaddata organisation_organisation_relation_types.json -a hlwtadmin
+- heroku run python manage.py loaddata genres.json -a hlwtadmin
 
 ## Settings
 - 'provide api keys and base_urls in /admin for gigfinders'
