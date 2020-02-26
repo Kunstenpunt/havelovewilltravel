@@ -93,8 +93,8 @@ for row in latest[["venue", "stad", "land", "source", "venue_clean", "stad_clean
             "pk": i,
             "model": "hlwtadmin.Venue",
             "fields": {
-                "raw_venue": key,
-                "raw_location": rloc,
+                "raw_venue": key[0:200],
+                "raw_location": rloc[0:200],
                 "organisation": organity
             }
         }
@@ -149,7 +149,7 @@ for row in latest[["titel", "titel_generated", "datum", "last_seen_on", "latitud
             "pk": i,
             "model": "hlwtadmin.Concert",
             "fields": {
-                "title": str(title),
+                "title": str(title)[0:200],
                 "date": row[3].date().isoformat(),
                 "genre": [genres_pk[genre]] if not isnull(genre) else [],
                 "created_at": created_at.isoformat(),
@@ -206,7 +206,7 @@ for row in latest[["titel", "titel_generated", "artiest_mb_id", "datum", "source
         "pk": i,
         "model": "hlwtadmin.ConcertAnnouncement",
         "fields": {
-            "title": str(title),
+            "title": str(title)[0:200],
             "artist": musicbrainz_pk[musicbrainz],
             "date": date.isoformat(),
             "gigfinder": gigfinder,
@@ -226,5 +226,12 @@ for row in latest[["titel", "titel_generated", "artiest_mb_id", "datum", "source
     i += 1
 
 
-with open("latest.json", "w", "utf-8") as f:
-    dump(fixture, f, indent=4)
+k = 1
+offset = 0
+size = 100000
+
+while (offset + size) < len(fixture):
+    with open("latest_" + str(k) + ".json", "w", "utf-8") as f:
+        dump(fixture[offset:(offset+size)], f, indent=4)
+    offset += size
+    k += 1
