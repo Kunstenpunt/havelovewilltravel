@@ -18,7 +18,7 @@ A more complete description of the data structure is provided in the Wiki [https
 - heroku run python manage.py createsuperuser -a hlwtadmin
 
 ## Prepopulate
-- type citycountries.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - # (check if Namibia has not become NaN)
+- type citycountries.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
 - type gigfinders.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
 - type genres.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
 - type organisation_organisation_relation_types.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
