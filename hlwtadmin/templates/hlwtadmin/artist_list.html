@@ -20,7 +20,7 @@
         </td>
         <td>{{ artist.genre.all|join:"," }}</td>
         <td>
-          {{ artist.concert_count }} / {{ artist.concerts_in_countries }} ({{ artist.period }})
+<!--          {{ artist.concert_count }} / {{ artist.concerts_in_countries }} ({{ artist.period }}) --> #TODO efficiency
         </td>
         <td>
         {% for gf in artist.gigfinderurl_set.all %}
