@@ -139,7 +139,7 @@ k = 1
 for row in latest[["titel", "titel_generated", "datum", "last_seen_on", "latitude", "longitude", "cancelled", "ignore", "maingenre", "concert_id", "event_id", "venue_clean", "stad_clean", "iso_code_clean", "artiest_mb_id"]].itertuples():
     title = row[1] if len(str(row[1])) > 5 else row[2]
     created_at = row[4].date()
-    concert_id = row[10]
+    concert_id = str(row[10])
     event_id = row[11]
     genre = row[9]
     organisation = (row[12], row[13], row[14])
@@ -218,7 +218,7 @@ for row in latest[["titel", "titel_generated", "artiest_mb_id", "datum", "source
             "updated_at": created_at.isoformat(),
             "latitude": row[14],
             "longitude": row[15],
-            "concert": concert_pk[row[7]]
+            "concert": concert_ids[str(row[8])]
         }
     }
     fixture.append(data)
