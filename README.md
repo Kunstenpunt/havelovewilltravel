@@ -32,6 +32,7 @@ A more complete description of the data structure is provided in the Wiki [https
 - type latest_7.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
 - type latest_8.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
 - type latest_9.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+- type latest_10.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
 
 ## Settings
 - 'provide api keys and base_urls in /admin for gigfinders'

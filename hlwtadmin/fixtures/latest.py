@@ -230,7 +230,7 @@ k = 1
 offset = 0
 size = 100000
 
-while (offset + size) < len(fixture):
+while (offset) < len(fixture):
     with open("latest_" + str(k) + ".json", "w", "utf-8") as f:
         dump(fixture[offset:(offset+size)], f, indent=4)
     offset += size
