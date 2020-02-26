@@ -272,7 +272,7 @@ class Concert(models.Model):
         try:
             r = post(url, data=message, params=params, headers=headers)
             if r.status_code != 200:
-                print("issue with sending this record to the api", message, r.status_code, r.headers)
+                print("issue with sending this record to the api", message, r.status_code, r.headers, r.content)
         except Exception as e:
             print(e)
         super(Concert, self).save(*args, **kwargs)
