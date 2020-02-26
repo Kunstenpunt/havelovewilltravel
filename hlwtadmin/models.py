@@ -216,7 +216,7 @@ class Concert(models.Model):
 
     def find_concurring_concerts(self):
         this_org = RelationConcertOrganisation.objects.filter(concert__id=self.id).first()
-        if this_org.organisation:
+        if this_org and this_org.organisation:
             return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation=this_org.organisation).exclude(id=self.id)
 
     def save(self, *args, **kwargs):
