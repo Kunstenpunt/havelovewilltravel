@@ -8,6 +8,8 @@ from django.db.models import Q
 
 from datetime import datetime
 
+from django.views.generic.list import MultipleObjectMixin
+
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, RelationConcertConcert, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
     RelationArtistArtist, OrganisationsMerge, ConcertsMerge
@@ -225,6 +227,12 @@ class OrganisationlessConcertListView(ListView):
         return context
 
 
+class ConcertForm(forms.ModelForm):
+    class Meta:
+        model = Concert
+        fields = ['date', 'genre', 'cancelled', 'ignore', 'verified', 'latitude', 'longitude']
+
+
 class ConcertDetailView(DetailView):
     model = Concert
 
@@ -325,12 +333,15 @@ class ExcludeArtistListView(ListView):
         return context
 
 
-class ArtistDetailView(DetailView):
+class ArtistDetailView(DetailView, MultipleObjectMixin):
     model = Artist
     fields = '__all__'
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        object_list = Concert.objects.filter(relationconcertartist__artist=self.object)
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context["form"] = ConcertForm()
         return context
 
 
@@ -457,12 +468,15 @@ class FullOrganisationListView(ListView):
         return context
 
 
-class OrganisationDetailView(DetailView):
+class OrganisationDetailView(DetailView, MultipleObjectMixin):
     model = Organisation
     fields = '__all__'
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        object_list = Concert.objects.filter(relationconcertorganisation__organisation=self.object)
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context["form"] = ConcertForm()
         return context
 
 

@@ -26,21 +26,21 @@
                 <th>Artist</th>
                 <th>Announcement</th>
             </tr>
-            {% for relation in organisation.relationconcertorganisation_set.all %}
-                {% if relation.concert.cancelled %}<tr style="text-decoration: line-through;">{% else %} <tr> {% endif %}
-                    <td><a href="{% url 'concert_detail' relation.concert.id %}">{{ relation.concert.date }}</a></td>
+            {% for concert in object_list %}
+                {% if concert.cancelled %}<tr style="text-decoration: line-through;">{% else %} <tr> {% endif %}
+                    <td><a href="{% url 'concert_detail' concert.id %}">{{ concert.date }}</a></td>
                     <td>
-                        {% for relationca in relation.concert.relationconcertartist_set.all %}
+                        {% for relationca in concert.relationconcertartist_set.all %}
                             <a href="{% url 'artist_detail' relationca.artist.mbid %}">{{ relationca.artist }}</a>
                         {% endfor %}
                     </td>
-<!--                    <td>
-                      {% for ca in relation.concert.concertannouncement_set.all %}
+                    <td>
+                      {% for ca in concert.concertannouncement_set.all %}
                           <a href="{% url 'concertannouncement_detail' ca.id %}">{{ ca.title }}</a>
                           <a target="_blank" href="{{ ca.gigfinder.base_url}}{{ ca.gigfinder_concert_id }}">
                           {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" /></a>
                       {% endfor %}
-                  </td>--> #TODO
+                  </td>
                 </tr>
             {% endfor %}
         </table>
