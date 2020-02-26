@@ -7,7 +7,7 @@
     <tr>
       <th>Name</th>
       <th>Genre</th>
-      <th>Concerts/countries (period)</th>
+      <th>#Concerts</th>
       <th>Gigfinders</th>
     </tr>
     {% for artist in artist_list %}
@@ -18,9 +18,9 @@
                 {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/musicbrainz.png' %}" alt="{{ artist.name }}" />
             </a>
         </td>
-<!--        <td>{{ artist.genre.all|join:"," }}</td>
+        <td>{{ artist.genre.all|join:"," }}</td>
         <td>
-          {{ artist.concert_count }} / {{ artist.concerts_in_countries }} ({{ artist.period }})
+          {{ artist.concert_count }}
         </td>
         <td>
         {% for gf in artist.gigfinderurl_set.all %}
@@ -28,7 +28,7 @@
               {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ gf.gigfinder }}.png" alt="{{ gf.gigfinder }}" />
           </a>
         {% endfor %}
-        </td>-->
+        </td>
       </tr>
     {% endfor %}
   </table>

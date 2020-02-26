@@ -1,20 +1,18 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Location: {{ location.city }}, {{ location.country }}</h1> # TODO ref to flag
+    <h1>Location: {{ location.city }}, {{ location.country }}</h1>
 
-    {% if location.organisation_set.all %}
     <div style="margin-left:20px;margin-top:20px">
         <h4>Organisations</h4>
         <ul>
-            {% for relation in location.organisation_set.all %}
+            {% for organisation in object_list %}
               <li>
-                  <a href="{% url 'organisation_detail' relation.id %}">{{ relation.name }}</a>
+                  <a href="{% url 'organisation_detail' organisation.id %}">{{ organisation.name }}</a>
               </li>
             {% endfor %}
         </ul>
     </div>
-    {% endif %}
 
     <hr>
     <div style="margin-left:20px;margin-top:20px">

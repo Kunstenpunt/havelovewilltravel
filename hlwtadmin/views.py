@@ -395,12 +395,15 @@ class SparseLocationListView(ListView):
         return context
 
 
-class LocationDetailView(DetailView):
+class LocationDetailView(DetailView, MultipleObjectMixin):
     model = Location
     fields = '__all__'
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        object_list = Organisation.objects.filter(location=self.object)
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context["form"] = OrganisationForm()
         return context
 
 
