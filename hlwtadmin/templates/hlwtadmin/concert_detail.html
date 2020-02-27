@@ -63,7 +63,10 @@
                     with venue
                     <a href="{% url 'venue_detail' relation.raw_venue.id %}">{{ relation.raw_venue }}</a>
                     {% if relation.far_from_concert %}
-                        {% load static %}<img style="width: 30px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="GPS issue" />
+                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="GPS issue" />
+                    {% endif %}
+                    {% if not relation.raw_venue.organisation and not relation.raw_venue.non_assignable %}
+                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="No related organisation" />
                     {% endif %}
                 </li>
             {% endfor %}
