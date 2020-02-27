@@ -32,7 +32,7 @@ organity_pk = {}
 for row in latest[["venue_clean", "stad_clean", "iso_code_clean"]].itertuples():
     venue = row[1]
     city = row[2]
-    country = row[3]
+    country = row[3].lower() if not isnull(row[3]) else None
 
     if not isnull(venue) and not isnull(city) and not isnull(country) and (venue, city, country) not in organity_pk:
         try:
@@ -83,7 +83,7 @@ for row in latest[["venue", "stad", "land", "source", "venue_clean", "stad_clean
     rawcountry = row[3]
     source = row[4]
 
-    organity = organity_pk[(row[5], row[6], row[7])] if (row[5], row[6], row[7]) in organity_pk else None
+    organity = organity_pk[(row[5], row[6], row[7].lower() if not isnull(row[7]) else None)] if (row[5], row[6], row[7].lower() if not isnull(row[7]) else None) in organity_pk else None
 
     key = "|".join([str(rawvenue), str(rawcity), str(rawcountry), str(source)])
     rloc = "|".join([str(rawcity), str(rawcountry), str(source)])
@@ -142,7 +142,7 @@ for row in latest[["titel", "titel_generated", "datum", "last_seen_on", "latitud
     concert_id = str(row[10])
     event_id = row[11]
     genre = row[9]
-    organisation = (row[12], row[13], row[14])
+    organisation = (row[12], row[13], row[14].lower() if not isnull(row[14]) else None)
 
     if concert_id not in concert_ids:
         data = {
@@ -226,12 +226,18 @@ for row in latest[["titel", "titel_generated", "artiest_mb_id", "datum", "source
     i += 1
 
 
-k = 1
-offset = 0
-size = 100000
+# k = 1
+# offset = 0
+# size = 100000
+#
+# while (offset) < len(fixture):
+#     with open("latest_" + str(k) + ".json", "w", "utf-8") as f:
+#         dump(fixture[offset:(offset+size)], f, indent=4)
+#     offset += size
+#     k += 1
 
-while (offset) < len(fixture):
-    with open("latest_" + str(k) + ".json", "w", "utf-8") as f:
-        dump(fixture[offset:(offset+size)], f, indent=4)
-    offset += size
-    k += 1
+with open("relationconcertorganisation.json", "w", "utf-8") as f:
+    dump([fix for fix in fixture if fix["model"] == "hlwtadmin.RelationConcertOrganisation"], f, indent=4)
+
+with open("venue.json", "w", "utf-8") as f:
+    dump([fix for fix in fixture if fix["model"] == "hlwtadmin.Venue"], f, indent=4)
