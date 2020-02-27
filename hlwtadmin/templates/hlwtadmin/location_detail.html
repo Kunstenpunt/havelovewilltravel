@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>{% block title %}Location: {{ location.city }}, {{ location.country }}{% endblock %}</h1>
+    <h1>{% block title %}Location: {{ location.city }}, {{ location.country }}{% endblock %} {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" /></h1>
 
     <div style="margin-left:20px;margin-top:20px">
         <h4>Organisations</h4>
