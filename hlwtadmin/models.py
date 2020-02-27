@@ -10,9 +10,9 @@ from json import dumps
 import hashlib
 import hmac
 
-from requests import post, exceptions
-from datetime import datetime, timedelta, timezone
-from time import sleep
+from requests import post
+from datetime import datetime, timedelta
+from math import sqrt
 
 import os
 
@@ -95,6 +95,17 @@ class ConcertAnnouncement(models.Model):
 
     def get_absolute_url(self):
         return reverse('concertannouncement_detail', args=[str(self.id)])
+
+    def far_from_concert(self):
+        x1 = self.concert.latitude
+        x2 = self.latitude
+        y1 = self.concert.longitude
+        y2 = self.longitude
+        try:
+            dist = sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+        except TypeError:
+            dist = 0
+        return dist > 0.001
     
     def save(self, *args, **kwargs):
         if not self.id:
