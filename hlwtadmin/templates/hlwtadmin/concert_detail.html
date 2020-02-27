@@ -1,17 +1,26 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>{% block title %}Concert: {{ concert.title }}{% endblock %}</h1>
+    {% if concert.cancelled %}<h1 style="text-decoration: line-through;">{% else %}<h1>{% endif %}
+        {% block title %}Concert: {{ concert.title }}{% endblock %}
+        {% if concert.verified %}{% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
+    </h1>
 
     <div style="margin-left:20px;margin-top:20px">
-        <p>Datum: {{ concert.date }}</p>
-        <p>Genre: {{ concert.genre.all|join:","}}</p>
-        <p>Cancelled: {{ concert.cancelled }}</p>
-        <p>Ignore: {{ concert.ignore }}</p>
-        <p>Verified: {{ concert.verified }}</p>
-        <p>GPS: {{ concert.latitude }}, {{ concert.longitude }}</p>
-        <p>Created at: {{ concert.created_at }}</p>
-        <p>Updated at: {{ concert.updated_at }}</p>
+        <table border="1">
+            <tr>
+                <td>Datum</td>
+                <td>{{ concert.date }}</td>
+            </tr>
+            <tr>
+                <td>Genre</td>
+                <td>{{ concert.genre.all|join:","}}</td>
+            </tr>
+            <tr>
+                <td>GPS</td>
+                <td>{{ concert.latitude }}, {{ concert.longitude }}</td>
+            </tr>
+        </table>
     </div>
 
     <div style="margin-left:20px;margin-top:20px">
@@ -47,32 +56,6 @@
             {% endfor %}
         </ul>
     </div>
-
-    {% if concert.concertannouncement_set.all %}
-    <div style="margin-left:20px;margin-top:20px">
-        <h4>Based on</h4>
-        <ul>
-            {% for relation in concert.concertannouncement_set.all %}
-                <li>
-                    <a target="_blank" href="{{ relation.gigfinder.base_url}}{{ relation.gigfinder_concert_id }}">
-                        {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ relation.gigfinder }}.png" alt="{{ relation.gigfinder }}" />
-                    </a>
-                    <a href="{% url 'concertannouncement_detail' relation.id %}">
-                        {{ relation.title }} ({{ relation.date }}), {{ relation.gigfinder_artist_name }}, {{ relation.gigfinder_concert_id }}
-                    </a>
-                    with venue
-                    <a href="{% url 'venue_detail' relation.raw_venue.id %}">{{ relation.raw_venue }}</a>
-                    {% if relation.far_from_concert %}
-                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="GPS issue" />
-                    {% endif %}
-                    {% if not relation.raw_venue.organisation and not relation.raw_venue.non_assignable %}
-                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="No related organisation" />
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
 
     {% if concert.find_concurring_concerts.all %}
     <div style="margin-left:20px;margin-top:20px">
@@ -116,7 +99,80 @@
 
     <hr>
 
+        {% if concert.concertannouncement_set.all %}
     <div style="margin-left:20px;margin-top:20px">
+        <h4>Based on</h4>
+        <table border="1">
+            <tr>
+                <th>Gigfinder</th>
+                <th>Concertannouncement</th>
+                <th>Venue</th>
+                <th>GPS</th>
+                <th>Organisation</th>
+            </tr>
+            {% for relation in concert.concertannouncement_set.all %}
+                <tr>
+                    <td>
+                        <a target="_blank" href="{{ relation.gigfinder.base_url}}{{ relation.gigfinder_concert_id }}">
+                        {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ relation.gigfinder }}.png" alt="{{ relation.gigfinder }}" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'concertannouncement_detail' relation.id %}">
+                        {{ relation.title }} ({{ relation.date }})
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'venue_detail' relation.raw_venue.id %}">{{ relation.raw_venue }}</a>
+                    </td>
+                    <td>
+                    {% if relation.far_from_concert %}
+                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="GPS issue" />
+                    {% endif %}
+                    </td>
+                    <td>
+                    {% if not relation.raw_venue.organisation and not relation.raw_venue.non_assignable %}
+                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="No related organisation" />
+                    {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+
+    <hr>
+
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Technical details</h4>
+        <table border="1">
+            <tr>
+                <td>Cancelled</td>
+                <td>{{ concert.cancelled }}</td>
+            </tr>
+            <tr>
+                <td>Ignore</td>
+                <td>{{ concert.ignore }}</td>
+            </tr>
+            <tr>
+                <td>Verified</td>
+                <td>{{ concert.verified }}</td>
+            </tr>
+            <tr>
+                <td>Created at</td>
+                <td>{{ concert.created_at }}</td>
+            </tr>
+            <tr>
+                <td>Updated at</td>
+                <td>{{ concert.updated_at }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <hr>
+
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Actions</h4>
         <ul>
             {% if perms.hlwtadmin.can_update_concert %}<li><a href="{% url 'concert_update' concert.id %}">Update this concert</a></li>{% endif %}
             {% if perms.hlwtadmin.can_create_relationconcertorganisation %}<li><a href="{% url 'relationconcertorganisation_create' concert.id %}">Relate this concert to an organisation</a></li>{% endif %}
