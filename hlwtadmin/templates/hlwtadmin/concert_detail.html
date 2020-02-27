@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Concert: {{ concert.title }}</h1>
+    <h1>{% block title %}Concert: {{ concert.title }}{% endblock %}</h1>
 
     <div style="margin-left:20px;margin-top:20px">
         <p>Datum: {{ concert.date }}</p>

@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Title: {{ venue.raw_venue }}</h1>
+    <h1>{% block title %}Venue: {{ venue.raw_venue }}{% endblock %}</h1>
 
     <div style="margin-left:20px;margin-top:20px">
         <p>Clean venue:

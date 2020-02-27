@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Artist: {{ artist.name }}
+    <h1>{% block title %}Artist: {{ artist.name }}{% endblock %}
         <a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">
             {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/musicbrainz.png' %}" alt="{{ artist.name }}" />
         </a>

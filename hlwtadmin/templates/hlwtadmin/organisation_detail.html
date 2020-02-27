@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Organisation: {{ organisation.name }}</h1>
+    <h1>{% block title %}Organisation: {{ organisation.name }}{% endblock %}</h1>
 
     <div style="margin-left:20px;margin-top:20px">
         <p>Location: {% if organisation.location %}<a href="{% url 'location_detail' organisation.location.id %}">{{ organisation.location }}</a>{% endif %}</p>

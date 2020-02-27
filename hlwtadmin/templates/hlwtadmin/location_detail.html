@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Location: {{ location.city }}, {{ location.country }}</h1>
+    <h1>{% block title %}Location: {{ location.city }}, {{ location.country }}{% endblock %}</h1>
 
     <div style="margin-left:20px;margin-top:20px">
         <h4>Organisations</h4>

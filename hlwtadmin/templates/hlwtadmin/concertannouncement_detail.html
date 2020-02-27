@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Concert announcement: {{ concertannouncement.title }}</h1>
+    <h1>{% block title %}Concert announcement: {{ concertannouncement.title }}{% endblock %}</h1>
 
     <div style="margin-left:20px;margin-top:20px">
         <p>Related artist: {% if concertannouncement.artist %} <a href="{% url 'artist_detail' concertannouncement.artist.mbid %}">{{ concertannouncement.artist }}</a> {% endif %}</p>
