@@ -258,7 +258,7 @@ class Concert(models.Model):
             with open("hlwtadmin/mrhenrysecret.txt", "rb") as f:
                 secret = bytes(f.read().strip())
         except FileNotFoundError:
-            secret = os.environ.get('MR_HENRY_API_KEY').strip("'")
+            secret = bytes(os.environ.get('MR_HENRY_API_KEY').strip("'"))
 
         signature = binascii.b2a_hex(hmac.new(secret, message, digestmod=hashlib.sha256).digest())
 
