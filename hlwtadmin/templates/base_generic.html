@@ -30,27 +30,21 @@
 <body>
     <div class="container-fluid">
         <div class="row">
+            <h1>Have Love Will Travel: Admin</h1>
+        </div>
+        <div class="row">
             <div class="col-sm-2">
                 {% block sidebar %}
+                    {% load static %}<img style="width: 160px; border: 0px; margin-left: 1px; margin-right: 1px; margin-bottom: 30px;" src="{% static 'icons/underconstruction.jpg' %}" />
                     <ul class="sidebar-nav">
                         <li><a href="{% url 'index' %}">Home</a></li>
-                        <li><a href="{% url 'concerts' %}">All master concerts</a></li>
-                        <li><a href="{% url 'recently_added_concerts' %}">Recently added concerts</a></li>
-                        <li><a href="{% url 'upcoming_concerts' %}">Upcoming concerts</a></li>
-                        <li><a href="{% url 'organisations' %}">All organisations</a></li>
-                        <li><a href="{% url 'artists' %}">All artists</a></li>
-                        <li><a href="{% url 'includeartists' %}">Artists on include list</a></li>
-                        <li><a href="{% url 'excludeartists' %}">Artists on exclude list</a></li>
-                        <li><a href="{% url 'locations' %}">All locations</a></li>
-                        <li><a href="{% url 'venues' %}">All venues</a></li>
-                        <li><a href="{% url 'allconcertannouncements' %}">All concertannouncements</a></li>
                         <hr>
-                        <li><a href="{% url 'organisation_create' %}">Create organisation</a></li>
-                        <li><a href="{% url 'artist_create' %}">Create artist</a></li>
-                        <li><a href="{% url 'concertannouncement_create' %}">Create concertannouncement</a></li>
-                        <li><a href="{% url 'venue_create' %}">Create venue</a></li>
-                        <li><a href="{% url 'concert_create' %}">Create master concert</a></li>
-                        <li><a href="{% url 'location_create' %}">Create location</a></li>
+                        <li><a href="{% url 'concerts' %}">Browse master concerts</a></li>
+                        <li><a href="{% url 'organisations' %}">Browse organisations</a></li>
+                        <li><a href="{% url 'artists' %}">Browse artists</a></li>
+                        <li><a href="{% url 'locations' %}">Browse locations</a></li>
+                        <li><a href="{% url 'venues' %}">Browse venues</a></li>
+                        <li><a href="{% url 'allconcertannouncements' %}">Browse concertannouncements</a></li>
                         <hr>
                         <li><a href="{% url 'organisationsmerge_create' %}">Merge organisations</a></li>
                         <li><a href="{% url 'concertsmerge_create' %}">Merge concerts</a></li>
