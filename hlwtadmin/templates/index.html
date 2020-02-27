@@ -15,8 +15,8 @@
   <div>
     <h2>Overview</h2>
     <ul>
-      <li><a href="{% url 'recently_added_concerts' %}">Recently added concerts (unverified)</a>{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
-      <li><a href="">Recently added organisations (unverified)</a>{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
+      <li><a href="{% url 'recently_added_concerts' %}">Recently added and still unverified concerts</a></li>
+      <li><a href="{% url 'recently_added_organisations' %}">Recently added and still unverified organisations</a></li>
       <li><a href="{% url 'upcoming_concerts' %}">Upcoming concerts</a></li>
     </ul>
   </div>
@@ -27,43 +27,44 @@
       <li>Unverified organisations with similar names{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
       <li>Unverified organisations with similar GPS{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
       <li>Unverified concerts with concurring concerts by same artist{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
-      <li>Unassignable venues{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
+      <li><a href="{% url 'unverified_organisations' %}">Unverified organisations</a> ({{ num_unverified_organisations }})</li>
     </ul>
   </div>
 
   <div>
     <h2>Consistency</h2>
     <ul>
-      <li>Organisations without latitude and longitude{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
-      <li>Organisations without genre{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
-      <li>Concerts without latitude and longitude{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
-      <li>Concerts without genre{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
-      <li>Artists without genre{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
-      <li>Concerts without titles{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
-      <li>Organisations without disambiguation{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
+      <li><a href="{% url 'organisations_without_gps' %}">Organisations without latitude and longitude</a> ({{ num_orgs_without_gps }})</li>
+      <li><a href="{% url 'organisations_without_genre' %}">Organisations without genre</a> ({{ num_orgs_without_genre }})</li>
+      <li><a href="{% url 'organisations_without_disambiguation' %}">Organisations without disambiguation</a> ({{ num_orgs_without_disambiguation }})</li>
+      <li><a href="{% url 'concerts_without_gps' %}">Concerts without latitude and longitude</a> ({{ num_concerts_without_gps }})</li>
+      <li><a href="{% url 'concerts_without_genre' %}">Concerts without genre</a> ({{ num_concerts_without_genre }})</li>
+      <li><a href="{% url 'concerts_without_title' %}">Concerts without titles</a> ({{ num_concerts_without_title }})</li>
+      <li><a href="{% url 'artists_without_genre' %}">Artists without genre</a> ({{ num_artists_without_genre }})</li>
     </ul>
   </div>
 
   <div>
-    <h2>Verifications</h2>
+    <h2>Include and exclude lists</h2>
     <ul>
-      <li><a href="{% url 'unverified_organisations' %}">Unverified organisations</a>: {{ num_unverified_organisations }}</li>
-      <li><a href="{% url 'includeartists' %}">Artists on include list</a></li>
-      <li><a href="{% url 'excludeartists' %}">Artists on exclude list</a></li>
+      <li><a href="{% url 'unassignable_venues' %}">Unassignable venues</a> ({{ num_unassignable_venues }})</li>
+      <li><a href="{% url 'excludeartists' %}">Artists on exclude list</a> ({{ num_excluded_artists }})</li>
+      <li><a href="{% url 'includeartists' %}">Artists on include list</a> ({{ num_included_artists }})</li>
     </ul>
   </div>
 
   <div>
     <h2>Relations</h2>
     <ul>
-      <li><a href="{% url 'concertannouncements' %}">Announcements wo/ master</a>: {{ num_concertannouncements_without_concerts }}</li>
-      <li><a href="{% url 'artistless_concerts' %}">Concerts wo/ artists</a>: {{ num_concerts_without_artists }}</li>
-      <li><a href="{% url 'organisationless_concerts' %}">Concerts wo/ organisations</a>: {{ num_concerts_without_organities }}</li>
-      <li><a href="{% url 'sparsevenues' %}">Venues wo/ organisation</a>: {{ num_rawvenues_without_organities }}</li>
-      <li><a href="{% url 'sparse_organisations' %}">Organisations wo/ venues</a>: {{ num_organities_without_rawvenues }}</li>
-      <li><a href="{% url 'sparse_organisations2' %}">Organisations without locations</a>: {{ num_organities_without_locations }}</li>
-      <li>Organisations without concerts{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
-      <li><a href="{% url 'sparse_locations' %}">Cities without countries</a>: {{ num_cities_without_countries }}</li>
+      <li><a href="{% url 'concertannouncements' %}">Announcements wo/ concert</a> ({{ num_concertannouncements_without_concerts }})</li>
+      <li><a href="{% url 'artistless_concerts' %}">Concerts wo/ artists</a> ({{ num_concerts_without_artists }})</li>
+      <li><a href="{% url 'organisationless_concerts' %}">Concerts wo/ organisations</a> ({{ num_concerts_without_organities }})</li>
+      <li><a href="{% url 'concerts_without_announcements' %}">Concerts wo/ announcements</a> ({{ num_concerts_without_announcements }})</li>
+      <li><a href="{% url 'sparsevenues' %}">Venues wo/ organisation</a> ({{ num_rawvenues_without_organities }})</li>
+      <li><a href="{% url 'sparse_organisations' %}">Organisations wo/ venues</a> ({{ num_organities_without_rawvenues }})</li>
+      <li><a href="{% url 'sparse_organisations2' %}">Organisations without locations</a> ({{ num_organities_without_locations }})</li>
+      <li><a href="{% url 'organisations_without_concerts' %}">Organisations without concerts</a> ({{ num_organisation_without_concerts }})</li>
+      <li><a href="{% url 'sparse_locations' %}">Cities without countries</a> ({{ num_cities_without_countries }})</li>
     </ul>
   </div>
 {% endblock %}

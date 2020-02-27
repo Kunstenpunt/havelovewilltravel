@@ -129,7 +129,7 @@ class ConcertAnnouncement(models.Model):
         super(ConcertAnnouncement, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = ['last_seen_on', '-date']
+        ordering = ['-date']
 
     def _exists_non_cancelled_masterconcert_on_date_with_artist(self):
         try:
