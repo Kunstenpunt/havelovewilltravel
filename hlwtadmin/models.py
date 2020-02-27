@@ -352,6 +352,10 @@ class RelationConcertArtist(models.Model):
     def __str__(self):
         return self.concert.title + " - " + self.artist.name
 
+    def save(self, *args, **kwargs):
+        super(RelationConcertArtist, self).save(*args, **kwargs)
+        self.concert.save()
+
     class Meta:
         ordering = ['concert']
 
@@ -372,7 +376,11 @@ class RelationConcertOrganisation(models.Model):
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.concert.title + " " + (self.organisation_credited_as  + " (" + self.organisation.name + ")" if self.organisation_credited_as else self.organisation.name)
+        return self.concert.title + " " + (self.organisation_credited_as + " (" + self.organisation.name + ")" if self.organisation_credited_as else self.organisation.name)
+
+    def save(self, *args, **kwargs):
+        super(RelationConcertOrganisation, self).save(*args, **kwargs)
+        self.concert.save()
 
     class Meta:
         ordering = ['concert']
