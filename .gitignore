@@ -132,3 +132,11 @@ hlwtadmin/google_api_places_api_key.txt
 hlwtadmin/setlist_api_key.txt
 hlwtadmin/songkick_api_key.txt
 hlwtadmin/mrhenrysecret.txt
+
+hlwtadmin/fixtures/latest_*
+hlwtadmin/fixtures/citycountries.json
+hlwtadmin/fixtures/genres.json
+hlwtadmin/fixtures/gigfinders.json
+hlwtadmin/fixtures/organisation_organisation_relation_types.json
+hlwtadmin/fixtures/organisation_types.json
+hlwtadmin/fixtures/*.xlsx
