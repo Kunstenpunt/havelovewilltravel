@@ -226,18 +226,12 @@ for row in latest[["titel", "titel_generated", "artiest_mb_id", "datum", "source
     i += 1
 
 
-# k = 1
-# offset = 0
-# size = 100000
-#
-# while (offset) < len(fixture):
-#     with open("latest_" + str(k) + ".json", "w", "utf-8") as f:
-#         dump(fixture[offset:(offset+size)], f, indent=4)
-#     offset += size
-#     k += 1
+k = 1
+offset = 0
+size = 100000
 
-with open("relationconcertorganisation.json", "w", "utf-8") as f:
-    dump([fix for fix in fixture if fix["model"] == "hlwtadmin.RelationConcertOrganisation"], f, indent=4)
-
-with open("venue.json", "w", "utf-8") as f:
-    dump([fix for fix in fixture if fix["model"] == "hlwtadmin.Venue"], f, indent=4)
+while offset < len(fixture):
+    with open("latest_" + str(k) + ".json", "w", "utf-8") as f:
+        dump(fixture[offset:(offset+size)], f, indent=4)
+    offset += size
+    k += 1

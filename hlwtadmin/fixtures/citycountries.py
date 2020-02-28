@@ -31,20 +31,22 @@ for country in latest["country"].unique():
 
 i = 1
 location_pk = {}
-for location in latest[["name", "country"]].itertuples():
+for location in latest[["name", "subcountry", "country"]].itertuples():
     print(location)
     city = location[1]
-    country = location[2]
-    if not isnull(city) and not isnull(country) and (city, country) not in location_pk:
+    subcountry = location[2]
+    country = location[3]
+    if not isnull(city) and not isnull(subcountry) and not isnull(country) and (city, subcountry, country) not in location_pk:
         data = {
             "pk": i,
             "model": "hlwtadmin.Location",
             "fields": {
                 "city": city,
+                "subcountry": subcountry,
                 "country": country_pk[country]
             }
         }
-        location_pk[(city, country)] = i
+        location_pk[(city, subcountry, country)] = i
         i += 1
         fixture.append(data)
 

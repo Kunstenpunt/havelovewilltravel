@@ -331,6 +331,7 @@ class Location(models.Model):
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
     country = models.ForeignKey("Country", blank=True, null=True, on_delete=models.PROTECT)
+    subcountry = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.city + ", " + (self.country.name if self.country else "No country provided")
