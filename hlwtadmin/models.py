@@ -105,7 +105,7 @@ class ConcertAnnouncement(models.Model):
             dist = sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
         except TypeError:
             dist = 0
-        return dist > 0.001
+        return dist > 0.01
     
     def save(self, *args, **kwargs):
         if not self.id:
