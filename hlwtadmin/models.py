@@ -11,7 +11,7 @@ import hashlib
 import hmac
 
 from requests import post
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from math import sqrt
 
 import os
@@ -237,7 +237,7 @@ class Concert(models.Model):
             "event_id": str(self.id),
             "titel": self.title,
             "titel_generated": self.title,
-            "datum": self.date.strftime("%Y/%m/%d") if isinstance(self.date, datetime) else self.date,
+            "datum": self.date.strftime("%Y/%m/%d") if isinstance(self.date, date) else self.date,
             "artiest": rel_artiest.artist.name if rel_artiest else None,
             "artiest_merge_naam": rel_artiest.artist.name if rel_artiest else None,
             "artiest_mb_id": rel_artiest.artist.mbid if rel_artiest else None,
@@ -251,8 +251,8 @@ class Concert(models.Model):
             if rel_organisation.organisation:
                 if rel_organisation.organisation.location:
                     data["stad_clean"] = rel_organisation.organisation.location.city
-                    data["land_clean"] = rel_organisation.organisation.location.country.name
-                    data["iso_code_clean"] = rel_organisation.organisation.location.country.iso_code
+                    data["land_clean"] = rel_organisation.organisation.location.country.name if rel_organisation.organisation.location.country else None
+                    data["iso_code_clean"] = rel_organisation.organisation.location.country.iso_code if rel_organisation.organisation.location.country else None
                 data["venue_clean"] = rel_organisation.organisation.name
 
         for i, ca in enumerate(ConcertAnnouncement.objects.filter(concert_id=self.id)):
