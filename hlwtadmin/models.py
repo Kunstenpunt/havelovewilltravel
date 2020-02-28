@@ -217,7 +217,7 @@ class Concert(models.Model):
         return ", ".join([rel.organisation.name for rel in RelationConcertOrganisation.objects.filter(concert__id=self.id) if rel.organisation])
 
     def is_upcoming(self):
-        return self.date >= datetime.now().date()
+        return self.date >= datetime.now().date() if self.date else True
 
     def is_new(self):
         return self.created_at.date() > (datetime.now() - timedelta(days=14)).date()
