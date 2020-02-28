@@ -271,6 +271,48 @@ class MyBackgroundTaskTestCase(TestCase):
                                   url="https://www.facebook.com/rebirthcollective")
         self.gfurl.save()
 
+        self.country = Country.objects.create(
+            name="bestaand land"
+        )
+        self.country.save()
+
+        self.loc = Location.objects.create(
+            city="bestaande stad",
+            subcountry="bestaand subland",
+            country=self.country
+        )
+        self.loc.save()
+
+        self.venue_with_existing_loc = Venue.objects.create(
+            raw_venue="announcement|bestaande stad|bestaand land|facebook"
+        )
+        self.venue_with_existing_loc.save()
+
+        self.venue_without_existing_loc = Venue.objects.create(
+            raw_venue="announcement|onbestaande stad|onbestaand land|facebook"
+        )
+        self.venue_without_existing_loc.save()
+
+        self.ca_with_venue_with_existing_loc = ConcertAnnouncement.objects.create(
+            title="announcement",
+            artist=self.artist,
+            date="2000-01-01",
+            gigfinder=self.gf,
+            raw_venue=self.venue_with_existing_loc,
+            ignore=False
+        )
+        #self.ca_with_venue_with_existing_loc.save()
+
+        self.ca_with_venue_without_existing_loc = ConcertAnnouncement.objects.create(
+            title="announcement",
+            artist=self.artist,
+            date="2001-01-01",
+            gigfinder=self.gf,
+            raw_venue=self.venue_without_existing_loc,
+            ignore=False
+        )
+        #self.ca_with_venue_without_existing_loc.save()
+
     def test_synchronize_with_musicbrainz(self):
         out = StringIO()
         call_command("synchronize_with_musicbrainz", stdout=out)
@@ -279,8 +321,12 @@ class MyBackgroundTaskTestCase(TestCase):
         self.assertEqual(GigFinderUrl.objects.count(), 7)
         self.assertTrue(Artist.objects.filter(name="Rebirth Collective").first().include)
 
-    def test_synchronize_concerts_per_artist(self):
-        synchronize_concerts_per_artist()
-        tasks.run_next_task()
-        self.assertEqual(Concert.objects.count(), ConcertAnnouncement.objects.count())
+    def test_resolve_venues(self):
+        out = StringIO()
+        call_command("resolve_venues", stdout=out)
 
+        print("venue without", self.venue_without_existing_loc)
+        self.assertEqual(self.venue_without_existing_loc.organisation.name, Organisation.objects.first().name)
+
+        print("venue with existing loc", self.venue_with_existing_loc)
+        self.assertEqual(self.venue_with_existing_loc.organisation.location, self.loc)

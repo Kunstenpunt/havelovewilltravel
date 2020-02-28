@@ -424,7 +424,7 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
-        fields = ['city', 'latitude', 'longitude', 'country']
+        fields = ['city', 'latitude', 'longitude', 'country', 'verified']
         widgets = {
             'country': autocomplete.ModelSelect2(
                 url='country_autocomplete'
@@ -457,6 +457,9 @@ class LocationListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+    def get_queryset(self):
+        return Location.objects.exclude(organisation__isnull=True)
 
 
 class SparseLocationListView(ListView):

@@ -125,7 +125,7 @@ class ConcertAnnouncement(models.Model):
                 self.concert.updated_at = datetime.now()
                 self.concert.latitude = self.latitude
                 self.concert.longitude = self.longitude
-                self.concert.save(args)
+                self.concert.save()
         super(ConcertAnnouncement, self).save(*args, **kwargs)
 
     class Meta:
@@ -237,10 +237,10 @@ class Concert(models.Model):
             "event_id": str(self.id),
             "titel": self.title,
             "titel_generated": self.title,
-            "datum": self.date.strftime("%Y/%m/%d"),
-            "artiest": rel_artiest.artist.name,
-            "artiest_merge_naam": rel_artiest.artist.name,
-            "artiest_mb_id": rel_artiest.artist.mbid,
+            "datum": self.date.strftime("%Y/%m/%d") if isinstance(self.date, datetime) else self.date,
+            "artiest": rel_artiest.artist.name if rel_artiest else None,
+            "artiest_merge_naam": rel_artiest.artist.name if rel_artiest else None,
+            "artiest_mb_id": rel_artiest.artist.mbid if rel_artiest else None,
             "cancelled": self.cancelled,
             "ignore": self.ignore,
             "latitude": self.latitude,
@@ -257,7 +257,7 @@ class Concert(models.Model):
 
         for i, ca in enumerate(ConcertAnnouncement.objects.filter(concert_id=self.id)):
             source = ca.gigfinder.name
-            source_link = ca.gigfinder.base_url + ca.gigfinder_concert_id
+            source_link = str(ca.gigfinder.base_url) + str(ca.gigfinder_concert_id)
             data["source_" + str(i)] = source
             data["source_link_" + str(i)] = source_link
 
@@ -332,9 +332,10 @@ class Location(models.Model):
     longitude = models.FloatField(blank=True, null=True)
     country = models.ForeignKey("Country", blank=True, null=True, on_delete=models.PROTECT)
     subcountry = models.CharField(max_length=200, blank=True, null=True)
+    verified = models.BooleanField(blank=True, null=True, default=True)
 
     def __str__(self):
-        return self.city + ", " + (self.country.name if self.country else "No country provided")
+        return self.city + ", " + (self.subcountry if self.subcountry else "No state provided") + ", " + (self.country.name if self.country else "No country provided")
 
     def get_absolute_url(self):
         return reverse('location_detail', args=[str(self.id)])

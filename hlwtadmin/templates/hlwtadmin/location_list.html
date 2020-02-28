@@ -6,7 +6,8 @@
   <ul>
     {% for location in location_list %}
       <li>
-        <a href="{{ location.get_absolute_url }}">{{ location.country.name }}, {{ location.city }}</a> {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" />
+        <a href="{{ location.get_absolute_url }}">{{ location.country.name }}, {{ location.city }} ({{ location.subcountry }})</a> {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" />
+          ({{ location.organisation_set.count }})
       </li>
     {% endfor %}
   </ul>
