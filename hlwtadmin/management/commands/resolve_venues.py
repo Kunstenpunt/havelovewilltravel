@@ -67,4 +67,3 @@ class Command(BaseCommand):
             venue.organisation = org
             venue.save()
             print("venue is now", venue, venue.organisation)
-            input()
