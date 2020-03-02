@@ -26,12 +26,11 @@ class Command(BaseCommand):
                 if self._venue_is_not_related_to_organisation(concertannouncement):
                     self._create_new_unverified_organisation_and_relate_to_venue(concertannouncement)
                 self._create_new_masterconcert_with_concertannouncement_organisation_artist(concertannouncement)
-            input()
 
     @staticmethod
     def _exists_non_cancelled_masterconcert_on_date_with_artist(self):
         try:
-            return Concert.objects.filter(date=self.date).filter(relationconcertartist__artist=self.artist)[0]  # TODO what if multiple masterconcerts
+            return Concert.objects.filter(date=self.date).filter(relationconcertartist__artist=self.artist).exclude(title="nan").first()  # TODO what if multiple masterconcerts
         except IndexError:
             return None
 
@@ -64,16 +63,17 @@ class Command(BaseCommand):
     def _create_new_unverified_organisation_and_relate_to_venue(self):
         name_prop, stad, land, bron = self.raw_venue.raw_venue.split("|")
         name = name_prop if len(name_prop.strip()) > 0 else self.raw_venue.raw_venue
-        country = Country.objects.filter(name=land).first()
-        if not country:
-            country = Country.objects.filter(iso_code=land.lower()).first()
-        loc = Location.objects.filter(city__istartswith=stad).filter(country=country).first()
-        org = Organisation.objects.create(name=name,
-                                          annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
-                                          location=loc, verified=False)
-        org.save()
-        self.raw_venue.organisation = org
-        self.raw_venue.save()
+        if name not in ("None", "nan"):
+            country = Country.objects.filter(name=land).first()
+            if not country:
+                country = Country.objects.filter(iso_code=land.lower()).first()
+            loc = Location.objects.filter(city__istartswith=stad).filter(country=country).first()
+            org = Organisation.objects.create(name=name,
+                                              annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
+                                              location=loc, verified=False)
+            org.save()
+            self.raw_venue.organisation = org
+            self.raw_venue.save()
 
     @staticmethod
     def _create_new_masterconcert_with_concertannouncement_organisation_artist(self):
