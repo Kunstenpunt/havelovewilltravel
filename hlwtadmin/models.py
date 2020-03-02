@@ -145,11 +145,13 @@ class ConcertAnnouncement(models.Model):
         self.concert = self.masterconcert
 
     def _relate_organisation_related_to_venue_also_to_the_masterconcert(self):
-        RelationConcertOrganisation.objects.create(concert=self.masterconcert, organisation=self.raw_venue.organisation, verified=False)
+        rco = RelationConcertOrganisation.objects.create(concert=self.masterconcert, organisation=self.raw_venue.organisation, verified=False)
+        rco.save()
 
     def _relate_organisation_related_to_masterconcert_to_venue(self):
         org = RelationConcertOrganisation.objects.filter(concert=self.masterconcert)[0].organisation  # TODO what if several organisations connected to masterconcert?
         self.raw_venue.organisation = org
+        self.raw_venue.save()
 
     def _venue_is_not_related_to_organisation(self):
         return self.raw_venue.organisation is None
@@ -170,6 +172,7 @@ class ConcertAnnouncement(models.Model):
         mc.save()
         for genre in self.artist.genre.all():
             mc.genre.add(genre)
+        mc.save()
         relco = RelationConcertOrganisation(concert=mc, organisation=self.raw_venue.organisation, verified=False)
         relco.save()
         relca = RelationConcertArtist(concert=mc, artist=self.artist)
