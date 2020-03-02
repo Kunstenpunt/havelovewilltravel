@@ -13,9 +13,10 @@ class Command(BaseCommand):
             if venue:
                 cas = ConcertAnnouncement.objects.filter(raw_venue=venue)
                 for ca in cas:
-                    concert= ca.concert
-                    print(organisation, "has as concert", concert)
-                    RelationConcertOrganisation.objects.create(
-                        concert=concert,
-                        organisation=organisation
-                    )
+                    concert = ca.concert
+                    if concert:
+                        print(organisation, "has as concert", concert)
+                        RelationConcertOrganisation.objects.create(
+                            concert=concert,
+                            organisation=organisation
+                        )
