@@ -159,7 +159,10 @@ class ConcertsMergeCreate(CreateView):
 
 class ConcertsMergeDelete(DeleteView):
     model = ConcertsMerge
-    success_url = reverse_lazy('concerts')
+
+    def get_success_url(self):
+        target = self.object.primary_object
+        return reverse_lazy('concert_detail', kwargs={'pk': target.id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -192,7 +195,10 @@ class OrganisationsMergeCreate(CreateView):
 
 class OrganisationsMergeDelete(DeleteView):
     model = OrganisationsMerge
-    success_url = reverse_lazy('organisations')
+
+    def get_success_url(self):
+        target = self.object.primary_object
+        return reverse_lazy('organisation_detail', kwargs={'pk': target.id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
