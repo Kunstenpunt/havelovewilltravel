@@ -19,6 +19,12 @@ from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location
 class ConcertAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Concert.objects.all()
+
+        first_selected = self.forwarded.get('primary_object', None)
+
+        if first_selected:
+            qs = qs.exclude(id=first_selected)
+
         if self.q:
             qs = qs.filter(title__icontains=self.q)
         return qs
@@ -49,6 +55,12 @@ class ArtistAutocomplete(autocomplete.Select2QuerySetView):
 class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Organisation.objects.all()
+
+        first_selected = self.forwarded.get('primary_object', None)
+
+        if first_selected:
+            qs = qs.exclude(id=first_selected)
+
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         return qs
@@ -130,7 +142,8 @@ class ConcertsMergeForm(forms.ModelForm):
                 url='concert_autocomplete'
             ),
             'alias_objects': autocomplete.ModelSelect2Multiple(
-                url='concert_autocomplete'
+                url='concert_autocomplete',
+                forward=['primary_object']
             ),
         }
 
@@ -162,7 +175,8 @@ class OrganisationsMergeForm(forms.ModelForm):
                 url='organisation_autocomplete'
             ),
             'alias_objects': autocomplete.ModelSelect2Multiple(
-                url='organisation_autocomplete'
+                url='organisation_autocomplete',
+                forward=['primary_object']
             ),
         }
 
