@@ -389,7 +389,7 @@ class RelationConcertOrganisation(models.Model):
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.concert.title + " " + (self.organisation_credited_as + " (" + self.organisation.name + ")" if self.organisation_credited_as else self.organisation.name)
+        return self.concert.title + " " + (self.organisation_credited_as + " (" + self.organisation.name + ")" if self.organisation_credited_as else str(self.organisation))
 
     def save(self, *args, **kwargs):
         super(RelationConcertOrganisation, self).save(*args, **kwargs)
