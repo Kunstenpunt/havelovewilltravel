@@ -51,6 +51,7 @@
                         <hr>
                         <li><a href="{% url 'organisationsmerge_create' %}">Merge organisations</a></li>
                         <li><a href="{% url 'concertsmerge_create' %}">Merge concerts</a></li>
+                        <li><a href="{% url 'locationsmerge_create' %}">Merge locations</a></li>
                         <hr>
                         {% if user.is_authenticated %}
                             <li>User: {{ user.get_username }}</li>

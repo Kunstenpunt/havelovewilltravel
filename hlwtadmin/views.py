@@ -13,7 +13,7 @@ from django.views.generic.list import MultipleObjectMixin
 
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, RelationConcertConcert, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
-    RelationArtistArtist, OrganisationsMerge, ConcertsMerge
+    RelationArtistArtist, OrganisationsMerge, ConcertsMerge, LocationsMerge
 
 
 class ConcertAutocomplete(autocomplete.Select2QuerySetView):
@@ -76,6 +76,12 @@ class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
 class LocationAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Location.objects.all()
+
+        first_selected = self.forwarded.get('primary_object', None)
+
+        if first_selected:
+            qs = qs.exclude(id=first_selected)
+
         if self.q:
             qs = qs.filter(Q(city__icontains=self.q) | Q(country__name__icontains=self.q))
         return qs
@@ -199,6 +205,42 @@ class OrganisationsMergeDelete(DeleteView):
     def get_success_url(self):
         target = self.object.primary_object
         return reverse_lazy('organisation_detail', kwargs={'pk': target.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class LocationsMergeForm(forms.ModelForm):
+    class Meta:
+        model = LocationsMerge
+        fields = ['primary_object', 'alias_objects']
+        widgets = {
+            'primary_object': autocomplete.ModelSelect2(
+                url='location_autocomplete'
+            ),
+            'alias_objects': autocomplete.ModelSelect2Multiple(
+                url='location_autocomplete',
+                forward=['primary_object']
+            ),
+        }
+
+
+class LocationsMergeCreate(CreateView):
+    model = LocationsMerge
+    form_class = LocationsMergeForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class LocationsMergeDelete(DeleteView):
+    model = LocationsMerge
+
+    def get_success_url(self):
+        target = self.object.primary_object
+        return reverse_lazy('location_detail', kwargs={'pk': target.id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -480,6 +480,21 @@ class ConcertsMerge(models.Model):
         return reverse('concertsmerge_delete', args=[str(self.id)])
 
 
+class LocationsMerge(models.Model):
+    primary_object = models.ForeignKey("Location", on_delete=models.PROTECT, related_name="primary")
+    alias_objects = models.ManyToManyField("Location", related_name="aliases")
+
+    def __str__(self):
+        return str(self.primary_object) + " < " + ", ".join([str(ao) for ao in self.alias_objects.all()])
+
+    def delete(self, *args, **kwargs):
+        mmi = MergedModelInstance.create(self.primary_object, [ao for ao in self.alias_objects.all()], keep_old=False)
+        super(LocationsMerge, self).delete(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('locationsmerge_delete', args=[str(self.id)])
+
+
 class Genre(models.Model):
     name = models.CharField(max_length=200)
 
