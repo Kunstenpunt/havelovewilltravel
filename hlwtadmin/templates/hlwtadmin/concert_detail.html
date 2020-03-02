@@ -57,23 +57,6 @@
         </ul>
     </div>
 
-    {% if concert.find_concurring_concerts.all %}
-    <div style="margin-left:20px;margin-top:20px">
-        <h4>Concerts on same day in same organisation</h4>
-        <ul>
-            {% for c in concert.find_concurring_concerts.all %}
-                <li>
-                    {% if perms.hlwtadmin.can_update_concert %}<a href="{% url 'concert_detail' c.id %}">{{ c.title }},
-                    {% for relation in c.relationconcertartist_set.all %}
-                        {{ relation.artist }}
-                    {% endfor %}
-                    </a>{% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
-
     {% if concert.concerta.all or concert.concertb.all %}
     <div style="margin-left:20px;margin-top:20px">
 
@@ -81,14 +64,14 @@
         <ul>
             {% for relation in concert.concerta.all %}
               <li>
-                  {{ concert.title }} {{ relation.relation_type }} <a href="{{ relation.concert_b.id }}">{{ relation.concert_b.title }}</a>
+                  {{ concert.title }} {{ relation.relation_type.all|join:" and " }} <a href="{{ relation.concert_b.id }}">{{ relation.concert_b.title }}</a>
                   {% if perms.hlwtadmin.can_update_relationconcertconcert %}<a href="{% url 'relationconcertconcert_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
                   {% if perms.hlwtadmin.can_delete_relationconcertconcert %}<a href="{% url 'relationconcertconcert_delete' relation.id concert.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
               </li>
             {% endfor %}
             {% for relation in concert.concertb.all %}
               <li>
-                  Inverted relation: <a href="{{ relation.concert_a.id }}">{{ relation.concert_a.title }}</a> {{ relation.relation_type }} {{ concert.title }}
+                  Inverted relation: <a href="{{ relation.concert_a.id }}">{{ relation.concert_a.title }}</a> {{ relation.relation_type_set.all|join:", " }} {{ concert.title }}
                   {% if perms.hlwtadmin.can_update_relationconcertconcert %}<a href="{% url 'relationconcertconcert_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
                   {% if perms.hlwtadmin.can_delete_relationconcertconcert %}<a href="{% url 'relationconcertconcert_delete' relation.id concert.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
               </li>
@@ -168,6 +151,23 @@
             </tr>
         </table>
     </div>
+
+    {% if concert.find_concurring_concerts.all %}
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Concerts on same day in same organisation</h4>
+        <ul>
+            {% for c in concert.find_concurring_concerts.all %}
+                <li>
+                    <a href="{% url 'concert_detail' c.id %}">
+                    {% for relation in c.relationconcertartist_set.all %}
+                        {{ relation.concert }}
+                    {% endfor %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 
     <hr>
 
