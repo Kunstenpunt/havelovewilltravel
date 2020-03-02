@@ -486,7 +486,7 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
-        fields = ['city', 'latitude', 'longitude', 'country', 'verified']
+        fields = ['city', 'latitude', 'longitude', 'subcountry', 'country', 'verified']
         widgets = {
             'country': autocomplete.ModelSelect2(
                 url='country_autocomplete'
