@@ -237,61 +237,61 @@ class Concert(models.Model):
             return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation=this_org.organisation).exclude(id=self.id)
 
     def save(self, *args, **kwargs):
-        rel_artiest = RelationConcertArtist.objects.filter(concert__id=self.id).first()
-        rel_organisation = RelationConcertOrganisation.objects.filter(concert__id=self.id).first()
-        data = {
-            "event_id": str(self.id),
-            "titel": self.title,
-            "titel_generated": self.title,
-            "datum": self.date.strftime("%Y/%m/%d") if isinstance(self.date, date) else self.date,
-            "artiest": rel_artiest.artist.name if rel_artiest else None,
-            "artiest_merge_naam": rel_artiest.artist.name if rel_artiest else None,
-            "artiest_mb_id": rel_artiest.artist.mbid if rel_artiest else None,
-            "cancelled": self.cancelled,
-            "ignore": self.ignore,
-            "latitude": self.latitude,
-            "longitude": self.longitude
-        }
-
-        if rel_organisation:
-            if rel_organisation.organisation:
-                if rel_organisation.organisation.location:
-                    data["stad_clean"] = rel_organisation.organisation.location.city
-                    data["land_clean"] = rel_organisation.organisation.location.country.name if rel_organisation.organisation.location.country else None
-                    data["iso_code_clean"] = rel_organisation.organisation.location.country.iso_code if rel_organisation.organisation.location.country else None
-                data["venue_clean"] = rel_organisation.organisation.name
-
-        for i, ca in enumerate(ConcertAnnouncement.objects.filter(concert_id=self.id)):
-            source = ca.gigfinder.name
-            source_link = str(ca.gigfinder.base_url) + str(ca.gigfinder_concert_id)
-            data["source_" + str(i)] = source
-            data["source_link_" + str(i)] = source_link
-
-        message = bytes(dumps(data), "utf-8")
-
-        print(message)
-
-        try:
-            with open("hlwtadmin/mrhenrysecret.txt", "rb") as f:
-                secret = bytes(f.read().strip())
-        except FileNotFoundError:
-            secret = bytes(os.environ.get('MR_HENRY_API_KEY').strip("'"), "utf-8")
-
-        signature = binascii.b2a_hex(hmac.new(secret, message, digestmod=hashlib.sha256).digest())
-
-        base_url = "https://have-love-will-travel.herokuapp.com/"
-        url = base_url + "import-json"
-
-        params = {"signature": signature, "test": "test" in args}
-        headers = {"Content-Type": "application/json"}
-
-        r = None
-        try:
-            r = post(url, data=message, params=params, headers=headers)
-            if r.status_code != 200:
-                print("issue with sending this record to the api", message, r.status_code, r.headers, r.content)
-        except Exception as e:
-            print(e)
+        # rel_artiest = RelationConcertArtist.objects.filter(concert__id=self.id).first()
+        # rel_organisation = RelationConcertOrganisation.objects.filter(concert__id=self.id).first()
+        # data = {
+        #     "event_id": str(self.id),
+        #     "titel": self.title,
+        #     "titel_generated": self.title,
+        #     "datum": self.date.strftime("%Y/%m/%d") if isinstance(self.date, date) else self.date,
+        #     "artiest": rel_artiest.artist.name if rel_artiest else None,
+        #     "artiest_merge_naam": rel_artiest.artist.name if rel_artiest else None,
+        #     "artiest_mb_id": rel_artiest.artist.mbid if rel_artiest else None,
+        #     "cancelled": self.cancelled,
+        #     "ignore": self.ignore,
+        #     "latitude": self.latitude,
+        #     "longitude": self.longitude
+        # }
+        #
+        # if rel_organisation:
+        #     if rel_organisation.organisation:
+        #         if rel_organisation.organisation.location:
+        #             data["stad_clean"] = rel_organisation.organisation.location.city
+        #             data["land_clean"] = rel_organisation.organisation.location.country.name if rel_organisation.organisation.location.country else None
+        #             data["iso_code_clean"] = rel_organisation.organisation.location.country.iso_code if rel_organisation.organisation.location.country else None
+        #         data["venue_clean"] = rel_organisation.organisation.name
+        #
+        # for i, ca in enumerate(ConcertAnnouncement.objects.filter(concert_id=self.id)):
+        #     source = ca.gigfinder.name
+        #     source_link = str(ca.gigfinder.base_url) + str(ca.gigfinder_concert_id)
+        #     data["source_" + str(i)] = source
+        #     data["source_link_" + str(i)] = source_link
+        #
+        # message = bytes(dumps(data), "utf-8")
+        #
+        # print(message)
+        #
+        # try:
+        #     with open("hlwtadmin/mrhenrysecret.txt", "rb") as f:
+        #         secret = bytes(f.read().strip())
+        # except FileNotFoundError:
+        #     secret = bytes(os.environ.get('MR_HENRY_API_KEY').strip("'"), "utf-8")
+        #
+        # signature = binascii.b2a_hex(hmac.new(secret, message, digestmod=hashlib.sha256).digest())
+        #
+        # base_url = "https://have-love-will-travel.herokuapp.com/"
+        # url = base_url + "import-json"
+        #
+        # params = {"signature": signature, "test": "test" in args}
+        # headers = {"Content-Type": "application/json"}
+        #
+        # r = None
+        # try:
+        #     r = post(url, data=message, params=params, headers=headers)
+        #     if r.status_code != 200:
+        #         print("issue with sending this record to the api", message, r.status_code, r.headers, r.content)
+        # except Exception as e:
+        #     print(e)
         super(Concert, self).save(*args, **kwargs)
 
     class Meta:
