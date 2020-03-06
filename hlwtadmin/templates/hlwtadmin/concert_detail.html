@@ -160,7 +160,7 @@
                 <li>
                     <a href="{% url 'concert_detail' c.id %}">
                     {% for relation in c.relationconcertartist_set.all %}
-                        {{ relation.concert }}
+                        {{ relation.artist }}
                     {% endfor %}
                     </a>
                 </li>
