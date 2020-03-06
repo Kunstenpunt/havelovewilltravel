@@ -249,7 +249,7 @@ class LocationsMergeDelete(DeleteView):
 
 class ConcertListView(ListView):
     model = Concert
-    paginate_by = 15
+    paginate_by = 50
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -258,7 +258,7 @@ class ConcertListView(ListView):
 
 class RecentlyAddedConcertListView(ListView):
     model = Concert
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Concert.objects.exclude(verified=True).exclude(ignore=True).order_by('-created_at')
@@ -270,7 +270,7 @@ class RecentlyAddedConcertListView(ListView):
 
 class UpcomingConcertListView(ListView):
     model = Concert
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Concert.objects.filter(date__gte=datetime.now().date()).order_by('date', 'relationconcertorganisation__organisation__location__country')
@@ -282,7 +282,7 @@ class UpcomingConcertListView(ListView):
 
 class ArtistlessConcertListView(ListView):
     model = Concert
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Concert.objects.filter(relationconcertartist__artist__isnull=True)
@@ -294,7 +294,7 @@ class ArtistlessConcertListView(ListView):
 
 class OrganisationlessConcertListView(ListView):
     model = Concert
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Concert.objects.filter(relationconcertorganisation__organisation__isnull=True)
@@ -306,7 +306,7 @@ class OrganisationlessConcertListView(ListView):
 
 class NoGpsConcertListView(ListView):
     model = Concert
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Concert.objects.filter(latitude__isnull=True).exclude(verified=True)
@@ -318,7 +318,7 @@ class NoGpsConcertListView(ListView):
 
 class NoGenreConcertListView(ListView):
     model = Concert
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Concert.objects.filter(genre__isnull=True).exclude(verified=True)
@@ -330,7 +330,7 @@ class NoGenreConcertListView(ListView):
 
 class NoTitleConcertListView(ListView):
     model = Concert
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Concert.objects.annotate(text_len=Length('title')).filter(text_len__lt=4)
@@ -342,7 +342,7 @@ class NoTitleConcertListView(ListView):
 
 class NoAnnouncementConcertListView(ListView):
     model = Concert
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Concert.objects.filter(concertannouncement=None).exclude(verified=True)
@@ -413,7 +413,7 @@ class ArtistUpdate(UpdateView):
 
 class ArtistListView(ListView):
     model = Artist
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
@@ -430,7 +430,7 @@ class ArtistListView(ListView):
 
 class IncludeArtistListView(ListView):
     model = Artist
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         new_context = Artist.objects.filter(
@@ -445,7 +445,7 @@ class IncludeArtistListView(ListView):
 
 class ExcludeArtistListView(ListView):
     model = Artist
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         new_context = Artist.objects.filter(
@@ -460,7 +460,7 @@ class ExcludeArtistListView(ListView):
 
 class NoGenreArtistListView(ListView):
     model = Artist
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         new_context = Artist.objects.filter(genre__isnull=True)
@@ -474,7 +474,7 @@ class NoGenreArtistListView(ListView):
 class ArtistDetailView(DetailView, MultipleObjectMixin):
     model = Artist
     fields = '__all__'
-    paginate_by = 10
+    paginate_by = 50
 
     def get_context_data(self, **kwargs):
         object_list = Concert.objects.filter(relationconcertartist__artist=self.object)
@@ -514,7 +514,7 @@ class LocationUpdateView(UpdateView):
 
 class LocationListView(ListView):
     model = Location
-    paginate_by = 15
+    paginate_by = 50
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -526,7 +526,7 @@ class LocationListView(ListView):
 
 class SparseLocationListView(ListView):
     model = Location
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Location.objects.filter(country__isnull=True)
@@ -539,7 +539,7 @@ class SparseLocationListView(ListView):
 class LocationDetailView(DetailView, MultipleObjectMixin):
     model = Location
     fields = '__all__'
-    paginate_by = 10
+    paginate_by = 50
 
     def get_context_data(self, **kwargs):
         object_list = Organisation.objects.filter(location=self.object)
@@ -561,7 +561,7 @@ class OrganisationForm(forms.ModelForm):
 
 class OrganisationListView(ListView):
     model = Organisation
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Organisation.objects.filter(venue__isnull=True).filter(verified=False)
@@ -573,7 +573,7 @@ class OrganisationListView(ListView):
 
 class OrganisationListView2(ListView):
     model = Organisation
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Organisation.objects.filter(location__isnull=True).exclude(verified=True)
@@ -585,7 +585,7 @@ class OrganisationListView2(ListView):
 
 class OrganisationListView3(ListView):
     model = Organisation
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Organisation.objects.filter(latitude__isnull=True).exclude(verified=True)
@@ -597,7 +597,7 @@ class OrganisationListView3(ListView):
 
 class OrganisationListView4(ListView):
     model = Organisation
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Organisation.objects.filter(genre__isnull=True).exclude(verified=True)
@@ -609,7 +609,7 @@ class OrganisationListView4(ListView):
 
 class OrganisationListView5(ListView):
     model = Organisation
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Organisation.objects.filter(disambiguation__isnull=True)
@@ -621,7 +621,7 @@ class OrganisationListView5(ListView):
 
 class UnverifiedOrganisationListView(ListView):
     model = Organisation
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Organisation.objects.exclude(verified=True)
@@ -633,7 +633,7 @@ class UnverifiedOrganisationListView(ListView):
 
 class FullOrganisationListView(ListView):
     model = Organisation
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
@@ -650,7 +650,7 @@ class FullOrganisationListView(ListView):
 
 class OrganisationsWithoutConcertsListView(ListView):
     model = Organisation
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Organisation.objects.filter(relationconcertorganisation__organisation=None)
@@ -662,7 +662,7 @@ class OrganisationsWithoutConcertsListView(ListView):
 class OrganisationDetailView(DetailView, MultipleObjectMixin):
     model = Organisation
     fields = '__all__'
-    paginate_by = 10
+    paginate_by = 50
 
     def get_context_data(self, **kwargs):
         object_list = Concert.objects.filter(relationconcertorganisation__organisation=self.object)
@@ -711,7 +711,7 @@ class VenueForm(forms.ModelForm):
 
 class SparseVenueListView(ListView):
     model = Venue
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Venue.objects.filter(organisation__isnull=True).filter(non_assignable=False)
@@ -723,7 +723,7 @@ class SparseVenueListView(ListView):
 
 class UnassignableVenueListView(ListView):
     model = Venue
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Venue.objects.filter(non_assignable=True)
@@ -735,7 +735,7 @@ class UnassignableVenueListView(ListView):
 
 class VenueListView(ListView):
     model = Venue
-    paginate_by = 15
+    paginate_by = 50
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -796,7 +796,7 @@ class ConcertAnnouncementForm(forms.ModelForm):
 
 class AllConcertAnnouncementListView(ListView):
     model = ConcertAnnouncement
-    paginate_by = 15
+    paginate_by = 50
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -805,7 +805,7 @@ class AllConcertAnnouncementListView(ListView):
 
 class ConcertAnnouncementListView(ListView):
     model = ConcertAnnouncement
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return ConcertAnnouncement.objects.filter(concert__isnull=True)
@@ -1135,7 +1135,7 @@ class RelationConcertConcertDelete(DeleteView):
 
 class RecentlyAddedOrganisationListView(ListView):
     model = Organisation
-    paginate_by = 15
+    paginate_by = 50
 
     def get_queryset(self):
         return Organisation.objects.exclude(verified=True).order_by('-id')
