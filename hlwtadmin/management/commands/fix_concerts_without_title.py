@@ -8,7 +8,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for concert in Concert.objects.filter(title_iexact="nan") | Concert.objects.filter(title_iexact="none"):
+        for concert in Concert.objects.filter(title__iexact="nan") | Concert.objects.filter(title__iexact="none"):
             org = RelationConcertOrganisation.objects.filter(concert=concert).first().organisation
             artist = RelationConcertArtist.objects.filter(concert=concert).first().artist
             generated_title = artist.name + " @ " + org.name
