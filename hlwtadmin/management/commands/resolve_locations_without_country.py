@@ -30,7 +30,7 @@ class Command(BaseCommand):
                             for this_org in Organisation.objects.filter(location=loc):
                                 this_org.location = location
                                 this_org.save()
-                                loc.delete()
+                            loc.delete()
                         else:
                             print("adding country to location", country)
                             loc.country = country
