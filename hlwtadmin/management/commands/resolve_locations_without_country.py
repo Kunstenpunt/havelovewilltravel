@@ -18,7 +18,7 @@ class Command(BaseCommand):
                     print("venue", venue)
                     land = venue.raw_venue.split("|")[-2]
                     stad = venue.raw_venue.split("|")[-3]
-                    land = land.replace("The Netherlands", "nl").replace("Nederland", "nl").replace("België", "be").replace("UK", "gb").replace("Roemenië", "ro").replace("Frankrijk", "fr").replace("Russing Federation", "ru").replace("Uk", "gb")
+                    land = land.replace("The Netherlands", "nl").replace("Nederland", "nl").replace("België", "be").replace("UK", "gb").replace("Roemenië", "ro").replace("Frankrijk", "fr").replace("Russian Federation", "ru").replace("Uk", "gb").replace("Duitsland", "de").replace("United States of America", "us").replace("Tsjechië", "cz").replace("Oostenrijk", "at").replace("Korea, Republic Of", "kr")
                     print("location", stad, land)
                     country = Country.objects.filter(name__iexact=land).first()
                     if not country:
