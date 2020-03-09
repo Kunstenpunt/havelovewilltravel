@@ -22,7 +22,9 @@ class Command(BaseCommand):
                     print("location", stad, land)
                     country = Country.objects.filter(name__iexact=land).first()
                     if not country:
+                        print("no country found, trying iso code")
                         country = Country.objects.filter(iso_code=land.lower()).first()
+                        print("und", country)
                     if country:
                         print("found a country", country)
                         location = Location.objects.filter(country=country).filter(city__iexact=stad).first()
