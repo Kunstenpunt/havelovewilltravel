@@ -4,7 +4,7 @@ from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
 from django import forms
 from dal import autocomplete
-from django.db.models import Q
+from django.db.models import Q, Exists, Count
 from django.db.models.functions import Length
 
 from datetime import datetime
@@ -129,10 +129,10 @@ def index(request):
         'num_unassignable_venues': Venue.objects.filter(non_assignable=True).count(),
         'num_concerts_without_gps': Concert.objects.filter(latitude__isnull=True).exclude(verified=True).count(),
         'num_concerts_without_genre': Concert.objects.filter(genre__isnull=True).exclude(verified=True).count(),
-        'num_concerts_without_title': Concert.objects.annotate(text_len=Length('title')).filter(text_len__lt=4).count(),
+        'num_concerts_without_title': Concert.objects.annotate(text_len=Length('title')).filter(text_len__lt=5).count(),
         'num_concerts_without_announcements': Concert.objects.filter(concertannouncement=None).exclude(verified=True).count(),
         'num_organisation_without_concerts': Organisation.objects.filter(relationconcertorganisation__organisation=None).count(),
-        'num_artists_without_genre': Artist.objects.filter(genre__isnull=True).count()
+        'num_artists_without_genre': Artist.objects.filter(genre__isnull=True).exclude(relationconcertartist__isnull=True).count()
     }
 
     # Render the HTML template index.html with the data in the context variable
@@ -333,7 +333,7 @@ class NoTitleConcertListView(ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        return Concert.objects.annotate(text_len=Length('title')).filter(text_len__lt=4)
+        return Concert.objects.annotate(text_len=Length('title')).filter(text_len__lt=5)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -463,7 +463,7 @@ class NoGenreArtistListView(ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        new_context = Artist.objects.filter(genre__isnull=True)
+        new_context = Artist.objects.filter(genre__isnull=True).exclude(relationconcertartist__isnull=True).annotate(num_concerts=Count('relationconcertartist', distinct=True)).filter(num_concerts__gt=5).order_by('-num_concerts')
         return new_context
 
     def get_context_data(self, **kwargs):
