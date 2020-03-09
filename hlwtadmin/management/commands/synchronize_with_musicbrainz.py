@@ -76,8 +76,9 @@ class Command(BaseCommand):
             search_results = self.__search_artists_in_area("Belgium", limit, offset)
             for hit in list(search_results["artist-list"]):
                 artist = self.__obtain_a_specific_mb_artist(hit["id"])
-                self.__create_or_update_artist(artist)
-                self.__create_or_update_artist_gigfinders(artist)
+                if artist:
+                    self.__create_or_update_artist(artist)
+                    self.__create_or_update_artist_gigfinders(artist)
                 updated.append(hit["id"])
                 i += 1
             offset += limit
@@ -99,6 +100,7 @@ class Command(BaseCommand):
             except musicbrainz.NetworkError as e:
                 print("musicbrainz netwerkerror", e)
                 sleep(25.0)
-            except musicbrainz.Response:
-                sleep(25.0)
+            except musicbrainz.ResponseError as e:
+                print("musicbrainz response error", e)
+                return artist
         return artist
