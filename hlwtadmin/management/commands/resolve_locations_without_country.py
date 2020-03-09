@@ -23,6 +23,7 @@ class Command(BaseCommand):
                     if not country:
                         country = Country.objects.filter(iso_code=land.lower()).first()
                     if country:
+                        country = country.replace("Nederland", "nl").replace("België", "be")
                         print("found a country", country)
                         location = Location.objects.filter(country=country).filter(city=stad).first()
                         if location:
