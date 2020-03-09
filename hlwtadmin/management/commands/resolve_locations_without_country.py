@@ -18,14 +18,14 @@ class Command(BaseCommand):
                     print("venue", venue)
                     land = venue.raw_venue.split("|")[-2]
                     stad = venue.raw_venue.split("|")[-3]
-                    land = land.replace("The Netherlands", "nl").replace("Nederland", "nl").replace("België", "be").replace("uk", "gb")
+                    land = land.replace("The Netherlands", "nl").replace("Nederland", "nl").replace("België", "be").replace("UK", "gb").replace("Roemenië", "ro").replace("Frankrijk", "fr").replace("Russing Federation", "ru")
                     print("location", stad, land)
-                    country = Country.objects.filter(name=land).first()
+                    country = Country.objects.filter(name__iexact=land).first()
                     if not country:
                         country = Country.objects.filter(iso_code=land.lower()).first()
                     if country:
                         print("found a country", country)
-                        location = Location.objects.filter(country=country).filter(city=stad).first()
+                        location = Location.objects.filter(country=country).filter(city__iexact=stad).first()
                         if location:
                             print("found a location", location)
                             for this_org in Organisation.objects.filter(location=loc):
