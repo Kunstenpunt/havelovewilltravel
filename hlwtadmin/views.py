@@ -82,6 +82,10 @@ class LocationAutocomplete(autocomplete.Select2QuerySetView):
         qs = Location.objects.all()
 
         first_selected = self.forwarded.get('primary_object', None)
+        country = self.forwarded.get('country', None)
+
+        if country:
+            qs = qs.filter(country__id=country)
 
         if first_selected:
             qs = qs.exclude(id=first_selected)
@@ -151,8 +155,7 @@ class ConcertsMergeForm(forms.ModelForm):
         fields = ['artist', 'primary_object', 'alias_objects']
         widgets = {
             'artist': autocomplete.ModelSelect2(
-                url='artist_autocomplete',
-                forward=['artist']
+                url='artist_autocomplete'
             ),
             'primary_object': autocomplete.ModelSelect2(
                 url='concert_autocomplete',
@@ -223,16 +226,22 @@ class OrganisationsMergeDelete(DeleteView):
 
 
 class LocationsMergeForm(forms.ModelForm):
+    country = forms.ChoiceField(choices=Country.objects.all().values_list('id', 'name'))
+
     class Meta:
         model = LocationsMerge
-        fields = ['primary_object', 'alias_objects']
+        fields = ['country', 'primary_object', 'alias_objects']
         widgets = {
+            'country': autocomplete.ModelSelect2(
+                url='country_autocomplete'
+            ),
             'primary_object': autocomplete.ModelSelect2(
-                url='location_autocomplete'
+                url='location_autocomplete',
+                forward=['country']
             ),
             'alias_objects': autocomplete.ModelSelect2Multiple(
                 url='location_autocomplete',
-                forward=['primary_object']
+                forward=['primary_object', 'country']
             ),
         }
 
