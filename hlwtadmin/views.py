@@ -61,6 +61,10 @@ class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
         qs = Organisation.objects.all()
 
         first_selected = self.forwarded.get('primary_object', None)
+        location = self.forwarded.get('location', None)
+
+        if location:
+            qs = qs.filter(location__id=location)
 
         if first_selected:
             qs = qs.exclude(id=first_selected)
@@ -148,7 +152,13 @@ def index(request):
 
 
 class ConcertsMergeForm(forms.ModelForm):
-    artist = forms.ChoiceField(choices=Artist.objects.all().values_list('mbid', 'name'))
+    artist = autocomplete.Select2ListChoiceField(
+        choice_list=Artist.objects.all().values_list('mbid', 'name'),
+        required=False,
+        widget=autocomplete.ListSelect2(
+                url='artist_autocomplete'
+            )
+    )
 
     class Meta:
         model = ConcertsMerge
@@ -190,16 +200,28 @@ class ConcertsMergeDelete(DeleteView):
 
 
 class OrganisationsMergeForm(forms.ModelForm):
+    location = autocomplete.Select2ListChoiceField(
+        choice_list=Location.objects.all().values_list('id', 'city'),
+        required=False,
+        widget=autocomplete.ListSelect2(
+            url='location_autocomplete'
+        )
+    )
+
     class Meta:
         model = OrganisationsMerge
-        fields = ['primary_object', 'alias_objects']
+        fields = ['location', 'primary_object', 'alias_objects']
         widgets = {
+            'location': autocomplete.ModelSelect2(
+                url='location_autocomplete'
+            ),
             'primary_object': autocomplete.ModelSelect2(
-                url='organisation_autocomplete'
+                url='organisation_autocomplete',
+                forward=['location']
             ),
             'alias_objects': autocomplete.ModelSelect2Multiple(
                 url='organisation_autocomplete',
-                forward=['primary_object']
+                forward=['primary_object', 'location']
             ),
         }
 
@@ -226,7 +248,13 @@ class OrganisationsMergeDelete(DeleteView):
 
 
 class LocationsMergeForm(forms.ModelForm):
-    country = forms.ChoiceField(choices=Country.objects.all().values_list('id', 'name'))
+    country = autocomplete.Select2ListChoiceField(
+        choice_list=Country.objects.all().values_list('id', 'name'),
+        required=False,
+        widget=autocomplete.ListSelect2(
+            url='country_autocomplete'
+        )
+    )
 
     class Meta:
         model = LocationsMerge
