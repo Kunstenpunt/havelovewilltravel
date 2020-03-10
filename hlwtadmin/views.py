@@ -21,6 +21,10 @@ class ConcertAutocomplete(autocomplete.Select2QuerySetView):
         qs = Concert.objects.all()
 
         first_selected = self.forwarded.get('primary_object', None)
+        artist = self.forwarded.get('artist', None)
+
+        if artist:
+            qs = qs.filter(relationconcertartist__artist__mbid=artist)
 
         if first_selected:
             qs = qs.exclude(id=first_selected)
@@ -140,16 +144,23 @@ def index(request):
 
 
 class ConcertsMergeForm(forms.ModelForm):
+    artist = forms.ChoiceField(choices=Artist.objects.all().values_list('mbid', 'name'))
+
     class Meta:
         model = ConcertsMerge
-        fields = ['primary_object', 'alias_objects']
+        fields = ['artist', 'primary_object', 'alias_objects']
         widgets = {
+            'artist': autocomplete.ModelSelect2(
+                url='artist_autocomplete',
+                forward=['artist']
+            ),
             'primary_object': autocomplete.ModelSelect2(
-                url='concert_autocomplete'
+                url='concert_autocomplete',
+                forward=['artist']
             ),
             'alias_objects': autocomplete.ModelSelect2Multiple(
                 url='concert_autocomplete',
-                forward=['primary_object']
+                forward=['primary_object', 'artist']
             ),
         }
 
