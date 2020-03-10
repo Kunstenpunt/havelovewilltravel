@@ -6,7 +6,7 @@
   <ul>
     {% for location in location_list %}
       <li>
-        <a href="{{ location.get_absolute_url }}">{{ location }})</a>
+        <a href="{{ location.get_absolute_url }}">{{ location }}</a>
           {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" />
           {% if location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
           ({{ location.organisation_set.count }})
