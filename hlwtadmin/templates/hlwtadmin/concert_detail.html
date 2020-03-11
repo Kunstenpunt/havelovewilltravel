@@ -100,12 +100,13 @@
                         {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ relation.gigfinder }}.png" alt="{{ relation.gigfinder }}" />
                         </a>
                     </td>
-                    <td style="max-width: 25ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <td valign="top">
                         <a title="{{ relation.title }}" href="{% url 'concertannouncement_detail' relation.id %}">
-                        {{ relation.title }} ({{ relation.date }})
+                        {{ relation.title|truncatechars:50 }}
                         </a>
+                        {% if relation.recently_seen is not True %}{% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" />{% endif %}
                     </td>
-                    <td style="max-width: 25ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <td valign="top">
                         <a href="{% url 'venue_detail' relation.raw_venue.id %}">{{ relation.raw_venue }}</a>
                     </td>
                     <td>

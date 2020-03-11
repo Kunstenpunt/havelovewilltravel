@@ -106,6 +106,9 @@ class ConcertAnnouncement(models.Model):
         except TypeError:
             dist = 0
         return dist > 0.01
+
+    def recently_seen(self):
+        return timedelta(days=7) < self.last_seen_on - datetime.today().date()
     
     def save(self, *args, **kwargs):
         if not self.id:

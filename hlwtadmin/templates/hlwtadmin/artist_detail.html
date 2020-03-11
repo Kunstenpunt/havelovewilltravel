@@ -60,6 +60,7 @@
                       {% for ca in concert.concertannouncement_set.all %}
                         <a target="_blank" href="{{ ca.gigfinder.base_url}}{{ ca.gigfinder_concert_id }}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" /></a>
                         <a title="{{ ca.title }}" href="{% url 'concertannouncement_detail' ca.id %}">{% if ca.title != "nan" %}{{ ca.title|truncatechars:40 }}{% else %}{{ ca.gigfinder }}{% endif %}</a>
+                        {% if ca.recently_seen is not True %}{% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" />{% endif %}
                         <br>
                       {% endfor %}
                   </td>
