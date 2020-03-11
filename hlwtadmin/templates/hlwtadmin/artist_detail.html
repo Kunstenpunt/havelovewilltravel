@@ -58,9 +58,8 @@
                   {% endif %}
                   <td valign="top">
                       {% for ca in concert.concertannouncement_set.all %}
-                        {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" /></a>
-                        <a title="{{ ca.title }}" href="{% url 'concertannouncement_detail' ca.id %}">{{ ca.title|truncatechars:40 }}</a>
-                        <a target="_blank" href="{{ ca.gigfinder.base_url}}{{ ca.gigfinder_concert_id }}">
+                        <a target="_blank" href="{{ ca.gigfinder.base_url}}{{ ca.gigfinder_concert_id }}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" /></a>
+                        <a title="{{ ca.title }}" href="{% url 'concertannouncement_detail' ca.id %}">{% if ca.title != "nan" %}{{ ca.title|truncatechars:40 }}{% else %}{{ ca.gigfinder }}{% endif %}</a>
                         <br>
                       {% endfor %}
                   </td>
