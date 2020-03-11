@@ -101,7 +101,7 @@
                         </a>
                     </td>
                     <td style="max-width: 25ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                        <a href="{% url 'concertannouncement_detail' relation.id %}">
+                        <a title="{{ relation.title }}" href="{% url 'concertannouncement_detail' relation.id %}">
                         {{ relation.title }} ({{ relation.date }})
                         </a>
                     </td>
