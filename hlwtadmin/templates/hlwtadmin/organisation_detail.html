@@ -4,7 +4,7 @@
     <h1>{% block title %}Organisation: {{ organisation.name }}{% endblock %}</h1>
 
     <div style="margin-left:20px;margin-top:20px">
-        <p>Location: {% if organisation.location %}<a href="{% url 'location_detail' organisation.location.id %}">{{ organisation.location }}</a> {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ organisation.location.country.iso_code }}.png" />{% endif %}</p>
+        <p>Location: {% if organisation.address %}{{ organisation.address }}, {% endif %} {% if organisation.location %}<a href="{% url 'location_detail' organisation.location.id %}">{{ organisation.location }}</a> {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ organisation.location.country.iso_code }}.png" />{% endif %}</p>
         <p>Type: {{ organisation.organisation_type.all|join:", " }}</p>
         <p>Genre: {{ organisation.genre.all|join:", " }}</p>
         <p>Disambiguation: {{ organisation.disambiguation }}</p>
