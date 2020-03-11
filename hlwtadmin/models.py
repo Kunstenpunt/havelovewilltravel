@@ -313,6 +313,7 @@ class Organisation(models.Model):
     active = models.BooleanField(blank=True, null=True)
     capacity = models.CharField(max_length=250, null=True, blank=True)
     annotation = models.CharField(max_length=500, null=True, blank=True)
+    address = models.CharField(max_length=200, blank=True, null=True)
     history = HistoricalRecords()
 
     def __str__(self):
