@@ -30,14 +30,14 @@
             </tr>
             {% for concert in object_list %}
               {% if concert.cancelled %}<tr style="text-decoration: line-through;">{% else %} <tr> {% endif %}
-                  <td>
+                  <td valign="top">
                       {% if concert.is_upcoming %}
                         {% load static %}<img style="width: 46px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/coming.gif' %}" />
                       {% endif %}
                       <a href="{% url 'concert_detail' concert.id %}">{{ concert.date }}</a>
                   </td>
                   {% if concert.relationconcertorganisation_set.first %}
-                  <td>
+                  <td valign="top">
                       {% if concert.relationconcertorganisation_set.first.organisation %}
                           <a href="{% url 'organisation_detail' concert.relationconcertorganisation_set.first.organisation.id %}">
                               {{ concert.relationconcertorganisation_set.first.organisation }}
@@ -56,11 +56,12 @@
                   </td>
                   {% else %} <td>{% load static %}<img style="width: 36px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" />Missing organisation{% load static %}<img style="width: 36px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" /></td>
                   {% endif %}
-                  <td>
+                  <td valign="top">
                       {% for ca in concert.concertannouncement_set.all %}
-                          (<a href="{% url 'concertannouncement_detail' ca.id %}">hlwt</a>/
-                          <a target="_blank" href="{{ ca.gigfinder.base_url }}{{ ca.gigfinder_concert_id }}">
-                          {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" /></a>)
+                        {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" /></a>
+                        <a title="{{ ca.title }}" href="{% url 'concertannouncement_detail' ca.id %}">{{ ca.title|truncatechars:40 }}</a>
+                        <a target="_blank" href="{{ ca.gigfinder.base_url}}{{ ca.gigfinder_concert_id }}">
+                        <br>
                       {% endfor %}
                   </td>
               </tr>
