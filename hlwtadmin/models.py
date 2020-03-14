@@ -338,6 +338,7 @@ class OrganisationType(models.Model):
 
 class Location(models.Model):
     city = models.CharField(max_length=200)
+    zipcode = models.CharField(max_length=200, blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
     country = models.ForeignKey("Country", blank=True, null=True, on_delete=models.PROTECT)
