@@ -21,7 +21,7 @@
         </td>
         <td valign="top">
           {% for relation in concert.relationconcertartist_set.all %}
-            <a href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a>
+            <a href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a><br>
           {% endfor %}
         </td>
         <td valign="top">
@@ -31,14 +31,15 @@
             {% else %}
               Missing organisation
             {% endif %}
-            ({{ relation.organisation.location }}
             {% if relation.organisation.location %}
+              <br>
+              {{ relation.organisation.location.city }}{% if relation.organisation.location.subcountry %}, {{ relation.organisation.location.subcountry }}{% endif %}
               {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ relation.organisation.location.country.iso_code }}.png" />
             {% endif %}
-            )
+            <br>
           {% endfor %}
         </td>
-        <td valign="top">{{ concert.genre.all|join:"," }}</td>
+        <td valign="top">{{ concert.genre.all|join:"<br>" }}</td>
         <td valign="top">
           {% for ca in concert.concertannouncement_set.all %}
             <a target="_blank" href="{{ ca.gigfinder.base_url }}{{ ca.gigfinder_concert_id }}">
