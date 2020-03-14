@@ -383,6 +383,12 @@ class RelationConcertArtist(models.Model):
         super(RelationConcertArtist, self).save(*args, **kwargs)
         self.concert.save()
 
+    def previous_concert_by_artist(self):
+        return RelationConcertArtist.objects.filter(artist=self.artist).filter(concert__date__lt=self.concert.date).order_by('-concert__date').first()
+
+    def next_concert_by_artist(self):
+        return RelationConcertArtist.objects.filter(artist=self.artist).filter(concert__date__gt=self.concert.date).order_by('concert__date').first()
+
     class Meta:
         ordering = ['concert']
 
@@ -408,6 +414,12 @@ class RelationConcertOrganisation(models.Model):
     def save(self, *args, **kwargs):
         super(RelationConcertOrganisation, self).save(*args, **kwargs)
         self.concert.save()
+
+    def previous_concert_at_organisation(self):
+        return RelationConcertOrganisation.objects.filter(organisation=self.organisation).filter(concert__date__lt=self.concert.date).order_by('-concert__date').first()
+
+    def next_concert_at_organisation(self):
+        return RelationConcertOrganisation.objects.filter(organisation=self.organisation).filter(concert__date__gt=self.concert.date).order_by('concert__date').first()
 
     class Meta:
         ordering = ['concert']
