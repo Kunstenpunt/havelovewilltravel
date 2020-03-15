@@ -12,6 +12,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for org in Organisation.objects.filter(location__country__isnull=True):
             print(org, org.location)
+
+            if org.name == "None":
+                rels = RelationConcertOrganisation.objects.filter(organisation=org)
+                for rel in rels:
+                    rel.delete()
+                org.delete()
+
             locs = []
             rels = RelationConcertOrganisation.objects.filter(organisation=org)
             if len(rels) > 0:
