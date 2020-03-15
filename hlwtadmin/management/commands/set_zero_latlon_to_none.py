@@ -9,25 +9,25 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for obj in Organisation.objects.filter(latitude__isnull=True):
+        for obj in Organisation.objects.filter(latitude=0):
             print(obj, obj.latitude, obj.longitude)
             obj.latitude = None
             obj.longitude = None
             obj.save()
 
-        for obj in Concert.objects.filter(latitude__isnull=True):
+        for obj in Concert.objects.filter(latitude=0):
             print(obj, obj.latitude, obj.longitude)
             obj.latitude = None
             obj.longitude = None
             obj.save()
 
-        for obj in Location.objects.filter(latitude__isnull=True):
+        for obj in Location.objects.filter(latitude=0):
             print(obj, obj.latitude, obj.longitude)
             obj.latitude = None
             obj.longitude = None
             obj.save()
 
-        for obj in ConcertAnnouncement.objects.filter(latitude__isnull=True):
+        for obj in ConcertAnnouncement.objects.filter(latitude=0):
             print(obj, obj.latitude, obj.longitude)
             obj.latitude = None
             obj.longitude = None
