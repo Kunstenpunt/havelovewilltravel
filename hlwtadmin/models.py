@@ -384,10 +384,12 @@ class RelationConcertArtist(models.Model):
         self.concert.save()
 
     def previous_concert_by_artist(self):
-        return RelationConcertArtist.objects.filter(artist=self.artist).filter(concert__date__lt=self.concert.date).order_by('-concert__date').first()
+        if self.concert.date:
+            return RelationConcertArtist.objects.filter(artist=self.artist).filter(concert__date__lt=self.concert.date).order_by('-concert__date').first()
 
     def next_concert_by_artist(self):
-        return RelationConcertArtist.objects.filter(artist=self.artist).filter(concert__date__gt=self.concert.date).order_by('concert__date').first()
+        if self.concert.date:
+            return RelationConcertArtist.objects.filter(artist=self.artist).filter(concert__date__gt=self.concert.date).order_by('concert__date').first()
 
     class Meta:
         ordering = ['concert']
@@ -416,10 +418,12 @@ class RelationConcertOrganisation(models.Model):
         self.concert.save()
 
     def previous_concert_at_organisation(self):
-        return RelationConcertOrganisation.objects.filter(organisation=self.organisation).filter(concert__date__lt=self.concert.date).order_by('-concert__date').first()
+        if self.concert.date:
+            return RelationConcertOrganisation.objects.filter(organisation=self.organisation).filter(concert__date__lt=self.concert.date).order_by('-concert__date').first()
 
     def next_concert_at_organisation(self):
-        return RelationConcertOrganisation.objects.filter(organisation=self.organisation).filter(concert__date__gt=self.concert.date).order_by('concert__date').first()
+        if self.concert.date:
+            return RelationConcertOrganisation.objects.filter(organisation=self.organisation).filter(concert__date__gt=self.concert.date).order_by('concert__date').first()
 
     class Meta:
         ordering = ['concert']
