@@ -12,19 +12,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         values = RelationConcertOrganisation.objects.all().values_list('concert', 'organisation', 'organisation_credited_as', 'relation_type', 'verified')
-
         for item, c in Counter(values).most_common():
             if c > 1:
-                print(c, item)
-                hit = RelationConcertOrganisation.objects.filter(concert=item[0]).filter(organisation=item[1]).filter(organisation_credited_as=item[2]).filter(relation_type=item[3]).filter(verified=item[4]).first()
-                print("about to delete", hit.pk)
-                hit.delete()
+                hit = RelationConcertOrganisation.objects.filter(concert=item[0]).filter(organisation=item[1]).filter(organisation_credited_as=item[2]).filter(relation_type=item[3]).filter(verified=item[4]).first().delete()
 
         values = RelationConcertArtist.objects.all().values_list('concert', 'artist', 'artist_credited_as', 'relation_type')
-
         for item, c in Counter(values).most_common():
             if c > 1:
-                print(c, item)
-                hit = RelationConcertArtist.objects.filter(concert=item[0]).filter(artist=item[1]).filter(artist_credited_as=item[2]).filter(relation_type=item[3]).first()
-                print("about to delete", hit.pk)
-                hit.delete()
+                hit = RelationConcertArtist.objects.filter(concert=item[0]).filter(artist=item[1]).filter(artist_credited_as=item[2]).filter(relation_type=item[3]).first().delete()

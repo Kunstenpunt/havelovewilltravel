@@ -13,7 +13,7 @@ import hmac
 from requests import post
 from datetime import datetime, timedelta, date
 from math import sqrt
-
+from collections import Counter
 import os
 
 
@@ -491,6 +491,16 @@ class OrganisationsMerge(models.Model):
         mmi = MergedModelInstance.create(self.primary_object, [ao for ao in self.alias_objects.all()], keep_old=False)
         super(OrganisationsMerge, self).delete(*args, **kwargs)
 
+        values = RelationConcertOrganisation.objects.all().values_list('concert', 'organisation', 'organisation_credited_as', 'relation_type', 'verified')
+        for item, c in Counter(values).most_common():
+            if c > 1:
+                hit = RelationConcertOrganisation.objects.filter(concert=item[0]).filter(organisation=item[1]).filter(organisation_credited_as=item[2]).filter(relation_type=item[3]).filter(verified=item[4]).first().delete()
+
+        values = RelationConcertArtist.objects.all().values_list('concert', 'artist', 'artist_credited_as', 'relation_type')
+        for item, c in Counter(values).most_common():
+            if c > 1:
+                hit = RelationConcertArtist.objects.filter(concert=item[0]).filter(artist=item[1]).filter(artist_credited_as=item[2]).filter(relation_type=item[3]).first().delete()
+
     def get_absolute_url(self):
         return reverse('organisationsmerge_delete', args=[str(self.id)])
 
@@ -505,6 +515,16 @@ class ConcertsMerge(models.Model):
     def delete(self, *args, **kwargs):
         mmi = MergedModelInstance.create(self.primary_object, [ao for ao in self.alias_objects.all()], keep_old=False)
         super(ConcertsMerge, self).delete(*args, **kwargs)
+
+        values = RelationConcertOrganisation.objects.all().values_list('concert', 'organisation', 'organisation_credited_as', 'relation_type', 'verified')
+        for item, c in Counter(values).most_common():
+            if c > 1:
+                hit = RelationConcertOrganisation.objects.filter(concert=item[0]).filter(organisation=item[1]).filter(organisation_credited_as=item[2]).filter(relation_type=item[3]).filter(verified=item[4]).first().delete()
+
+        values = RelationConcertArtist.objects.all().values_list('concert', 'artist', 'artist_credited_as', 'relation_type')
+        for item, c in Counter(values).most_common():
+            if c > 1:
+                hit = RelationConcertArtist.objects.filter(concert=item[0]).filter(artist=item[1]).filter(artist_credited_as=item[2]).filter(relation_type=item[3]).first().delete()
 
     def get_absolute_url(self):
         return reverse('concertsmerge_delete', args=[str(self.id)])
