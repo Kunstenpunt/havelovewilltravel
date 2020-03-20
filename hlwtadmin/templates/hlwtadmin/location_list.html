@@ -4,8 +4,19 @@
   <h1>Location List</h1>
 
     <form method="get" action="{% url 'locations' %}">
-        <p>Filter: <input type="text" value={{filter}} name="filter"/></p>
-        <p>order_by: <input type="text" value={{orderby}} name="orderby"/></p>
+        <p>Filter:
+            <select id="filter" name="filter">
+                {% for country in countries %}
+                    <option value="{{ country.name }}"{% if country.name == filter %} selected {% endif %}>{{ country.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>order_by:
+            <select id="orderby" name="orderby">
+                <option value="city">Order by city name</option>
+                <option value="verified">Order by verified status</option>
+            </select>
+        </p>
         <p><input type="submit" name="submit" value="submit"/></p>
     </form>
 
@@ -20,21 +31,29 @@
       </li>
     {% endfor %}
   </ul>
-  {% if is_paginated %}
-      <div class="pagination">
-          <span class="page-links">
-              {% if page_obj.has_previous %}
-                  <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-              {% endif %}
-              <span class="page-current">
-                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-              </span>
-              {% if page_obj.has_next %}
-                  <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
-              {% endif %}
-          </span>
-      </div>
-  {% endif %}
+
+    {% load my_tags %}
+
+    {% if is_paginated %}
+      {% if page_obj.has_previous %}
+        <a href="?{% param_replace page=1 %}">First</a>
+        {% if page_obj.previous_page_number != 1 %}
+          <a href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
+        {% endif %}
+      {% endif %}
+
+      Page {{ page_obj.number }} of {{ paginator.num_pages }}
+
+      {% if page_obj.has_next %}
+        {% if page_obj.next_page_number != paginator.num_pages %}
+          <a href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
+        {% endif %}
+        <a href="?{% param_replace page=paginator.num_pages %}">Last</a>
+      {% endif %}
+
+      <p>Objects {{ page_obj.start_index }}—{{ page_obj.end_index }} of {{ num_locations }}</p>
+    {% endif %}
+
   {% else %}
     <p>There are no locations in the library.</p>
   {% endif %}
