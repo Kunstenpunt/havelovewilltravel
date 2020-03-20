@@ -2,6 +2,13 @@
 
 {% block content %}
   <h1>Location List</h1>
+
+    <form method="get" action="{% url 'locations' %}">
+        <p>Filter: <input type="text" value={{filter}} name="filter"/></p>
+        <p>order_by: <input type="text" value={{orderby}} name="orderby"/></p>
+        <p><input type="submit" name="submit" value="submit"/></p>
+    </form>
+
   {% if location_list %}
   <ul>
     {% for location in location_list %}
