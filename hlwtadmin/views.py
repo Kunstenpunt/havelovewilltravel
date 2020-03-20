@@ -30,7 +30,7 @@ class ConcertAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.exclude(id=first_selected)
 
         if self.q:
-            qs = qs.filter(title__icontains=self.q)
+            qs = qs.filter(title__unaccent__icontains=self.q)
         return qs
 
     def get_result_label(self, item):
@@ -44,7 +44,7 @@ class ConcertAnnouncementAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = ConcertAnnouncement.objects.all()
         if self.q:
-            qs = qs.filter(title__icontains=self.q)
+            qs = qs.filter(title__unaccent__icontains=self.q)
         return qs
 
 
@@ -52,7 +52,7 @@ class ArtistAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Artist.objects.all()
         if self.q:
-            qs = qs.filter(name__icontains=self.q)
+            qs = qs.filter(name__unaccent__icontains=self.q)
         return qs
 
 
@@ -70,7 +70,7 @@ class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.exclude(id=first_selected)
 
         if self.q:
-            qs = qs.filter(name__icontains=self.q)
+            qs = qs.filter(name__unaccent__icontains=self.q)
         return qs
 
     def get_result_label(self, item):
@@ -95,7 +95,7 @@ class LocationAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.exclude(id=first_selected)
 
         if self.q:
-            qs = qs.filter(Q(city__icontains=self.q) | Q(country__name__icontains=self.q))
+            qs = qs.filter(Q(city__unaccent__icontains=self.q) | Q(country__name__unaccent__icontains=self.q))
         return qs
 
 
@@ -103,7 +103,7 @@ class CountryAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Country.objects.all()
         if self.q:
-            qs = qs.filter(name__icontains=self.q)
+            qs = qs.filter(name__unaccent__icontains=self.q)
         return qs
 
 
@@ -111,7 +111,7 @@ class VenueAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Venue.objects.all()
         if self.q:
-            qs = qs.filter(raw_venue__icontains=self.q)
+            qs = qs.filter(raw_venue__unaccent__icontains=self.q)
         return qs
 
 
