@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'hlwtadmin',
     'simple_history',
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [
