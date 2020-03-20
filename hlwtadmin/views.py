@@ -6,6 +6,7 @@ from django import forms
 from dal import autocomplete
 from django.db.models import Q, Exists, Count
 from django.db.models.functions import Length
+from django.utils.html import format_html
 
 from datetime import datetime
 
@@ -34,10 +35,13 @@ class ConcertAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     def get_result_label(self, item):
-        if item.date:
-            return item.title + " (" + item.date.isoformat() + ", " + item.artists() + ", " + item.organisations() + ")"
-        else:
-            return item.title
+        return format_html('<div style="overflow: auto;"><div style="float: left;"><i>{}</i><br><b>{}</b> by <b>{}</b> at <b>{}</b></div><div align="right" style="overflow: hidden;"><a target="_blank" href="{}">ctrl+click to open</a></div></div>',
+                           item.title[0:80],
+                           (item.date.isoformat() if item.date else "No date"),
+                           item.artists()[0:35],
+                           item.organisations()[0:45],
+                           item.get_absolute_url()
+                           )
 
 
 class ConcertAnnouncementAutocomplete(autocomplete.Select2QuerySetView):
@@ -54,6 +58,9 @@ class ArtistAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             qs = qs.filter(name__unaccent__icontains=self.q)
         return qs
+
+    def get_result_label(self, item):
+        return format_html('{} <i>{}</i> -- <a target="_blank" href="{}">ctrl+click to open</a>', item.name, (item.disambiguation if item.disambiguation else "No disambiguation"), item.get_absolute_url())
 
 
 class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
@@ -74,11 +81,17 @@ class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     def get_result_label(self, item):
-        if item.disambiguation or item.location:
-            brackets = " (" + (item.disambiguation + ", " if item.disambiguation else "") + (str(item.location) if item.location else "") + ")"
-            return item.name + brackets
-        else:
-            return item.name
+        return format_html(
+            '<div style="overflow: auto;"><div style="float: left;">{} <i>{}</i><br><b>{}</b>{} <img title="{}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{}{}.png" /></div><div align="right" style="overflow: hidden;"><a target="_blank" href="{}">ctrl+click to open</a></div></div>',
+            item.name[0:80],
+            (item.disambiguation if item.disambiguation else "No disambiguation"),
+            (item.location if item.location else "No location"),
+            "",
+            (item.location.country if item.location.country else "No country"),
+            "/static/flags/",
+            (item.location.country.iso_code if item.location.country else None),
+            item.get_absolute_url()
+            )
 
 
 class LocationAutocomplete(autocomplete.Select2QuerySetView):
@@ -913,11 +926,12 @@ class RelationConcertOrganisationForm(forms.ModelForm):
         fields = ['concert', 'organisation', 'verified', 'organisation_credited_as', 'relation_type']
         widgets = {
             'concert': autocomplete.ModelSelect2(
-                url='concert_autocomplete'
+                url='concert_autocomplete',
+                attrs={'data-html': True}
             ),
             'organisation': autocomplete.ModelSelect2(
                 url='organisation_autocomplete',
-                attrs={'data-html': False}
+                attrs={'data-html': True}
             )
         }
 
@@ -973,7 +987,8 @@ class RelationConcertArtistForm(forms.ModelForm):
                 url='concert_autocomplete'
             ),
             'artist': autocomplete.ModelSelect2(
-                url='artist_autocomplete'
+                url='artist_autocomplete',
+                attrs={'data-html': True},
             )
         }
 
