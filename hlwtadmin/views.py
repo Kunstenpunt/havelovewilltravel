@@ -284,6 +284,7 @@ class LocationsMergeCreate(CreateView):
         context = super().get_context_data(**kwargs)
         return context
 
+
 class LocationsMergeDelete(DeleteView):
     model = LocationsMerge
 
@@ -567,10 +568,17 @@ class LocationListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter'] = self.request.GET.get('filter', None)
+        context['orderby'] = self.request.GET.get('orderby', 'city  ')
+        context['num_locations'] = Location.objects.filter(country__name=context['filter']).count()
+        context['countries'] = Country.objects.all()
         return context
 
     def get_queryset(self):
-        return Location.objects.exclude(organisation__isnull=True)
+        filter_val = self.request.GET.get('filter', None)
+        order = self.request.GET.get('orderby', 'country')
+        new_context = Location.objects.filter(country__name=filter_val,).order_by(order)
+        return new_context
 
 
 class SparseLocationListView(ListView):
