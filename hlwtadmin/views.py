@@ -182,10 +182,12 @@ class ConcertsMergeForm(forms.ModelForm):
             ),
             'primary_object': autocomplete.ModelSelect2(
                 url='concert_autocomplete',
+                attrs={'data-html': True},
                 forward=['artist']
             ),
             'alias_objects': autocomplete.ModelSelect2Multiple(
                 url='concert_autocomplete',
+                attrs={'data-html': True},
                 forward=['primary_object', 'artist']
             ),
         }
@@ -230,10 +232,12 @@ class OrganisationsMergeForm(forms.ModelForm):
             ),
             'primary_object': autocomplete.ModelSelect2(
                 url='organisation_autocomplete',
+                attrs={'data-html': True},
                 forward=['location']
             ),
             'alias_objects': autocomplete.ModelSelect2Multiple(
                 url='organisation_autocomplete',
+                attrs={'data-html': True},
                 forward=['primary_object', 'location']
             ),
         }
