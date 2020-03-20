@@ -48,10 +48,9 @@
                       {% if concert.relationconcertorganisation_set.first.organisation.location %}
                         in <a href="{% url 'location_detail' concert.relationconcertorganisation_set.first.organisation.location.id %}">
                             {{ concert.relationconcertorganisation_set.first.organisation.location }}
-                            {% if concert.relationconcertorganisation_set.first.organisation.location %}
-                                {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ concert.relationconcertorganisation_set.first.organisation.location.country.iso_code }}.png" />
-                            {% endif %}
                         </a>
+                          {% load static %}<img title="{{ concert.relationconcertorganisation_set.first.organisation.location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ concert.relationconcertorganisation_set.first.organisation.location.country.iso_code }}.png" />
+                          {% if concert.relationconcertorganisation_set.first.organisation.location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
                       {% endif %}
                   </td>
                   {% else %} <td>{% load static %}<img style="width: 36px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" />Missing organisation{% load static %}<img style="width: 36px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" /></td>

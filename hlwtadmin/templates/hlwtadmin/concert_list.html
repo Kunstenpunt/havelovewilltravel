@@ -33,8 +33,9 @@
             {% endif %}
             {% if relation.organisation.location %}
               <br>
-              {{ relation.organisation.location.city }}{% if relation.organisation.location.subcountry %}, {{ relation.organisation.location.subcountry }}{% endif %}
-              {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ relation.organisation.location.country.iso_code }}.png" />
+              {{ relation.organisation.location }}
+              {% load static %}<img title="{{ organisation.location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ relation.organisation.location.country.iso_code }}.png" />
+              {% if relation.organisation.location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
             {% endif %}
             <br>
           {% endfor %}

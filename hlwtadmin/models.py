@@ -346,10 +346,10 @@ class Location(models.Model):
     verified = models.BooleanField(blank=True, null=True, default=True)
 
     def __str__(self):
-        return self.city + ", " + \
-               (self.zipcode if self.zipcode else "No zipcode") + ", " + \
-               (self.subcountry if self.subcountry else "No state") + ", " + \
-               (self.country.name if self.country else "No country")
+        return self.city + \
+               (" (" + self.zipcode + ")" if self.zipcode else "") + \
+               (" [" + self.subcountry + "]" if self.subcountry and self.country.name != "Belgium" else "")# + \
+               #(", " + self.country.name if self.country else "No country")
 
     def get_absolute_url(self):
         return reverse('location_detail', args=[str(self.id)])
