@@ -108,7 +108,7 @@ class ConcertAnnouncement(models.Model):
         return dist > 0.01
 
     def recently_seen(self):
-        return timedelta(days=7) < self.last_seen_on - datetime.today().date()
+        return timedelta(days=8) <= self.last_seen_on - datetime.today().date()
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -215,6 +215,7 @@ class Concert(models.Model):
     genre = models.ManyToManyField("Genre", blank=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
+    annotation = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.title

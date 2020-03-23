@@ -422,7 +422,7 @@ class NoAnnouncementConcertListView(ListView):
 class ConcertForm(forms.ModelForm):
     class Meta:
         model = Concert
-        fields = ['date', 'genre', 'cancelled', 'ignore', 'verified', 'latitude', 'longitude']
+        fields = ['date', 'genre', 'cancelled', 'ignore', 'verified', 'latitude', 'longitude', 'annotation']
 
 
 class ConcertDetailView(DetailView):
