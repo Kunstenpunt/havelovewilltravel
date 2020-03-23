@@ -89,7 +89,7 @@ class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
             "",
             (item.location.country if (item.location and item.location.country) else "No country"),
             "/static/flags/",
-            (item.location.country.iso_code if item.location.country else None),
+            (item.location.country.iso_code if (item.location and item.location.country) else None),
             item.get_absolute_url()
             )
 
