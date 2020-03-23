@@ -108,6 +108,9 @@ class ConcertAnnouncement(models.Model):
         return dist > 0.01
 
     def recently_seen(self):
+        print("last seen on", self.last_seen_on)
+        print("today", datetime.today().date())
+        print("timedelta", self.last_seen_on - datetime.today().date())
         return timedelta(days=8) <= self.last_seen_on - datetime.today().date()
     
     def save(self, *args, **kwargs):
