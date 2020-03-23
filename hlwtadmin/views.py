@@ -87,7 +87,7 @@ class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
             (item.disambiguation if item.disambiguation else "No disambiguation"),
             (item.location if item.location else "No location"),
             "",
-            (item.location.country if item.location.country else "No country"),
+            (item.location.country if (item.location and item.location.country) else "No country"),
             "/static/flags/",
             (item.location.country.iso_code if item.location.country else None),
             item.get_absolute_url()
@@ -778,7 +778,8 @@ class VenueForm(forms.ModelForm):
         fields = ['organisation', 'non_assignable']
         widgets = {
             'organisation': autocomplete.ModelSelect2(
-                url='organisation_autocomplete'
+                url='organisation_autocomplete',
+                attrs={'data-html': True}
             ),
         }
 
@@ -860,7 +861,8 @@ class ConcertAnnouncementForm(forms.ModelForm):
                 url='artist_autocomplete'
             ),
             'concert': autocomplete.ModelSelect2(
-                url='concert_autocomplete'
+                url='concert_autocomplete',
+                attrs={'data-html': True}
             ),
             'raw_venue': autocomplete.ModelSelect2(
                 url='venue_autocomplete'
@@ -988,7 +990,8 @@ class RelationConcertArtistForm(forms.ModelForm):
         fields = ['artist', 'concert', 'artist_credited_as']
         widgets = {
             'concert': autocomplete.ModelSelect2(
-                url='concert_autocomplete'
+                url='concert_autocomplete',
+                attrs={'data-html': True}
             ),
             'artist': autocomplete.ModelSelect2(
                 url='artist_autocomplete',
@@ -1159,10 +1162,12 @@ class RelationConcertConcertForm(forms.ModelForm):
         fields = ['concert_a', 'relation_type', 'concert_b']
         widgets = {
             'concert_a': autocomplete.ModelSelect2(
-                url='concert_autocomplete'
+                url='concert_autocomplete',
+                attrs={'data-html': True}
             ),
             'concert_b': autocomplete.ModelSelect2(
-                url='concert_autocomplete'
+                url='concert_autocomplete',
+                attrs={'data-html': True}
             )
         }
 
