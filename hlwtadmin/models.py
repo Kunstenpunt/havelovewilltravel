@@ -83,6 +83,7 @@ class ConcertAnnouncement(models.Model):
     gigfinder_concert_id = models.CharField(max_length=250, blank=True, null=True)
     concert = models.ForeignKey("Concert", on_delete=models.PROTECT, blank=True, null=True)
     last_seen_on = models.DateField(auto_now=True)
+    seen_count = models.IntegerField(default=1)
     raw_venue = models.ForeignKey("Venue", on_delete=models.PROTECT, blank=True, null=True)
     ignore = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -109,7 +110,10 @@ class ConcertAnnouncement(models.Model):
 
     def recently_seen(self):
         return timedelta(days=8) > (datetime.today().date() - self.last_seen_on)
-    
+
+    def frequently_seen(self):
+        return self.seen_count > 1
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.masterconcert = self._exists_non_cancelled_masterconcert_on_date_with_artist()
@@ -124,11 +128,12 @@ class ConcertAnnouncement(models.Model):
                     self._create_new_unverified_organisation_and_relate_to_venue()
                 self._create_new_masterconcert_with_concertannouncement_organisation_artist()
         if self.id:
+            self.seen_count += 1
             if self.concert and not self.concert.verified:
                 self.concert.updated_at = datetime.now()
                 self.concert.latitude = self.latitude
                 self.concert.longitude = self.longitude
-                self.concert.save()
+#                self.concert.save()
         super(ConcertAnnouncement, self).save(*args, **kwargs)
 
     class Meta:
