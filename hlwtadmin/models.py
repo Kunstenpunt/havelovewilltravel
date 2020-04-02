@@ -133,7 +133,7 @@ class ConcertAnnouncement(models.Model):
                 self.concert.updated_at = datetime.now()
                 self.concert.latitude = self.latitude
                 self.concert.longitude = self.longitude
-#                self.concert.save()
+                self.concert.save()
         super(ConcertAnnouncement, self).save(*args, **kwargs)
 
     class Meta:
