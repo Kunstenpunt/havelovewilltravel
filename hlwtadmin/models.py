@@ -245,6 +245,12 @@ class Concert(models.Model):
         if this_org and this_org.organisation:
             return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation=this_org.organisation).exclude(id=self.id)
 
+    def is_confirmed(self):
+        for ca in ConcertAnnouncement.objects.filter(concert__id=self.id):
+            print(ca.recently_seen(), ca.frequently_seen())
+            if ca.recently_seen() or ca.frequently_seen():
+                return True
+
     def save(self, *args, **kwargs):
         rel_artiest = RelationConcertArtist.objects.filter(concert__id=self.id).first()
         rel_organisation = RelationConcertOrganisation.objects.filter(concert__id=self.id).first()

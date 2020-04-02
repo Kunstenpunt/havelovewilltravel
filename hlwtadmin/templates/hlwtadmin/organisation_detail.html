@@ -28,7 +28,7 @@
             </tr>
             {% for concert in object_list %}
                 {% if concert.cancelled %}<tr style="text-decoration: line-through;">{% else %} <tr> {% endif %}
-                    <td valign="top"><a href="{% url 'concert_detail' concert.id %}">{{ concert.date }}</a></td>
+                    <td valign="top"><a href="{% url 'concert_detail' concert.id %}"> {{ concert.date }}</a>{% if not concert.is_confirmed %}(Unconfirmed){% endif %}</td>
                     <td valign="top">
                         {% for relationca in concert.relationconcertartist_set.all %}
                             <a href="{% url 'artist_detail' relationca.artist.mbid %}">{{ relationca.artist }}</a>
