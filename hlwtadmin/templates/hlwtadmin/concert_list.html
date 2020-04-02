@@ -2,6 +2,17 @@
 
 {% block content %}
   <h1>Concert List</h1>
+
+    <form method="get" action="{% url 'concerts' %}">
+        <p>
+            <label for="filter_start">From:</label>
+            <input type="date" id="filter_start" name="filter_start">
+            <label for="filter_end">From:</label>
+            <input type="date" id="filter_end" name="filter_end">
+        </p>
+        <p><input type="submit" name="submit" value="submit"/></p>
+    </form>
+
   {% if concert_list %}
   <table border="1">
     <tr>
@@ -51,21 +62,27 @@
       </tr>
     {% endfor %}
   </table>
-  {% if is_paginated %}
-      <div class="pagination">
-          <span class="page-links">
-              {% if page_obj.has_previous %}
-                  <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-              {% endif %}
-              <span class="page-current">
-                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-              </span>
-              {% if page_obj.has_next %}
-                  <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
-              {% endif %}
-          </span>
-      </div>
-  {% endif %}
+  {% load my_tags %}
+
+    {% if is_paginated %}
+      {% if page_obj.has_previous %}
+        <a href="?{% param_replace page=1 %}">First</a>
+        {% if page_obj.previous_page_number != 1 %}
+          <a href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
+        {% endif %}
+      {% endif %}
+
+      Page {{ page_obj.number }} of {{ paginator.num_pages }}
+
+      {% if page_obj.has_next %}
+        {% if page_obj.next_page_number != paginator.num_pages %}
+          <a href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
+        {% endif %}
+        <a href="?{% param_replace page=paginator.num_pages %}">Last</a>
+      {% endif %}
+
+      <p>Objects {{ page_obj.start_index }}—{{ page_obj.end_index }} of {{ num_concerts }}</p>
+    {% endif %}
   {% else %}
     <p>There are no concerts in the library.</p>
   {% endif %}

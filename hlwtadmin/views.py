@@ -320,7 +320,16 @@ class ConcertListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter_start'] = self.request.GET.get('filter_start', '1900-01-01')
+        context['filter_end'] = self.request.GET.get('filter_end', '2999-12-31')
+        context['num_concerts'] = Concert.objects.filter(date__gte=context['filter_start']).filter(date__lte=context['filter_end']).count()
         return context
+
+    def get_queryset(self):
+        filter_start = self.request.GET.get('filter_start', '1900-01-01')
+        filter_end = self.request.GET.get('filter_end', '2999-12-31')
+        new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end)
+        return new_context
 
 
 class RecentlyAddedConcertListView(ListView):
@@ -485,13 +494,14 @@ class ArtistListView(ListView):
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
         new_context = Artist.objects.filter(
-            name__istartswith=filter_val
+            name__unaccent__icontains=filter_val
         )
         return new_context
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
+        context['num_artists'] = Artist.objects.filter(name__unaccent__icontains=context['filter'])
         return context
 
 
@@ -709,17 +719,16 @@ class FullOrganisationListView(ListView):
     model = Organisation
     paginate_by = 50
 
-    def get_queryset(self):
-        filter_val = self.request.GET.get('filter', '')
-        new_context = Organisation.objects.filter(
-            name__istartswith=filter_val
-        )
-        return new_context
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
+        context['num_organisations'] = Organisation.objects.filter(name__unaccent__icontains=context['filter']).count()
         return context
+
+    def get_queryset(self):
+        filter_val = self.request.GET.get('filter', '')
+        new_context = Organisation.objects.filter(name__unaccent__icontains=filter_val,)
+        return new_context
 
 
 class OrganisationsWithoutConcertsListView(ListView):
@@ -732,6 +741,7 @@ class OrganisationsWithoutConcertsListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
 
 class OrganisationDetailView(DetailView, MultipleObjectMixin):
     model = Organisation
