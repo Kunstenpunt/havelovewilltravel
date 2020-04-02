@@ -40,9 +40,9 @@
                             <a title="{{ ca.title }}" href="{% url 'concertannouncement_detail' ca.id %}">{% if ca.title != "nan" %}{{ ca.title|truncatechars:40 }}{% else %}{{ ca.gigfinder }}{% endif %}</a>
                             {% if ca.recently_seen is not True %}
                                 {% if ca.frequently_seen is not True %}
-                                    {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" />
-                                {% else %}
                                     {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/banana.png' %}" />
+                                {% else %}
+                                    {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" />
                                 {% endif %}
                             {% endif %}
                             <br>

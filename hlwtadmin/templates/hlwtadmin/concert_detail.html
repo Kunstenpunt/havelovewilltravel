@@ -118,9 +118,9 @@
                         </a>
                         {% if relation.recently_seen is not True %}
                             {% if relation.frequently_seen is not True %}
-                                {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" />
-                            {% else %}
                                 {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/banana.png' %}" />
+                            {% else %}
+                                {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" />
                             {% endif %}
                         {% endif %}
                     </td>
