@@ -235,7 +235,7 @@ class Concert(models.Model):
         return self.date >= datetime.now().date() if self.date else True
 
     def is_new(self):
-        return self.created_at.date() > (datetime.now() - timedelta(days=14)).date()
+        return self.created_at.date() > (datetime.now() - timedelta(days=7)).date()
 
     def get_absolute_url(self):
         return reverse('concert_detail', args=[str(self.id)])
