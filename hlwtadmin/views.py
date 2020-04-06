@@ -597,14 +597,14 @@ class LocationListView(ListView):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', None)
         context['orderby'] = self.request.GET.get('orderby', 'city  ')
-        context['num_locations'] = Location.objects.filter(country__name=context['filter']).count()
+        context['num_locations'] = Location.objects.filter(country__name=context['filter']).exclude(organisation__location=None).count()
         context['countries'] = Country.objects.all()
         return context
 
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', None)
         order = self.request.GET.get('orderby', 'country')
-        new_context = Location.objects.filter(country__name=filter_val,).order_by(order)
+        new_context = Location.objects.filter(country__name=filter_val,).exclude(organisation__location=None).order_by(order)
         return new_context
 
 
@@ -722,12 +722,12 @@ class FullOrganisationListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
-        context['num_organisations'] = Organisation.objects.filter(name__unaccent__icontains=context['filter']).count()
+        context['num_organisations'] = Organisation.objects.filter(name__unaccent__icontains=context['filter']).exclude(relationconcertorganisation__organisation=None).count()
         return context
 
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
-        new_context = Organisation.objects.filter(name__unaccent__icontains=filter_val,)
+        new_context = Organisation.objects.filter(name__unaccent__icontains=filter_val,).exclude(relationconcertorganisation__organisation=None)
         return new_context
 
 
