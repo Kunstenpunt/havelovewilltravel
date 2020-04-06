@@ -35,7 +35,8 @@
                         {% load static %}<img style="width: 46px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/coming.gif' %}" />
                       {% endif %}
                       <a href="{% url 'concert_detail' concert.id %}">{{ concert.date }}</a>
-                      {% if not concert.is_confirmed %}(Unconfirmed){% endif %}
+                      {% if concert.verified %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
+                      {% if not concert.is_confirmed and not concert.verified %}(Unconfirmed){% endif %}
                   </td>
                   {% if concert.relationconcertorganisation_set.first %}
                   <td valign="top">
