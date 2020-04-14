@@ -58,7 +58,8 @@ class Command(BaseCommand):
                     gfurl = GigFinderUrl.objects.create(
                         artist=artistobject,
                         gigfinder=gf,
-                        url=url
+                        url=url,
+                        last_confirmed_by_musicbrainz=datetime.now()
                     )
                     gfurl.save()
 

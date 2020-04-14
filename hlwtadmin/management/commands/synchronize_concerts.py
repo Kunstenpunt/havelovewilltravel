@@ -49,6 +49,8 @@ class Command(BaseCommand):
                 leecher_setlist.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
             if gfurl.gigfinder.name == "www.songkick.com" and gfurl.artist.exclude is not True:
                 leecher_songkick.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
+            gfurl.last_synchronized = datetime.now()
+            gfurl.save(update_fields=['last_synchronize'])
 
 
 class PlatformLeecher(object):

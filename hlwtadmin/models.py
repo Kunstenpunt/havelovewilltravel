@@ -69,6 +69,8 @@ class GigFinderUrl(models.Model):
     artist = models.ForeignKey("Artist", on_delete=models.PROTECT)
     gigfinder = models.ForeignKey("GigFinder", on_delete=models.PROTECT)
     url = models.URLField()
+    last_confirmed_by_musicbrainz = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, 0))
+    last_synchronized = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, 0))
 
     def __str__(self):
         return self.url + " (" + str(self.artist) + ", " + str(self.gigfinder) + ")"
