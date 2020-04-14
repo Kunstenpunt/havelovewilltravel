@@ -14,7 +14,7 @@ from django.views.generic.list import MultipleObjectMixin
 
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, RelationConcertConcert, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
-    RelationArtistArtist, OrganisationsMerge, ConcertsMerge, LocationsMerge
+    RelationArtistArtist, OrganisationsMerge, ConcertsMerge, LocationsMerge, GigFinderUrl
 
 
 class ConcertAutocomplete(autocomplete.Select2QuerySetView):
@@ -629,6 +629,15 @@ class LocationDetailView(DetailView, MultipleObjectMixin):
         object_list = Organisation.objects.filter(location=self.object)
         context = super().get_context_data(object_list=object_list, **kwargs)
         context["form"] = OrganisationForm()
+        return context
+
+
+class GigfinderURLListView(ListView):
+    model = GigFinderUrl
+    paginate_by = 50
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         return context
 
 

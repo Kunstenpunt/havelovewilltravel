@@ -53,6 +53,8 @@ urlpatterns = [
     path('venue/create/', views.VenueCreate.as_view(), name='venue_create'),
     path('venue/<int:pk>/update/', views.VenueUpdate.as_view(), name='venue_update'),
     path('venue/<int:pk>/delete/', views.VenueDelete.as_view(), name='venue_delete'),
+    # gigfinderurls
+    path('gigfinderurls/', views.GigfinderURLListView.as_view(), name='gigfinderurls'),
     # concertannouncement
     path('concertannouncements/', views.ConcertAnnouncementListView.as_view(), name='concertannouncements'),
     path('allconcertannouncements/', views.AllConcertAnnouncementListView.as_view(), name='allconcertannouncements'),

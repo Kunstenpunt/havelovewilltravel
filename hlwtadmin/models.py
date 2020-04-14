@@ -75,6 +75,9 @@ class GigFinderUrl(models.Model):
     def __str__(self):
         return self.url + " (" + str(self.artist) + ", " + str(self.gigfinder) + ")"
 
+    class Meta:
+        ordering = ['-last_confirmed_by_musicbrainz', '-last_synchronized']
+
 
 class ConcertAnnouncement(models.Model):
     title = models.CharField(max_length=200)
