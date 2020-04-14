@@ -1124,11 +1124,11 @@ class RelationOrganisationOrganisationForm(forms.ModelForm):
         widgets = {
             'organisation_a': autocomplete.ModelSelect2(
                 url='organisation_autocomplete',
-                attrs={'data-html': False}
+                attrs={'data-html': True}
             ),
             'organisation_b': autocomplete.ModelSelect2(
                 url='organisation_autocomplete',
-                attrs={'data-html': False}
+                attrs={'data-html': True}
             )
         }
 
