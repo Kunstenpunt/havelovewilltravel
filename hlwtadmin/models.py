@@ -12,6 +12,7 @@ import hmac
 
 from requests import post
 from datetime import datetime, timedelta, date
+import pytz
 from math import sqrt
 from collections import Counter
 import os
@@ -70,7 +71,7 @@ class GigFinderUrl(models.Model):
     gigfinder = models.ForeignKey("GigFinder", on_delete=models.PROTECT)
     url = models.URLField()
     last_confirmed_by_musicbrainz = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, 0))
-    last_synchronized = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, 0))
+    last_synchronized = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, 0, tzinfo=pytz.utc))
 
     def __str__(self):
         return self.url + " (" + str(self.artist) + ", " + str(self.gigfinder) + ")"

@@ -2,6 +2,7 @@ from hlwtadmin.models import Artist, GigFinderUrl, GigFinder, ConcertAnnouncemen
 
 from musicbrainzngs import set_useragent, search_artists, musicbrainz, get_artist_by_id
 from datetime import datetime
+import pytz
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -49,7 +50,7 @@ class Command(BaseCommand):
                 leecher_setlist.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
             if gfurl.gigfinder.name == "www.songkick.com" and gfurl.artist.exclude is not True:
                 leecher_songkick.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
-            gfurl.last_synchronized = datetime.now()
+            gfurl.last_synchronized = datetime.now(pytz.utc)
             gfurl.save(update_fields=['last_synchronized'])
 
 
