@@ -1,0 +1,15 @@
+type citycountries.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type gigfinders.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type genres.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type organisation_organisation_relation_types.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type organisation_types.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type latest_1.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type latest_2.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type latest_3.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type latest_4.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type latest_5.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type latest_6.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type latest_7.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type latest_8.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type latest_9.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
+type latest_10.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
