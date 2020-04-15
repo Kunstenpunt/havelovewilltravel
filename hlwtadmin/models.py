@@ -170,7 +170,7 @@ class ConcertAnnouncement(models.Model):
         return self.raw_venue.organisation is None
 
     def _create_new_unverified_organisation_and_relate_to_venue(self):
-        name_prop, stad, land, bron = self.raw_venue.raw_venue.split("|")
+        name_prop, stad, land, bron, *rest = self.raw_venue.raw_venue.split("|")
         name = name_prop if len(name_prop.strip()) > 0 else self.raw_venue.raw_venue
         country = Country.objects.filter(name=land).first()
         if not country:
@@ -263,7 +263,7 @@ class Concert(models.Model):
             "event_id": str(self.id),
             "titel": self.title,
             "titel_generated": self.title,
-            "datum": self.date.strftime("%Y/%m/%d") if isinstance(self.date, date) else self.date,
+            "datum": self.date.strftime("%Y/%m/%d") if isinstance(self.date, date) else self.date.replace("-", "/"),
             "artiest": rel_artiest.artist.name if rel_artiest else None,
             "artiest_merge_naam": rel_artiest.artist.name if rel_artiest else None,
             "artiest_mb_id": rel_artiest.artist.mbid if rel_artiest else None,
