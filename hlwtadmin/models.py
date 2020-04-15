@@ -253,7 +253,6 @@ class Concert(models.Model):
 
     def is_confirmed(self):
         for ca in ConcertAnnouncement.objects.filter(concert__id=self.id):
-            print(ca.recently_seen(), ca.frequently_seen())
             if ca.recently_seen() or ca.frequently_seen():
                 return True
 

@@ -131,6 +131,12 @@
                 <td>Is on exclude list</td>
                 <td>{{ artist.exclude }}</td>
             </tr>
+            {% for gigfinderurl in artist.gigfinderurl_set.all %}
+            <tr>
+                <td>{{ gigfinderurl.gigfinder }}</td>
+                <td>{{ gigfinderurl.last_confirmed_by_musicbrainz }}, {{ gigfinderurl.last_synchronized }}</td>
+            </tr>
+            {% endfor %}
         </table>
     </div>
 
