@@ -320,6 +320,14 @@ class Concert(models.Model):
 
 
 class Organisation(models.Model):
+    YEAR = 2
+    MONTH = 5
+    DAY = 8
+    PRECISION = (
+        (YEAR, 'Precise up to the year'),
+        (MONTH, 'Precise up to the month'),
+        (DAY, 'Precise up to the day')
+    )
     name = models.CharField(max_length=200)
     disambiguation = models.CharField(max_length=200, blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
@@ -327,7 +335,9 @@ class Organisation(models.Model):
     location = models.ForeignKey("Location", on_delete=models.PROTECT, blank=True, null=True)
     organisation_type = models.ManyToManyField("OrganisationType", blank=True)
     start_date = models.DateField(blank=True, null=True)
+    start_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
     end_date = models.DateField(blank=True, null=True)
+    end_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
     website = models.URLField(blank=True, null=True)
     verified = models.BooleanField(default=False, blank=True, null=True)
     genre = models.ManyToManyField("Genre", blank=True)
@@ -342,6 +352,12 @@ class Organisation(models.Model):
 
     def get_absolute_url(self):
         return reverse('organisation_detail', args=[str(self.id)])
+
+    def startdate(self):
+        return self.start_date.strftime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
+
+    def enddate(self):
+        return self.end_date.strftime("%Y/%m/%d"[0:self.end_date_precision]) if self.end_date else "?"
 
     class Meta:
         ordering = ['name']
@@ -455,15 +471,33 @@ class RelationConcertOrganisationType(models.Model):
 
 
 class RelationOrganisationOrganisation(models.Model):
+    YEAR = 2
+    MONTH = 5
+    DAY = 8
+    PRECISION = (
+        (YEAR, 'Precise up to the year'),
+        (MONTH, 'Precise up to the month'),
+        (DAY, 'Precise up to the day')
+    )
     organisation_a = models.ForeignKey("Organisation", on_delete=models.PROTECT, related_name='organisationa')
     organisation_b = models.ForeignKey("Organisation", on_delete=models.PROTECT, related_name='organisationb')
     start_date = models.DateField(blank=True, null=True)
+    start_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
     end_date = models.DateField(blank=True, null=True)
+    end_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
     relation_type = models.ManyToManyField("RelationOrganisationOrganisationType", blank=True)
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.organisation_a.name + " " + self.relation_type + " " + self.organisation_b.name + " (" + self.start_date.isoformat() + "-" + self.end_date.isoformat() + ")"
+        startdate = self.start_date.strftime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
+        enddate = self.end_date.strptime("%Y/%m/%d"[0:self.end_date_precision]) if self.end_date else "?"
+        return self.organisation_a.name + " " + self.relation_type + " " + self.organisation_b.name + " (" + startdate + "-" + enddate + ")"
+
+    def startdate(self):
+        return self.start_date.strftime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
+
+    def enddate(self):
+        return self.end_date.strptime("%Y/%m/%d"[0:self.end_date_precision]) if self.end_date else "?"
 
     def get_absolute_url(self):
         return reverse('relationorganisationorganisation_update', args=[str(self.id)])
@@ -477,15 +511,34 @@ class RelationOrganisationOrganisationType(models.Model):
 
 
 class RelationArtistArtist(models.Model):
+    YEAR = 2
+    MONTH = 5
+    DAY = 8
+    PRECISION = (
+        (YEAR, 'Precise up to the year'),
+        (MONTH, 'Precise up to the month'),
+        (DAY, 'Precise up to the day')
+    )
     artist_a = models.ForeignKey("Artist", on_delete=models.PROTECT, related_name='artista')
     artist_b = models.ForeignKey("Artist", on_delete=models.PROTECT, related_name='artistb')
     start_date = models.DateField(blank=True, null=True)
+    start_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
     end_date = models.DateField(blank=True, null=True)
+    end_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
     relation_type = models.ManyToManyField("RelationArtistArtistType", blank=True)
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.artist_a.name + " " + self.relation_type + " " + self.artist_b.name + " (" + self.start_date.isoformat() + "-" + self.end_date.isoformat() + ")"
+        startdate = self.start_date.strptime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
+        enddate = self.end_date.strptime("%Y/%m/%d"[0:self.end_date_precision]) if self.end_date else "?"
+        return self.artist_a.name + " " + self.relation_type + " " + self.artist_b.name + " (" + startdate + "-" + enddate + ")"
+
+    def startdate(self):
+        return self.start_date.strftime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
+
+    def enddate(self):
+        return self.end_date.strptime("%Y/%m/%d"[0:self.end_date_precision]) if self.end_date else "?"
+
 
     def get_absolute_url(self):
         return reverse('relationartistartist_update', args=[str(self.id)])

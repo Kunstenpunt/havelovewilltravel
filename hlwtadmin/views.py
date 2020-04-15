@@ -644,7 +644,7 @@ class GigfinderURLListView(ListView):
 class OrganisationForm(forms.ModelForm):
     class Meta:
         model = Organisation
-        fields = ['name', 'disambiguation', 'website', 'organisation_type', 'genre', 'address', 'location', 'verified', 'start_date', 'end_date', 'latitude', 'longitude', 'annotation', 'active', 'capacity']
+        fields = ['name', 'disambiguation', 'website', 'organisation_type', 'genre', 'address', 'location', 'verified', 'start_date', 'start_date_precision', 'end_date', 'end_date_precision', 'latitude', 'longitude', 'annotation', 'active', 'capacity']
         widgets = {
             'location': autocomplete.ModelSelect2(
                 url='location_autocomplete'
@@ -1064,13 +1064,15 @@ class RelationConcertArtistDelete(DeleteView):
 class RelationArtistArtistForm(forms.ModelForm):
     class Meta:
         model = RelationArtistArtist
-        fields = ['artist_a', 'artist_b', 'start_date', 'end_date', 'relation_type']
+        fields = ['artist_a', 'artist_b', 'start_date', 'start_date_precision', 'end_date', 'end_date_precision', 'relation_type']
         widgets = {
             'artist_a': autocomplete.ModelSelect2(
-                url='artist_autocomplete'
+                url='artist_autocomplete',
+                attrs={'data-html': True}
             ),
             'artist_b': autocomplete.ModelSelect2(
-                url='artist_autocomplete'
+                url='artist_autocomplete',
+                attrs={'data-html': True}
             )
         }
 
@@ -1103,7 +1105,7 @@ class RelationArtistArtistUpdate(UpdateView):
 
     def get_success_url(self):
         relation = get_object_or_404(RelationArtistArtist, pk=self.kwargs.get("pk"))
-        return reverse_lazy('artist_detail', kwargs={"pk": relation.artist_a.id})
+        return reverse_lazy('artist_detail', kwargs={"pk": relation.artist_a.mbid})
 
 
 class RelationArtistArtistDelete(DeleteView):
@@ -1120,7 +1122,7 @@ class RelationArtistArtistDelete(DeleteView):
 class RelationOrganisationOrganisationForm(forms.ModelForm):
     class Meta:
         model = RelationOrganisationOrganisation
-        fields = ['organisation_a', 'organisation_b', 'start_date', 'end_date', 'relation_type']
+        fields = ['organisation_a', 'organisation_b', 'start_date', 'start_date_precision', 'end_date', 'end_date_precision', 'relation_type']
         widgets = {
             'organisation_a': autocomplete.ModelSelect2(
                 url='organisation_autocomplete',
