@@ -112,6 +112,7 @@
                         is related to
                     {% endif %}
                     {{ organisation.name }}
+                    ({{ relation.startdate }} - {{ relation.enddate }})
                     {% if perms.hlwtadmin.can_update_relationorganisationorganisation %}<a href="{% url 'relationorganisationorganisation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
                     {% if perms.hlwtadmin.can_delete_relationorganisationorganisation %}<a href="{% url 'relationorganisationorganisation_delete' relation.id organisation.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
                 </li>
