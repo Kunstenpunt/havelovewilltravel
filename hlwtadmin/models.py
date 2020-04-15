@@ -382,8 +382,8 @@ class Location(models.Model):
     def __str__(self):
         return self.city + \
                (" (" + self.zipcode + ")" if self.zipcode else "") + \
-               (" [" + self.subcountry + "]" if self.subcountry and self.country.name != "Belgium" else "")# + \
-               #(", " + self.country.name if self.country else "No country")
+               (" [" + self.subcountry + "]" if self.subcountry and self.country.name != "Belgium" else "") + \
+               (", " + self.country.name if self.country else ", No country")
 
     def get_absolute_url(self):
         return reverse('location_detail', args=[str(self.id)])
