@@ -50,7 +50,7 @@ class Command(BaseCommand):
             if gfurl.gigfinder.name == "www.songkick.com" and gfurl.artist.exclude is not True:
                 leecher_songkick.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
             gfurl.last_synchronized = datetime.now()
-            gfurl.save(update_fields=['last_synchronize'])
+            gfurl.save(update_fields=['last_synchronized'])
 
 
 class PlatformLeecher(object):
@@ -60,14 +60,11 @@ class PlatformLeecher(object):
                 self.google_places_api_key = f.read().strip()
         except FileNotFoundError:
             self.google_places_api_key = os.environ.get('GOOGLE_PLACES_API_KEY').strip("'")
-        print("platform leecher api key google places", self.google_places_api_key)
 
     def get_lat_lon_for_venue(self, venue, city, country):
-        print("init locsearch", venue, city, country)
         url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}"
         venue_search = " ".join([venue, city, country])
         city_search = " ".join([city, country])
-        print("locsearch", url.format(venue_search, self.google_places_api_key))
         try:
             result = loads(get(url.format(venue_search, self.google_places_api_key)).text)
         except Exception as e:
@@ -80,7 +77,6 @@ class PlatformLeecher(object):
                 print("exception", e)
                 result = {"results": []}
         if len(result["results"]) > 0:
-            print("result found", result)
             if "types" in result["results"][0]:
                 if "locality" in result["results"][0]["types"] or "postal_code" in result["results"][0]["types"]:
                     city = result["results"][0]["name"]
@@ -88,7 +84,6 @@ class PlatformLeecher(object):
             else:
                 city = ", ".join(result["results"][0]["formatted_address"].split(", ")[1:-1])
                 country = result["results"][0]["formatted_address"].split(", ")[-1]
-            print("ready to send back")
             return {
                 "lat": result["results"][0]["geometry"]["location"]["lat"],
                 "lng": result["results"][0]["geometry"]["location"]["lng"],
@@ -96,7 +91,6 @@ class PlatformLeecher(object):
                 "country": country
             }
         else:
-            print("nothing found", result)
             return {"lat": None, "lng": None, "city": None, "country": None}
 
 
@@ -140,12 +134,9 @@ class FacebookScraper(PlatformLeecher):
                 r = f.read()
         soup = BeautifulSoup(r, 'html.parser')
         try:
-            print("looking for json ld")
             ld = loads(soup.find("script", {"type": "application/ld+json"}).text)
             datum = dateparse(ld["startDate"]).date()
-            print("moving to locsearch")
             location = self._get_location(ld)
-            print("location is", location)
             titel = ld["name"]
             event_data = {
                 "event_id": event_id,
@@ -157,7 +148,6 @@ class FacebookScraper(PlatformLeecher):
                 "longitude": location["lng"],
                 "titel": titel[0:199]
             }
-            print("event data", event_data)
         except AttributeError as e:
             print("error", e)
             event_data = {}
@@ -183,8 +173,6 @@ class FacebookScraper(PlatformLeecher):
         return loc_info
 
     def set_events_for_identifier(self, band, mbid, url):
-        print(band, mbid, url)
-
         urls = ["http://mobile.facebook" + "facebook".join(url.split("facebook")[1:]) + "/events"]
 
         for url in urls:
@@ -192,7 +180,6 @@ class FacebookScraper(PlatformLeecher):
 
             events = []
             for event_id in event_ids:
-                print("grabbing raw data for", event_id)
                 concert = self._get_event(event_id)
                 events.append(concert)
 
@@ -257,7 +244,6 @@ class BandsInTownLeecher(PlatformLeecher):
                     events = None
                 if events is not None:
                     while "errors" in events:
-                        print(events["errors"])
                         if "Rate limit exceeded" in events["errors"]:
                             print("one moment!")
                             sleep(60.0)
@@ -344,8 +330,7 @@ class SetlistFmLeecher(PlatformLeecher):
                 self.platform_access_granter = f.read()
         except FileNotFoundError:
             self.platform_access_granter = self.gf.api_key
-        self.platform = "www.setlist.fm" # base_url is www.setlist.fm/a/0/b-
-        print("setlistfm api", self.platform_access_granter)
+        self.platform = "www.setlist.fm"
 
     def set_events_for_identifier(self, band, mbid, url):
         events = []
@@ -442,8 +427,6 @@ class SongkickLeecher(PlatformLeecher):
         self.platform = "www.songkick.com"
         self.past_events_url = "http://api.songkick.com/api/3.0/artists/{0}/gigography.json?apikey={1}&page={2}"
         self.future_events_url = "http://api.songkick.com/api/3.0/artists/{0}/calendar.json?apikey={1}&page={2}"
-        print("songkick api", self.platform_access_granter)
-
 
     def set_events_for_identifier(self, band, mbid, url):
         artist_id, artist_name = url.split("/")[-1].split("-")[0], " ".join(url.split("/")[-1].split("-")[1:])
@@ -479,7 +462,6 @@ class SongkickLeecher(PlatformLeecher):
         if events:
             for concert in events:
                 if isinstance(concert, dict):
-                    print("songkick", concert)
                     concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
                     if not concertannouncement:
                         venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
@@ -523,7 +505,7 @@ class SongkickLeecher(PlatformLeecher):
             "datum": concertdate,
             "artiest": other["artist_name"],
             "artiest_id": str(other["artist_id"]),
-            "artiest_mb_naam": band,
+            "artiest_mb_naam": band.name,
             "artiest_mb_id": mbid,
             "stad": ",".join([i.strip() for i in event["location"]["city"].split(",")[0:-1]]),
             "land": event["location"]["city"].split(",")[-1].strip(),
