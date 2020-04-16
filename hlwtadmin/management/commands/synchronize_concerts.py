@@ -1,7 +1,7 @@
 from hlwtadmin.models import Artist, GigFinderUrl, GigFinder, ConcertAnnouncement, Venue
 
 from musicbrainzngs import set_useragent, search_artists, musicbrainz, get_artist_by_id
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 from django.core.management.base import BaseCommand, CommandError
@@ -40,8 +40,8 @@ class Command(BaseCommand):
         leecher_bit = BandsInTownLeecher()
         leecher_setlist = SetlistFmLeecher()
         leecher_songkick = SongkickLeecher()
-        for gfurl in GigFinderUrl.objects.all():
-            print(gfurl.artist, gfurl.artist.mbid, gfurl.url, gfurl.gigfinder.name)
+        for gfurl in GigFinderUrl.objects.filter(last_synchronized__lte=datetime.now(pytz.utc)-timedelta(days=6)):
+            print(gfurl.artist, gfurl.artist.mbid, gfurl.url, gfurl.gigfinder.name, gfurl.last_synchronized)
             if gfurl.gigfinder.name == "www.facebook.com" and gfurl.artist.exclude is not True:
                 leecher_fb.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
             if gfurl.gigfinder.name == "bandsintown.com" and gfurl.artist.exclude is not True:
