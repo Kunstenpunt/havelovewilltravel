@@ -284,7 +284,7 @@ class BandsInTownLeecher(PlatformLeecher):
                         ca.save()
                     else:
                         if concert["titel"] != concertannouncement.title:
-                            concertannouncement.title = concert["titel"][0:199]
+                            concertannouncement.title = concert["titel"][0:199].replace(u"\x00", '')
                         if concert["datum"] != concertannouncement.date:
                             concertannouncement.date = concert["datum"]
                         if concert["latitude"] != concertannouncement.latitude:
