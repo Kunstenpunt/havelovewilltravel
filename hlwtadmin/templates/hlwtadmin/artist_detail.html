@@ -103,14 +103,14 @@
         <ul>
             {% for relation in artist.artista.all %}
               <li>
-                  {{ artist.name }} {{ relation.relation_type.name }} <a href="{{ relation.artist_b.mbid }}">{{ relation.artist_b.name }}</a> ({{ relation.startdate }} - {{ relation.enddate }})
+                  {{ artist.name }} {{ relation.relation_type.all|join:", " }} <a href="{{ relation.artist_b.mbid }}">{{ relation.artist_b.name }}</a> ({{ relation.startdate }} - {{ relation.enddate }})
                   {% if perms.hlwtadmin.can_update_relationartistartist %}<a href="{% url 'relationartistartist_update' relation.id %}">[update relation]</a>{% endif %}
                   {% if perms.hlwtadmin.can_delete_relationartistartist %}<a href="{% url 'relationartistartist_delete' relation.id artist.mbid %}">[delete relation]</a>{% endif %}
               </li>
             {% endfor %}
             {% for relation in artist.artistb.all %}
               <li>
-                  <a href="{{ relation.artist_a.mbid }}">{{ relation.artist_a.name }}</a> {{ relation.relation_type.name }} {{ artist.name }} ({{ relation.startdate }} - {{ relation.enddate }})
+                  <a href="{{ relation.artist_a.mbid }}">{{ relation.artist_a.name }}</a> {{ relation.relation_type.all|join:", " }} {{ artist.name }} ({{ relation.startdate }} - {{ relation.enddate }})
                   {% if perms.hlwtadmin.can_update_relationartistartist %}<a href="{% url 'relationartistartist_update' relation.id %}">[update relation]</a>{% endif %}
                   {% if perms.hlwtadmin.can_delete_relationartistartist %}<a href="{% url 'relationartistartist_delete' relation.id artist.mbid %}">[delete relation]</a>{% endif %}
               </li>
