@@ -6,6 +6,7 @@
     <form method="get" action="{% url 'locations' %}">
         <p>Filter:
             <select id="filter" name="filter">
+                <option value="">No selection</option>
                 {% for country in countries %}
                     <option value="{{ country.name }}"{% if country.name == filter %} selected {% endif %}>{{ country.name }}</option>
                 {% endfor %}
@@ -16,6 +17,10 @@
                 <option value="city">Order by city name</option>
                 <option value="verified">Order by verified status</option>
             </select>
+        </p>
+        <p>
+            <label for="filter">Search term:</label>
+            <input type="text" id="filtersearch" name="filtersearch"/>
         </p>
         <p><input type="submit" name="submit" value="submit"/></p>
     </form>

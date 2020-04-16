@@ -613,17 +613,24 @@ class LocationListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter'] = self.request.GET.get('filter', None)
-        context['orderby'] = self.request.GET.get('orderby', 'city  ')
-        context['num_locations'] = Location.objects.filter(country__name=context['filter']).exclude(organisation__location=None).count()
+        context['filter'] = self.request.GET.get('filter', '')
+        context['filtersearch'] = self.request.GET.get('filtersearch', '')
+        context['num_locations'] = Location.objects.filter(city__icontains=context['filtersearch']).filter(country__name=context['filter']).exclude(organisation__location=None).count()
         context['countries'] = Country.objects.all()
         return context
 
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', None)
+        filter_search = self.request.GET.get('filtersearch', None)
         order = self.request.GET.get('orderby', 'country')
-        new_context = Location.objects.filter(country__name=filter_val,).exclude(organisation__location=None).order_by(order)
-        return new_context
+        if filter_search and filter_val:
+            return Location.objects.filter(city__unaccent__icontains=filter_search).filter(country__name=filter_val).exclude(organisation__location=None).order_by(order)
+        if not filter_search and filter_val:
+            return Location.objects.filter(country__name=filter_val).exclude(organisation__location=None).order_by(order)
+        if filter_search and not filter_val:
+            return Location.objects.filter(city__unaccent__icontains=filter_search).exclude(organisation__location=None).order_by(order)
+        if not filter_search and not filter_val:
+            return Location.objects.exclude(organisation__location=None).order_by(order)
 
 
 class SparseLocationListView(ListView):
