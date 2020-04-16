@@ -17,6 +17,22 @@ from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location
     RelationArtistArtist, OrganisationsMerge, ConcertsMerge, LocationsMerge, GigFinderUrl
 
 
+class SubcountryAutocompleteFromList(autocomplete.Select2ListView):
+    def get_list(self):
+        qs = Location.objects.all()
+        print(qs)
+
+        country = self.forwarded.get('country', None)
+        print(country)
+
+        if country:
+            qs = qs.filter(country=country)
+
+        if self.q:
+            qs = qs.filter(subcountry__unaccent__icontains=self.q)
+        return set(qs.values_list("subcountry"))
+
+
 class ConcertAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Concert.objects.all()
@@ -563,11 +579,15 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
-        fields = ['city', 'zipcode', 'subcountry', 'country', 'latitude', 'longitude', 'verified']
+        fields = ['country', 'subcountry', 'city', 'zipcode', 'latitude', 'longitude', 'verified']
         widgets = {
             'country': autocomplete.ModelSelect2(
-                url='country_autocomplete'
+                url='country_autocomplete',
             ),
+            'subcountry': autocomplete.ListSelect2(
+                url='subcountry_autocomplete_list',
+                forward=['country']
+            )
         }
 
 
