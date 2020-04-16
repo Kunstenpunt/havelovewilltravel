@@ -20,17 +20,15 @@ from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location
 class SubcountryAutocompleteFromList(autocomplete.Select2ListView):
     def get_list(self):
         qs = Location.objects.all()
-        print(qs)
 
         country = self.forwarded.get('country', None)
-        print(country)
 
         if country:
             qs = qs.filter(country=country)
 
         if self.q:
             qs = qs.filter(subcountry__unaccent__icontains=self.q)
-        return set(qs.values_list("subcountry"))
+        return set(qs.values_list("subcountry", flat=True))
 
 
 class ConcertAutocomplete(autocomplete.Select2QuerySetView):
