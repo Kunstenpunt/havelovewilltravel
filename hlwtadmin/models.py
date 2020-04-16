@@ -118,7 +118,7 @@ class ConcertAnnouncement(models.Model):
         return timedelta(days=8) > (datetime.today().date() - self.last_seen_on)
 
     def frequently_seen(self):
-        return self.seen_count > 1
+        return self.seen_count > 3
 
     def save(self, *args, **kwargs):
         if not self.id:
