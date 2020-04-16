@@ -304,7 +304,7 @@ class BandsInTownLeecher(PlatformLeecher):
             "land": (concert["venue"]["country"]).strip(),
             "stad": stad,
             "venue": (concert["venue"]["name"]).strip() if "name" in concert["venue"] else None,
-            "titel": (str(band) + " - " + str((concert["venue"]["name"]).strip()) if "name" in concert["venue"] else None) + "," + dateparse(concert["datetime"]).date().isoformat() + (concert["description"]).strip(),
+            "titel": (str(band) + " - " + str((concert["venue"]["name"]).strip()) if "name" in concert["venue"] else "Venue unknown") + "," + dateparse(concert["datetime"]).date().isoformat() + (concert["description"]).strip(),
             "artiest": band,
             "artiest_mb_naam": band,
             "artiest_id": "bandsintown_" + str(concert["artist_id"]),
