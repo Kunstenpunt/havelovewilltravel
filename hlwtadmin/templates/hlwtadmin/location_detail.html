@@ -7,6 +7,7 @@
     <div style="margin-left:20px;margin-top:20px">
         <p>Zipcode: {{ location.zipcode }}</p>
         <p>GPS: {{ location.latitude }}, {{ location.longitude }}</p>
+        <p>Country: <a href="{% url 'locations' %}?filter={{ location.country.name }}&orderby=city" >{{ location.country.name }}</a></p>
     </div>
 
     <div style="margin-left:20px;margin-top:20px">
