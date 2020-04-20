@@ -575,6 +575,14 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
 
 
 class LocationForm(forms.ModelForm):
+    subcountry = autocomplete.Select2ListCreateChoiceField(
+        choice_list=Location.objects.all().values_list("subcountry", flat=True),
+        widget=autocomplete.ListSelect2(
+            url='subcountry_autocomplete_list',
+            forward=['country'],
+        ),
+    )
+
     class Meta:
         model = Location
         fields = ['country', 'subcountry', 'city', 'zipcode', 'latitude', 'longitude', 'verified']
@@ -582,10 +590,6 @@ class LocationForm(forms.ModelForm):
             'country': autocomplete.ModelSelect2(
                 url='country_autocomplete',
             ),
-            'subcountry': autocomplete.ListSelect2(
-                url='subcountry_autocomplete_list',
-                forward=['country']
-            )
         }
 
 
