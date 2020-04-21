@@ -27,5 +27,6 @@ type citycountries.json | heroku run --no-tty -a hlwtadmin -- python manage.py l
 
 
 ## Schedule background tasks via Heroku Scheduler
-- python manage.py synchronize_with_musicbrainz
-- python manage.py synchronze_concerts
+- python manage.py synchronize_with_musicbrainz (run on friday evening)
+- python manage.py synchronize_concerts (run saturday morning)
+- python manage.py clean_duplicated_relations (run every night)
