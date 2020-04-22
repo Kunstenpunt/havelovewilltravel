@@ -8,7 +8,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True):
+        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True):
             print("working on", concertannouncement)
             masterconcert = self._exists_non_cancelled_masterconcert_on_date_with_artist(concertannouncement)
             if masterconcert:
