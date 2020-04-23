@@ -152,6 +152,7 @@ def index(request):
         'num_organisations': (Organisation.objects.count()),
         'num_venues': Venue.objects.count(),
         'num_announcements': ConcertAnnouncement.objects.count(),
+        'num_locations': Location.objects.count(),
         'num_concertannouncements_without_concerts': ConcertAnnouncement.objects.filter(concert__isnull=True).count(),
         'num_concerts_without_artists': Concert.objects.filter(relationconcertartist__artist__isnull=True).count(),
         'num_concerts_without_organities': Concert.objects.filter(relationconcertorganisation__organisation__isnull=True).count(),
