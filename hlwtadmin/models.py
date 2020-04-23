@@ -287,31 +287,31 @@ class Concert(models.Model):
                 data["source_" + str(i)] = source
                 data["source_link_" + str(i)] = source_link
 
-            # message = bytes(dumps(data), "utf-8")
-            #
-            # print(message)
-            #
-            # try:
-            #     with open("hlwtadmin/mrhenrysecret.txt", "rb") as f:
-            #         secret = bytes(f.read().strip())
-            # except FileNotFoundError:
-            #     secret = bytes(os.environ.get('MR_HENRY_API_KEY').strip("'"), "utf-8")
-            #
-            # signature = binascii.b2a_hex(hmac.new(secret, message, digestmod=hashlib.sha256).digest())
-            #
-            # base_url = "https://have-love-will-travel.herokuapp.com/"
-            # url = base_url + "import-json"
-            #
-            # params = {"signature": signature, "test": "test" in args}
-            # headers = {"Content-Type": "application/json"}
-            #
-            # r = None
-            # try:
-            #     r = post(url, data=message, params=params, headers=headers)
-            #     if r.status_code != 200:
-            #         print("issue with sending this record to the api", message, r.status_code, r.headers, r.content)
-            # except Exception as e:
-            #     print(e)
+            message = bytes(dumps(data), "utf-8")
+
+            print(message)
+
+            try:
+                with open("hlwtadmin/mrhenrysecret.txt", "rb") as f:
+                    secret = bytes(f.read().strip())
+            except FileNotFoundError:
+                secret = bytes(os.environ.get('MR_HENRY_API_KEY').strip("'"), "utf-8")
+
+            signature = binascii.b2a_hex(hmac.new(secret, message, digestmod=hashlib.sha256).digest())
+
+            base_url = "https://have-love-will-travel.herokuapp.com/"
+            url = base_url + "import-json"
+
+            params = {"signature": signature, "test": "test" in args}
+            headers = {"Content-Type": "application/json"}
+
+            r = None
+            try:
+                r = post(url, data=message, params=params, headers=headers)
+                if r.status_code != 200:
+                    print("issue with sending this record to the api", message, r.status_code, r.headers, r.content)
+            except Exception as e:
+                print(e)
         super(Concert, self).save(*args, **kwargs)
 
     class Meta:
