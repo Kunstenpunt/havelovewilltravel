@@ -117,7 +117,7 @@
                         <a title="{{ relation.title }}" href="{% url 'concertannouncement_detail' relation.id %}">
                         {{ relation.title|truncatechars:50 }}
                         </a>
-                        {% if ca.ignore %}🙈{% endif %}
+                        {% if relation.ignore %}🙈{% endif %}
                         {% if relation.recently_seen is not True %}
                             {% if relation.gigfinder.name != "www.setlist.fm" %}
                                 {% if relation.frequently_seen is not True %}

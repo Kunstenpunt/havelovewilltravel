@@ -147,9 +147,9 @@ def index(request):
 
     # Generate counts of some of the main objects
     context = {
-        'num_concerts': (Concert.objects.all().count()),
-        'num_artists': (Artist.objects.count()),
-        'num_organisations': (Organisation.objects.count()),
+        'num_concerts': Concert.objects.all().count(),
+        'num_artists': Artist.objects.count(),
+        'num_organisations': Organisation.objects.count(),
         'num_venues': Venue.objects.count(),
         'num_announcements': ConcertAnnouncement.objects.count(),
         'num_locations': Location.objects.count(),
@@ -516,7 +516,7 @@ class ArtistListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
-        context['num_artists'] = Artist.objects.filter(name__unaccent__icontains=context['filter'])
+        context['num_artists'] = Artist.objects.filter(name__unaccent__icontains=context['filter']).count()
         return context
 
 
