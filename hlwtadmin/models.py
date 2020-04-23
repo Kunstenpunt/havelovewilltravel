@@ -262,7 +262,7 @@ class Concert(models.Model):
             "event_id": str(self.id),
             "titel": self.title,
             "titel_generated": self.title,
-            "datum": self.date.strftime("%Y/%m/%d") if isinstance(self.date, date) else self.date.replace("-", "/"),
+            "datum": self.date.strftime("%Y/%m/%d") if isinstance(self.date, date) else self.date.replace("-", "/") if self.date else None,
             "artiest": rel_artiest.artist.name if rel_artiest else None,
             "artiest_merge_naam": rel_artiest.artist.name if rel_artiest else None,
             "artiest_mb_id": rel_artiest.artist.mbid if rel_artiest else None,
