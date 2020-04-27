@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import pytz
 
 from django.core.management.base import BaseCommand, CommandError
+from django.db.utils import DatabaseError
 
 from time import sleep
 
@@ -40,7 +41,7 @@ class Command(BaseCommand):
         leecher_bit = BandsInTownLeecher()
         leecher_setlist = SetlistFmLeecher()
         leecher_songkick = SongkickLeecher()
-        for gfurl in GigFinderUrl.objects.filter(last_synchronized__lte=datetime.now(pytz.utc)-timedelta(days=6)):
+        for gfurl in GigFinderUrl.objects.filter(last_synchronized__lte=datetime.now(pytz.utc)-timedelta(days=4)):
             print(gfurl.artist, gfurl.artist.mbid, gfurl.url, gfurl.gigfinder.name, gfurl.last_synchronized)
             if gfurl.gigfinder.name == "www.facebook.com" and gfurl.artist.exclude is not True:
                 leecher_fb.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
@@ -51,7 +52,10 @@ class Command(BaseCommand):
             if gfurl.gigfinder.name == "www.songkick.com" and gfurl.artist.exclude is not True:
                 leecher_songkick.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
             gfurl.last_synchronized = datetime.now(pytz.utc)
-            gfurl.save(update_fields=['last_synchronized'])
+            try:
+                gfurl.save(update_fields=['last_synchronized'])
+            except DatabaseError:
+                pass
 
 
 class PlatformLeecher(object):
