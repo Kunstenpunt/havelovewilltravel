@@ -17,9 +17,6 @@ A more complete description of the data structure is provided in the Wiki [https
 - heroku run python manage.py migrate -a hlwtadmin
 - heroku run python manage.py createsuperuser -a hlwtadmin
 
-## Prepopulate
-type citycountries.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && type gigfinders.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && - type genres.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && - type organisation_organisation_relation_types.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && - type organisation_types.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && type latest_1.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && type latest_2.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && type latest_3.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && type latest_4.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && type latest_5.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && type latest_6.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && type latest_7.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && type latest_8.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && type latest_9.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json - && type latest_10.json | heroku run --no-tty -a hlwtadmin -- python manage.py loaddata --format=json -
-
 ## Settings
 - 'provide api keys and base_urls in /admin for gigfinders'
 - set GOOGLE_PLACES_API_KEY in environment variable
@@ -27,6 +24,6 @@ type citycountries.json | heroku run --no-tty -a hlwtadmin -- python manage.py l
 
 
 ## Schedule background tasks via Heroku Scheduler
-- $ if [ "$(date +%u)" -lt 6 ]; then python manage.py synchronize_with_musicbrainz; fi
-- $ if [ "$(date +%u)" -gt 5 ]; then python manage.py synchronize_concerts; fi
+- $ if [ "$(date +%u)" = 4 ]; then python manage.py synchronize_with_musicbrainz; fi # synchronize musicbrainz on thursday evening
+- $ if [ "$(date +%u)" -gt 4 ]; then python manage.py synchronize_concerts; fi # synchronize concerts in the weekend, on friday, saturday and sunday evening
 - $ python manage.py clean_duplicated_relations
