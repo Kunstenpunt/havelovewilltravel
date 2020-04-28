@@ -356,6 +356,7 @@ class RecentlyAddedConcertListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['num_concerts'] = Concert.objects.exclude(verified=True).exclude(ignore=True).order_by('-created_at').count()
         return context
 
 
@@ -368,6 +369,7 @@ class UpcomingConcertListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['num_concerts'] = Concert.objects.filter(date__gte=datetime.now().date()).order_by('date', 'relationconcertorganisation__organisation__location__country').count()
         return context
 
 
