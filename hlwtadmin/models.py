@@ -256,7 +256,8 @@ class Concert(models.Model):
                 return True
 
     def save(self, *args, **kwargs):
-        if self.id:
+        send = False
+        if self.id and send:
             rel_artiest = RelationConcertArtist.objects.filter(concert=self).first()
             rel_organisation = RelationConcertOrganisation.objects.filter(concert=self).first()
             data = {
