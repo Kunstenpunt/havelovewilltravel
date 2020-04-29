@@ -60,6 +60,7 @@
       <li><a href="{% url 'concertannouncements' %}">Announcements wo/ concert</a> ({{ num_concertannouncements_without_concerts }})</li>
       <li><a href="{% url 'artistless_concerts' %}">Concerts wo/ artists</a> ({{ num_concerts_without_artists }})</li>
       <li><a href="{% url 'organisationless_concerts' %}">Concerts wo/ organisations</a> ({{ num_concerts_without_organities }})</li>
+      <li><a href="{% url 'concerts_with_multiple_organisations_in_different_countries' %}">Concerts with multiple organisations in different countries</a></li>
       <li><a href="{% url 'concerts_without_announcements' %}">Concerts wo/ announcements</a> ({{ num_concerts_without_announcements }})</li>
       <li><a href="{% url 'sparsevenues' %}">Venues wo/ organisation</a> ({{ num_rawvenues_without_organities }})</li>
       <li><a href="{% url 'sparse_organisations' %}">Organisations wo/ venues</a> ({{ num_organities_without_rawvenues }})</li>

@@ -2,7 +2,7 @@
 
 {% block content %}
   <h1>Concert List</h1>
-
+  {% if request.path == '/hlwtadmin/concerts/'%}
     <form method="get" action="{% url 'concerts' %}">
         <p>
             <label for="filter_start">From:</label>
@@ -12,6 +12,7 @@
         </p>
         <p><input type="submit" name="submit" value="submit"/></p>
     </form>
+  {% endif %}
 
   {% if concert_list %}
   <table border="1">
