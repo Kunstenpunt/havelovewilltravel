@@ -59,6 +59,7 @@ class Command(BaseCommand):
         for org in Organisation.objects.annotate(num_venues=Count('venue__raw_location', distinct=True)).filter(num_venues__gte=2):
             venuelocs = set([self.norm(loc) for loc in org.venue_set.all().values_list('raw_location', flat=True)])
             if len(venuelocs) > 1:
+                count += 1
                 print(count + 1, org, org.pk)
                 # print("\t", venuelocs)
                 # print("\t\t", org.venue_set.all())
