@@ -689,7 +689,7 @@ class OrganisationListView(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.filter(venue__isnull=True).filter(verified=False)
+        return Organisation.objects.filter(venue__isnull=True).filter(relationconcertorganisation__organisation=None).filter(verified=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
