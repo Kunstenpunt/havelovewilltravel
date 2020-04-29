@@ -1,4 +1,4 @@
-from hlwtadmin.models import Artist, GigFinderUrl, GigFinder, ConcertAnnouncement, Venue, Organisation, RelationConcertOrganisation
+from hlwtadmin.models import Artist, GigFinderUrl, GigFinder, ConcertAnnouncement, Venue, Organisation, RelationConcertOrganisation, Concert, RelationConcertArtist
 
 from musicbrainzngs import set_useragent, search_artists, musicbrainz, get_artist_by_id
 from datetime import datetime
@@ -58,12 +58,23 @@ class Command(BaseCommand):
         return self.strip_accents(city.lower()), country
 
     def handle(self, *args, **options):
-        count = 0
-        for org in Organisation.objects.annotate(num_venues=Count('venue__raw_location', distinct=True)).filter(num_venues__gte=2):
-            venuelocs = set([self.norm(loc) for loc in org.venue_set.all().values_list('raw_location', flat=True)])
-            if len(venuelocs) > 1:
-                count += 1
-                RelationConcertOrganisation.objects.filter(organisation=org).delete()
-                for venue in org.venue_set.all():
-                    venue.organisation = None
-                    venue.save()
+        # count = 0
+        # for org in Organisation.objects.annotate(num_venues=Count('venue__raw_location', distinct=True)).filter(num_venues__gte=2):
+        #     venuelocs = set([self.norm(loc) for loc in org.venue_set.all().values_list('raw_location', flat=True)])
+        #     if len(venuelocs) > 1:
+        #         count += 1
+        #         RelationConcertOrganisation.objects.filter(organisation=org).delete()
+        #         for venue in org.venue_set.all():
+        #             venue.organisation = None
+        #             venue.save()
+
+        for concert in Concert.objects.annotate(num_countries=Count('relationconcertorganisation__organisation__location__country', distinct=True)).filter(num_countries__gte=2):
+            print(concert, concert.pk)
+            input()
+            for ca in concert.concertannouncement_set.all():
+                print(ca)
+                ca.concert = None
+                ca.save()
+            RelationConcertOrganisation.objects.filter(concert=concert).delete()
+            RelationConcertArtist.objects.filter(concert=concert).delete()
+
