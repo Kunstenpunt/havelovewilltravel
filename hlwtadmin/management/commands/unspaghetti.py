@@ -43,6 +43,9 @@ class Command(BaseCommand):
             "The Netherlands": "NL",
             "Londen": "London",
             "Engeland": "GB",
+            "Frankfurt Am Main": "Frankfurt",
+            "Cournon-D'Auvergne": "Cournon",
+            "Cournon D'Auvergne": "Cournon",
         }
         country = loc.split("|")[-2]
         country = translate[country] if country in translate else country
@@ -60,14 +63,7 @@ class Command(BaseCommand):
             venuelocs = set([self.norm(loc) for loc in org.venue_set.all().values_list('raw_location', flat=True)])
             if len(venuelocs) > 1:
                 count += 1
-                print(count + 1, org, org.pk)
-                # print("\t", venuelocs)
-                # print("\t\t", org.venue_set.all())
-                # split = input("Should I split this?")
-                # if split == "y":
-                #     RelationConcertOrganisation.objects.filter(organisation=org).delete()
-                #     for venue in org.venue_set.all():
-                #         venue.organisation = None
-                #         venue.save()
-                print("\n---\n\n")
-        print(count)
+                RelationConcertOrganisation.objects.filter(organisation=org).delete()
+                for venue in org.venue_set.all():
+                    venue.organisation = None
+                    venue.save()
