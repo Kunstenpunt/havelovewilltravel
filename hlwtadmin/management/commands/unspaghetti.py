@@ -69,10 +69,7 @@ class Command(BaseCommand):
         #             venue.save()
 
         for concert in Concert.objects.annotate(num_countries=Count('relationconcertorganisation__organisation__location__country', distinct=True)).filter(num_countries__gte=2):
-            print(concert, concert.pk)
-            input()
             for ca in concert.concertannouncement_set.all():
-                print(ca)
                 ca.concert = None
                 ca.save()
             RelationConcertOrganisation.objects.filter(concert=concert).delete()
