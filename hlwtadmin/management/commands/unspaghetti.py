@@ -9,12 +9,16 @@ from time import sleep
 
 from django.db.models import Avg, Count
 
-import pycountry
+import pycountry, unicodedata
 
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
         pass
+
+    def strip_accents(self, s):
+        return ''.join(c for c in unicodedata.normalize('NFD', s)
+                       if unicodedata.category(c) != 'Mn')
 
     def norm(self, loc):
 
@@ -38,7 +42,7 @@ class Command(BaseCommand):
             pass
         city = loc.split("|")[-3]
         city = translate[city] if city in translate else city
-        return city, country
+        return self.strip_accents(city.lower()), country
 
     def handle(self, *args, **options):
         count = 0
