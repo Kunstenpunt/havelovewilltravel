@@ -13,6 +13,8 @@ class Command(BaseCommand):
             for ca in ConcertAnnouncement.objects.filter(concert=concert):
                 ca.concert = None
                 ca.save()
+            for rel in RelationConcertOrganisation.objects.filter(concert=concert):
+                rel.delete()
             for rel in RelationConcertArtist.objects.filter(concert=concert):
                 rel.delete()
             concert.delete()
