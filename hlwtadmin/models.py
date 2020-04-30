@@ -129,7 +129,8 @@ class ConcertAnnouncement(models.Model):
 
     def most_likely_clean_location(self):
         loclist = [venue.organisation.location for venue in Venue.objects.filter(raw_location=self.raw_venue.raw_location).exclude(organisation=None)]
-        return Counter(loclist).most_common(1)[0][0]
+        if len(loclist) > 0:
+            return Counter(loclist).most_common(1)[0][0]
 
     def save(self, *args, **kwargs):
         if not self.id:
