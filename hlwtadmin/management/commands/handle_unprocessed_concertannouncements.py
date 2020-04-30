@@ -53,9 +53,10 @@ class Command(BaseCommand):
 
     @staticmethod
     def _relate_organisation_related_to_masterconcert_to_venue(self, masterconcert):
-        org = RelationConcertOrganisation.objects.filter(concert=masterconcert)[0].organisation  # TODO what if several organisations connected to masterconcert?
-        self.raw_venue.organisation = org
-        self.raw_venue.save()
+        org = RelationConcertOrganisation.objects.filter(concert=masterconcert)
+        if org:
+            self.raw_venue.organisation = org.organisation
+            self.raw_venue.save()
 
     @staticmethod
     def _venue_is_not_related_to_organisation(self):
