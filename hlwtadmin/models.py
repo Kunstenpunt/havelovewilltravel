@@ -15,6 +15,7 @@ from datetime import datetime, timedelta, date
 import pytz
 from math import sqrt
 import os
+from collections import Counter
 
 
 # Create your models here.
@@ -126,6 +127,10 @@ class ConcertAnnouncement(models.Model):
             return True
         return False
 
+    def most_likely_clean_location(self):
+        loclist = [venue.organisation.location for venue in Venue.objects.filter(raw_location=self.raw_venue.raw_location).exclude(organisation=None)]
+        return Counter(loclist).most_common(1)[0][0]
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.masterconcert = self._exists_non_cancelled_masterconcert_on_date_with_artist()
@@ -211,6 +216,9 @@ class Venue(models.Model):
 
     def __str__(self):
         return self.raw_venue
+
+    def clean_location(self):
+        return self.organisation.location
 
     def get_absolute_url(self):
         return reverse('venue_detail', args=[str(self.id)])

@@ -14,6 +14,7 @@
         <p>Venue: {% if concertannouncement.raw_venue %} <a href="{% url 'venue_detail' concertannouncement.raw_venue.id %}">{{ concertannouncement.raw_venue }} </a> {% endif %}</p>
         <p>GPS: {{ concertannouncement.latitude }}, {{ concertannouncement.longitude }}</p>
         <p>Count seen: {{ concertannouncement.seen_count }}</p>
+        <p>Most likely location: {{ concertannouncement.most_likely_clean_location}}</p>
     </div>
 
     <div style="margin-left:20px;margin-top:20px">
