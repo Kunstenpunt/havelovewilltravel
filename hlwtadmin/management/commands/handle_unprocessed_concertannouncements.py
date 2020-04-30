@@ -13,7 +13,6 @@ class Command(BaseCommand):
             masterconcert = self._exists_non_cancelled_masterconcert_on_date_with_artist(concertannouncement)
             if masterconcert:
                 print("found a masterconcert", masterconcert, masterconcert.pk)
-                input()
                 if masterconcert.title == "nan":
                     masterconcert.title = concertannouncement.title
                     masterconcert.save()
