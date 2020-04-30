@@ -128,13 +128,14 @@ class ConcertAnnouncement(models.Model):
         return False
 
     def most_likely_clean_location(self):
-        loclist = [venue.organisation.location for venue in Venue.objects.filter(raw_location=self.raw_venue.raw_location).exclude(organisation=None)]
-        if len(loclist) > 0:
-            return Counter(loclist).most_common(1)[0][0]
-        else:
-            country = Country.objects.filter(name=self.raw_venue.raw_location.split("|")[-2]).first()
-            location = Location.objects.filter(country=country).filter(city=self.raw_venue.raw_location.split("|")[-3]).first()
-            return location
+        if not "None|None" in self.raw_venue.raw_location:
+            loclist = [venue.organisation.location for venue in Venue.objects.filter(raw_location=self.raw_venue.raw_location).exclude(organisation=None)]
+            if len(loclist) > 0:
+                return Counter(loclist).most_common(1)[0][0]
+            else:
+                country = Country.objects.filter(name=self.raw_venue.raw_location.split("|")[-2]).first()
+                location = Location.objects.filter(country=country).filter(city=self.raw_venue.raw_location.split("|")[-3]).first()
+                return location
 
     def save(self, *args, **kwargs):
         if not self.id:

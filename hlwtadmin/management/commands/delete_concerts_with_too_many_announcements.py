@@ -9,7 +9,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for concert in Concert.objects.annotate(num_ca=Count('concertannouncement')).filter(num_ca__gt=50):
+        for concert in Concert.objects.annotate(num_ca=Count('concertannouncement')).filter(num_ca=0):
             print(concert.id, concert, concert.date)
             RelationConcertOrganisation.objects.filter(concert=concert).delete()
             RelationConcertArtist.objects.filter(concert=concert).delete()
