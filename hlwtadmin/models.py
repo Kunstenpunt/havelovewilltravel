@@ -218,7 +218,7 @@ class Venue(models.Model):
         return self.raw_venue
 
     def clean_location(self):
-        return self.organisation.location
+        return self.organisation.location if self.organisation else None
 
     def get_absolute_url(self):
         return reverse('venue_detail', args=[str(self.id)])
