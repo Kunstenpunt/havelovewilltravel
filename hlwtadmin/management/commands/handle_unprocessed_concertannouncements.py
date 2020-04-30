@@ -53,7 +53,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def _relate_organisation_related_to_masterconcert_to_venue(self, masterconcert):
-        org = RelationConcertOrganisation.objects.filter(concert=masterconcert)
+        org = RelationConcertOrganisation.objects.filter(concert=masterconcert).first()
         if org:
             self.raw_venue.organisation = org.organisation
             self.raw_venue.save()
