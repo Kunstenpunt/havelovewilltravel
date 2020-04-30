@@ -163,7 +163,7 @@ class ConcertAnnouncement(models.Model):
 
     def _exists_non_cancelled_masterconcert_on_date_with_artist(self):
         try:
-            return Concert.objects.filter(date=self.date).filter(relationconcertartist__artist=self.artist)[0]  # TODO what if multiple masterconcerts
+            return Concert.objects.filter(date=self.date).exclude(ignore=True).exclude(cancelled=True).filter(relationconcertartist__artist=self.artist).filter(relationconcertorganisation__organisation__location=self.most_likely_clean_location()).first()
         except IndexError:
             return None
 
