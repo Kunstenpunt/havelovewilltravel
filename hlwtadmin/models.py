@@ -132,8 +132,8 @@ class ConcertAnnouncement(models.Model):
         if len(loclist) > 0:
             return Counter(loclist).most_common(1)[0][0]
         else:
-            country = Country.objects.filter(name=self.raw_venue.split("|")[-2]).first()
-            location = Location.objects.filter(country=country).filter(city=self.raw_venue.split("|")[-3]).first()
+            country = Country.objects.filter(name=self.raw_venue.raw_location.split("|")[-2]).first()
+            location = Location.objects.filter(country=country).filter(city=self.raw_venue.raw_location.split("|")[-3]).first()
             return location
 
     def save(self, *args, **kwargs):
