@@ -114,10 +114,17 @@ class ConcertAnnouncement(models.Model):
         return dist > 0.01
 
     def recently_seen(self):
-        return timedelta(days=8) > (datetime.today().date() - self.last_seen_on)
+        return timedelta(days=30) > (datetime.today().date() - self.last_seen_on)
 
     def frequently_seen(self):
         return self.seen_count > 3
+
+    def deleted(self):
+        if self.gigfinder.name == "www.setlist.fm" and not self.recently_seen():
+            return True
+        elif self.ignore:
+            return True
+        return False
 
     def save(self, *args, **kwargs):
         if not self.id:
