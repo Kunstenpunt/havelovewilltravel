@@ -128,7 +128,7 @@ class ConcertAnnouncement(models.Model):
         return False
 
     def most_likely_clean_location(self):
-        if not ("None|None" in self.raw_venue.raw_location or self.raw_venue.non_assignable):
+        if not ("None|None" in self.raw_venue.raw_location or "||facebook" in self.raw_venue.raw_location or self.raw_venue.non_assignable):
             loclist = [venue.organisation.location for venue in Venue.objects.filter(raw_location=self.raw_venue.raw_location).exclude(organisation=None)]
             if len(loclist) > 0:
                 return Counter(loclist).most_common(1)[0][0]
