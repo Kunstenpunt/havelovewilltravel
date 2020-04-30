@@ -1,31 +1,20 @@
 {% extends "base_generic.html" %}
 
+{% block title %}Concert: {{ concert.title }}{% endblock %}
+
 {% block content %}
     {% if concert.cancelled %}<h1 style="text-decoration: line-through;">{% else %}<h1>{% endif %}
-        {% block title %}Concert: {{ concert.title }}{% endblock %}
+        Concert
         {% if concert.verified %}{% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
         {% if not concert.is_confirmed and not concert.verified %}(Unconfirmed){% endif %}
     </h1>
+    <hr>
 
     <div style="margin-left:20px;margin-top:20px">
-        <table border="1">
-            <tr>
-                <td>Datum</td>
-                <td>{{ concert.date }}</td>
-            </tr>
-            <tr>
-                <td>Genre</td>
-                <td>{{ concert.genre.all|join:","}}</td>
-            </tr>
-            <tr>
-                <td>GPS</td>
-                <td>{{ concert.latitude }}, {{ concert.longitude }}</td>
-            </tr>
-            <tr>
-                <td>Annotation</td>
-                <td>{{ concert.annotation }}</td>
-            </tr>
-        </table>
+        <h4>Date</h4>
+        <ul>
+            <li>{{ concert.date }}</li>
+        </ul>
     </div>
 
     <div style="margin-left:20px;margin-top:20px">
@@ -70,6 +59,8 @@
         </ul>
     </div>
 
+    <hr>
+
     {% if concert.concerta.all or concert.concertb.all %}
     <div style="margin-left:20px;margin-top:20px">
 
@@ -91,11 +82,10 @@
             {% endfor %}
         </ul>
     </div>
+    <hr>
     {% endif %}
 
-    <hr>
-
-        {% if concert.concertannouncement_set.all %}
+    {% if concert.concertannouncement_set.all %}
     <div style="margin-left:20px;margin-top:20px">
         <h4>Based on</h4>
         <table border="1">
@@ -144,7 +134,34 @@
             {% endfor %}
         </table>
     </div>
+    <hr>
     {% endif %}
+
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Details</h4>
+        <table border="1">
+            <tr>
+                <td>Titel</td>
+                <td>{{ concert.title }}</td>
+            </tr>
+            <tr>
+                <td>Datum</td>
+                <td>{{ concert.date }}</td>
+            </tr>
+            <tr>
+                <td>Genre</td>
+                <td>{{ concert.genre.all|join:","}}</td>
+            </tr>
+            <tr>
+                <td>GPS</td>
+                <td>{{ concert.latitude }}, {{ concert.longitude }}</td>
+            </tr>
+            <tr>
+                <td>Annotation</td>
+                <td>{{ concert.annotation }}</td>
+            </tr>
+        </table>
+    </div>
 
     <hr>
 
@@ -175,6 +192,7 @@
     </div>
 
     {% if concert.find_concurring_concerts.all %}
+    <hr>
     <div style="margin-left:20px;margin-top:20px">
         <h4>Concerts on same day in same organisation</h4>
         <ul>

@@ -8,6 +8,8 @@
         </a>
     </h1>
 
+    <hr>
+
     <div style="margin-left:20px;margin-top:20px">
         <table border="1">
             <tr>
@@ -20,62 +22,63 @@
         </table>
     </div>
 
+    <hr>
+
     <div style="margin-left:20px;margin-top:20px">
         <h4>Concerts</h4>
         <table border="1">
-            <tr>
-                <th>Date</th>
-                <th>Main organisation</th>
-                <th>Announcement</th>
-            </tr>
-            {% for concert in object_list %}
-              {% if concert.cancelled %}<tr style="text-decoration: line-through;">{% else %} <tr> {% endif %}
-                  <td valign="top">
-                      {% if concert.is_upcoming %}
-                        {% load static %}<img style="width: 46px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/coming.gif' %}" />
-                      {% endif %}
-                      <a href="{% url 'concert_detail' concert.id %}">{{ concert.date }}</a>
-                      {% if concert.verified %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
-                      {% if not concert.is_confirmed and not concert.verified %}(Unconfirmed){% endif %}
-                  </td>
-                  {% if concert.relationconcertorganisation_set.first %}
-                  <td valign="top">
-                      {% if concert.relationconcertorganisation_set.first.organisation %}
-                          <a href="{% url 'organisation_detail' concert.relationconcertorganisation_set.first.organisation.id %}">
-                              {{ concert.relationconcertorganisation_set.first.organisation }}
-                          </a>
-                      {% else %}
-                        Missing organisation
-                      {% endif %}
-                      {% if concert.relationconcertorganisation_set.first.organisation.location %}
-                        in <a href="{% url 'location_detail' concert.relationconcertorganisation_set.first.organisation.location.id %}">
-                            {{ concert.relationconcertorganisation_set.first.organisation.location }}
-                        </a>
-                          {% load static %}<img title="{{ concert.relationconcertorganisation_set.first.organisation.location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ concert.relationconcertorganisation_set.first.organisation.location.country.iso_code }}.png" />
-                          {% if concert.relationconcertorganisation_set.first.organisation.location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
-                      {% endif %}
-                  </td>
-                  {% else %} <td>{% load static %}<img style="width: 36px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" />Missing organisation{% load static %}<img style="width: 36px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" /></td>
-                  {% endif %}
-                  <td valign="top">
-                      {% for ca in concert.concertannouncement_set.all %}
-                        <a target="_blank" href="{{ ca.gigfinder.base_url}}{{ ca.gigfinder_concert_id }}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" /></a>
-                        <a title="{{ ca.title }}" href="{% url 'concertannouncement_detail' ca.id %}">{% if ca.title != "nan" %}{{ ca.title|truncatechars:40 }}{% else %}{{ ca.gigfinder }}{% endif %}</a>
-                          {% if ca.deleted %}
-                            🙈
-                          {% elif ca.recently_seen is not True %}
-                            {% if ca.frequently_seen is not True %}
-                                {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/banana.png' %}" />
-                            {% else %}
-                                {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" />
-                            {% endif %}
-                        {% endif %}
-                        <br>
-                      {% endfor %}
-                  </td>
-              </tr>
-            {% endfor %}
-        </table>
+    <tr>
+      <th>Date</th>
+      <th>Artist</th>
+      <th>Organisation</th>
+      <th>Genre</th>
+      <th>Gigfinders</th>
+    </tr>
+    {% for concert in object_list %}
+      {% if concert.cancelled %}<tr style="text-decoration: line-through;">{% else %} <tr> {% endif %}
+        <td valign="top">
+          {% if concert.is_new %}{% load static %}<img style="border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/new.gif' %}" />{% endif %}
+          {% if concert.is_upcoming %}{% load static %}<img style="width: 46px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/coming.gif' %}" />{% endif %}
+          <a href="{{ concert.get_absolute_url }}">{{ concert.date }}</a>
+          {% if concert.verified %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
+          {% if not concert.is_confirmed and not concert.verified %}(Unconfirmed){% endif %}
+        </td>
+        <td valign="top">
+          {% for relation in concert.relationconcertartist_set.all %}
+            <a href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a><br>
+          {% endfor %}
+        </td>
+        <td valign="top">
+          {% for relation in concert.relationconcertorganisation_set.all %}
+            {% if relation.organisation %}
+              <a href="{% url 'organisation_detail' relation.organisation.id %}">{{ relation.organisation.name }}</a>
+            {% else %}
+              Missing organisation
+            {% endif %}
+            {% if relation.organisation.location %}
+              <br>
+              {{ relation.organisation.location }}
+              {% load static %}<img title="{{ organisation.location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ relation.organisation.location.country.iso_code }}.png" />
+              {% if relation.organisation.location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
+            {% endif %}
+            <br>
+          {% endfor %}
+        </td>
+        <td valign="top">{{ concert.genre.all|join:"<br>" }}</td>
+        <td valign="top">
+          {% for ca in concert.concertannouncement_set.all %}
+            {% if ca.deleted is not True %}
+            <a target="_blank" href="{{ ca.gigfinder.base_url }}{{ ca.gigfinder_concert_id }}">
+                {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
+            </a>
+            <a href="{% url 'concertannouncement_detail' ca.pk %}" title="{{ ca }}">{{ ca|truncatechars:30 }}</a>
+            </br>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
         {% if is_paginated %}
             <div class="pagination">
                 <span class="page-links">
@@ -137,6 +140,8 @@
             {% endfor %}
         </table>
     </div>
+
+    <hr>
 
     <div style="margin-left:20px;margin-top:20px">
         <h4>Actions</h4>
