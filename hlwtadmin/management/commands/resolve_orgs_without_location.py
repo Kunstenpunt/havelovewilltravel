@@ -15,7 +15,7 @@ class Command(BaseCommand):
         with open("hlwtadmin/management/commands/cl.json", "r", "utf-8") as f:
             cl = load(f)
 
-        for organisation in Organisation.objects.filter(location__isnull=True)[0:100]:
+        for organisation in Organisation.objects.filter(location__isnull=True):
             venue = Venue.objects.filter(organisation=organisation).first()
             if venue:
                 print(venue)
