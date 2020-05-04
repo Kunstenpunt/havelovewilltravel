@@ -153,26 +153,8 @@ def index(request):
         'num_venues': Venue.objects.count(),
         'num_announcements': ConcertAnnouncement.objects.count(),
         'num_locations': Location.objects.count(),
-        'num_concertannouncements_without_concerts': ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True).count(),
-        'num_concerts_without_artists': Concert.objects.filter(relationconcertartist__artist__isnull=True).exclude(ignore=True).count(),
-        'num_concerts_without_organities': Concert.objects.filter(relationconcertorganisation__organisation__isnull=True).count(),
-        'num_rawvenues_without_organities': Venue.objects.filter(organisation__isnull=True).filter(non_assignable=False).count(),
-        'num_organities_without_rawvenues': Organisation.objects.filter(venue__isnull=True).filter(verified=False).count(),
-        'num_organities_without_locations': Organisation.objects.filter(location__isnull=True).exclude(verified=True).count(),
-        'num_cities_without_countries': Location.objects.filter(country__isnull=True).count(),
-        'num_unverified_organisations': Organisation.objects.exclude(verified=True).count(),
         'num_excluded_artists': Artist.objects.filter(exclude=True).count(),
-        'num_included_artists': Artist.objects.filter(include=True).count(),
-        'num_orgs_without_gps': Organisation.objects.filter(latitude__isnull=True).exclude(verified=True).count(),
-        'num_orgs_without_genre': Organisation.objects.filter(genre__isnull=True).exclude(verified=True).count(),
-        'num_orgs_without_disambiguation': Organisation.objects.filter(disambiguation__isnull=True).count(),
-        'num_unassignable_venues': Venue.objects.filter(non_assignable=True).count(),
-        'num_concerts_without_gps': Concert.objects.filter(latitude__isnull=True).exclude(verified=True).count(),
-        'num_concerts_without_genre': Concert.objects.filter(genre__isnull=True).exclude(verified=True).count(),
-        'num_concerts_without_title': Concert.objects.annotate(text_len=Length('title')).filter(text_len__lt=5).count(),
-        'num_concerts_without_announcements': Concert.objects.filter(concertannouncement=None).exclude(verified=True).count(),
-        'num_organisation_without_concerts': Organisation.objects.filter(relationconcertorganisation__organisation=None).count(),
-        'num_artists_without_genre': Artist.objects.filter(genre__isnull=True).exclude(relationconcertartist__isnull=True).count()
+        'num_included_artists': Artist.objects.filter(include=True).count()
     }
 
     # Render the HTML template index.html with the data in the context variable
