@@ -180,16 +180,18 @@ class ConcertAnnouncement(models.Model):
         self.concert = self.masterconcert
 
     def _relate_organisation_related_to_venue_also_to_the_masterconcert(self):
-        rco = RelationConcertOrganisation.objects.create(concert=self.masterconcert, organisation=self.raw_venue.organisation, verified=False)
-        rco.save()
+        if not self.raw_venue.non_assignable:
+            rco = RelationConcertOrganisation.objects.create(concert=self.masterconcert, organisation=self.raw_venue.organisation, verified=False)
+            rco.save()
 
     def _relate_organisation_related_to_masterconcert_to_venue(self):
-        org = RelationConcertOrganisation.objects.filter(concert=self.masterconcert)[0].organisation  # TODO what if several organisations connected to masterconcert?
-        self.raw_venue.organisation = org
-        self.raw_venue.save()
+        if not self.raw_venue.non_assignable and self.raw_venue.organisation is None:
+            org = RelationConcertOrganisation.objects.filter(concert=self.masterconcert)[0].organisation  # TODO what if several organisations connected to masterconcert?
+            self.raw_venue.organisation = org
+            self.raw_venue.save()
 
     def _venue_is_not_related_to_organisation(self):
-        return self.raw_venue.organisation is None
+        return self.raw_venue.organisation is None and not self.raw_venue.non_assignable
 
     def _create_new_unverified_organisation_and_relate_to_venue(self):
         name_prop, stad, land, bron, *rest = self.raw_venue.raw_venue.split("|")
