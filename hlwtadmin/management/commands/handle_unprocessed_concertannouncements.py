@@ -48,8 +48,12 @@ class Command(BaseCommand):
 
     @staticmethod
     def _relate_organisation_related_to_venue_also_to_the_masterconcert(self, masterconcert):
-        if self.raw_venue.organisation.name is not "None":
-            RelationConcertOrganisation.objects.create(concert=masterconcert, organisation=self.raw_venue.organisation, verified=False)
+        if not self.raw_venue.non_assignable and self.raw_venue.organisation.name is not "None":
+            rco = RelationConcertOrganisation.objects.create(
+                concert=masterconcert,
+                organisation=self.raw_venue.organisation,
+                verified=False)
+            rco.save()
 
     @staticmethod
     def _relate_organisation_related_to_masterconcert_to_venue(self, masterconcert):
@@ -76,8 +80,9 @@ class Command(BaseCommand):
                                                   annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
                                                   location=loc, verified=False)
                 org.save()
-                self.raw_venue.organisation = org
-                self.raw_venue.save()
+                if self.raw_venue.organisation is None and not self.raw_venue.non_assignable:
+                    self.raw_venue.organisation = org
+                    self.raw_venue.save()
         except ValueError:
             pass
 

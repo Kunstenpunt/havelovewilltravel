@@ -152,6 +152,10 @@ class ConcertAnnouncement(models.Model):
         if not self.id:
             self.masterconcert = self._exists_non_cancelled_masterconcert_on_date_with_artist()
             if self.masterconcert:
+                print("found a masterconcert", self.masterconcert, self.masterconcert.pk)
+                if self.masterconcert.title == "nan":
+                    self.masterconcert.title = self.title
+                    self.masterconcert.save()
                 self._relate_concertannouncement_to_masterconcert()
                 if self._is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert():
                     self._relate_organisation_related_to_venue_also_to_the_masterconcert()
@@ -179,7 +183,9 @@ class ConcertAnnouncement(models.Model):
 
     def _exists_non_cancelled_masterconcert_on_date_with_artist(self):
         try:
-            return Concert.objects.filter(date=self.date).exclude(ignore=True).exclude(cancelled=True).filter(relationconcertartist__artist=self.artist).filter(relationconcertorganisation__organisation__location=self.most_likely_clean_location()).first()
+            return Concert.objects.filter(date=self.date).exclude(ignore=True).exclude(cancelled=True).filter(
+                relationconcertartist__artist=self.artist).filter(
+                relationconcertorganisation__organisation__location=self.most_likely_clean_location()).first()
         except IndexError:
             return None
 
@@ -191,33 +197,40 @@ class ConcertAnnouncement(models.Model):
         self.concert = self.masterconcert
 
     def _relate_organisation_related_to_venue_also_to_the_masterconcert(self):
-        if not self.raw_venue.non_assignable:
-            rco = RelationConcertOrganisation.objects.create(concert=self.masterconcert, organisation=self.raw_venue.organisation, verified=False)
+        if not self.raw_venue.non_assignable and self.raw_venue.organisation.name is not "None":
+            rco = RelationConcertOrganisation.objects.create(
+                concert=self.masterconcert,
+                organisation=self.raw_venue.organisation,
+                verified=False)
             rco.save()
 
     def _relate_organisation_related_to_masterconcert_to_venue(self):
         if not self.raw_venue.non_assignable and self.raw_venue.organisation is None:
-            org = RelationConcertOrganisation.objects.filter(concert=self.masterconcert)[0].organisation  # TODO what if several organisations connected to masterconcert?
-            self.raw_venue.organisation = org
-            self.raw_venue.save()
+            org = RelationConcertOrganisation.objects.filter(concert=self.masterconcert).first()
+            if org:
+                self.raw_venue.organisation = org
+                self.raw_venue.save()
 
     def _venue_is_not_related_to_organisation(self):
         return self.raw_venue.organisation is None and not self.raw_venue.non_assignable
 
     def _create_new_unverified_organisation_and_relate_to_venue(self):
-        name_prop, stad, land, bron, *rest = self.raw_venue.raw_venue.split("|")
-        name = name_prop if len(name_prop.strip()) > 0 else self.raw_venue.raw_venue
-        country = Country.objects.filter(name=land).first()
-        if not country:
-            country = Country.objects.filter(iso_code=land.lower()).first()
-        loc = Location.objects.filter(city__istartswith=stad).filter(country=country).first()
-        org = Organisation.objects.create(name=name,
-                                          annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
-                                          location=loc, verified=False)
-        org.save()
-        if self.raw_venue.organisation is None and not self.raw_venue.non_assignable:
-            self.raw_venue.organisation = org
-            self.raw_venue.save()
+        try:
+            name_prop, stad, land, bron, *rest = self.raw_venue.raw_venue.split("|")
+            name = name_prop if len(name_prop.strip()) > 0 else self.raw_venue.raw_venue
+            country = Country.objects.filter(name=land).first()
+            if not country:
+                country = Country.objects.filter(iso_code=land.lower()).first()
+            loc = Location.objects.filter(city__istartswith=stad).filter(country=country).first()
+            org = Organisation.objects.create(name=name,
+                                              annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
+                                              location=loc, verified=False)
+            org.save()
+            if self.raw_venue.organisation is None and not self.raw_venue.non_assignable:
+                self.raw_venue.organisation = org
+                self.raw_venue.save()
+        except ValueError:
+            pass
 
     def _create_new_masterconcert_with_concertannouncement_organisation_artist(self):
         mc = Concert.objects.create(title=self.title, date=self.date, latitude=self.latitude, longitude=self.longitude)
