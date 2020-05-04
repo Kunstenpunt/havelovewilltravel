@@ -204,8 +204,9 @@ class ConcertAnnouncement(models.Model):
                                           annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
                                           location=loc, verified=False)
         org.save()
-        self.raw_venue.organisation = org
-        self.raw_venue.save()
+        if self.raw_venue.organisation is None and not self.raw_venue.non_assignable:
+            self.raw_venue.organisation = org
+            self.raw_venue.save()
 
     def _create_new_masterconcert_with_concertannouncement_organisation_artist(self):
         mc = Concert.objects.create(title=self.title, date=self.date, latitude=self.latitude, longitude=self.longitude)
