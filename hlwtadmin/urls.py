@@ -64,6 +64,7 @@ urlpatterns = [
     path('concertannouncement/<int:pk>/update/', views.ConcertAnnouncementUpdate.as_view(), name='concertannouncement_update'),
     path('concertannouncement/<int:pk>/delete/', views.ConcertAnnouncementDelete.as_view(), name='concertannouncement_delete'),
     # relationconcertorganisations
+    path('relationconcertorganisations/', views.RelationConcertOrganisationsListView.as_view(), name='relationconcertorganisations'),
     path('relationconcertorganisation/create/<int:pk>', views.RelationConcertOrganisationCreate.as_view(), name='relationconcertorganisation_create'),
     path('relationconcertorganisation/<int:pk>/update/', views.RelationConcertOrganisationUpdate.as_view(), name='relationconcertorganisation_update'),
     path('relationconcertorganisation/<int:pk>/delete/<int:concertid>', views.RelationConcertOrganisationDelete.as_view(), name='relationconcertorganisation_delete'),

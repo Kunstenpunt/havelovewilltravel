@@ -127,15 +127,26 @@ class ConcertAnnouncement(models.Model):
             return True
         return False
 
+    def clean_location_from_assignments(self):
+        loclist = [venue.organisation.location for venue in Venue.objects.filter(raw_location=self.raw_venue.raw_location).exclude(organisation=None)]
+        if len(loclist) > 0:
+            return Counter(loclist).most_common(1)[0][0]
+
+    def clean_location_from_string(self):
+        country = Country.objects.filter(name=self.raw_venue.raw_location.split("|")[-2]).first()
+        location = Location.objects.filter(country=country).filter(
+            city=self.raw_venue.raw_location.split("|")[-3]).first()
+        return location
+
     def most_likely_clean_location(self):
         if not ("None|None" in self.raw_venue.raw_location or "||facebook" in self.raw_venue.raw_location or self.raw_venue.non_assignable):
-            loclist = [venue.organisation.location for venue in Venue.objects.filter(raw_location=self.raw_venue.raw_location).exclude(organisation=None)]
-            if len(loclist) > 0:
-                return Counter(loclist).most_common(1)[0][0]
-            else:
-                country = Country.objects.filter(name=self.raw_venue.raw_location.split("|")[-2]).first()
-                location = Location.objects.filter(country=country).filter(city=self.raw_venue.raw_location.split("|")[-3]).first()
-                return location
+            clean = self.clean_location_from_assignments()
+            if clean is None:
+                clean = self.clean_location_from_string()
+            return clean
+
+    def clean_loc_certainty(self):
+        return self.clean_location_from_assignments() != self.clean_location_from_string()
 
     def save(self, *args, **kwargs):
         if not self.id:

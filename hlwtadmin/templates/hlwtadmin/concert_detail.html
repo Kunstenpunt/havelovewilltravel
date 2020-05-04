@@ -93,8 +93,7 @@
                 <th>Gigfinder</th>
                 <th>Concertannouncement</th>
                 <th>Venue</th>
-                <th>Related organisation</th>
-                <th>Has organisation</th>
+                <th>Issues</th>
             </tr>
             {% for relation in concert.concertannouncement_set.all %}
                 <tr>
@@ -122,12 +121,13 @@
                     </td>
                     <td>
                     {% if not relation.venue_organisation_is_in_concert_related_organisation %}
-                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="GPS issue" />
+                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="Venue organisation is not in related organisations" />
                     {% endif %}
-                    </td>
-                    <td>
                     {% if not relation.raw_venue.organisation and not relation.raw_venue.non_assignable %}
-                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="No related organisation" />
+                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="Venue has no related organisation" />
+                    {% endif %}
+                    {% if relation.clean_loc_certainty %}
+                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="Potential difference between raw venue location and location of related organisation" />
                     {% endif %}
                     </td>
                 </tr>

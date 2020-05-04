@@ -4,7 +4,7 @@ from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
 from django import forms
 from dal import autocomplete
-from django.db.models import Q, Exists, Count
+from django.db.models import Q, Exists, Count, F
 from django.db.models.functions import Length
 from django.utils.html import format_html
 
@@ -311,6 +311,18 @@ class LocationsMergeDelete(DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+
+class RelationConcertOrganisationsListView(ListView):
+    model = ConcertAnnouncement
+    paginate_by = 30
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_queryset(self):
+        return ConcertAnnouncement.objects.exclude(raw_venue__organisation=F('concert__relationconcertorganisation__organisation')).distinct()
 
 
 class ConcertListView(ListView):
