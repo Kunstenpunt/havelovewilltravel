@@ -322,7 +322,7 @@ class RelationConcertOrganisationsListView(ListView):
         return context
 
     def get_queryset(self):
-        return ConcertAnnouncement.objects.exclude(raw_venue__organisation=F('concert__relationconcertorganisation__organisation')).distinct()
+        return ConcertAnnouncement.objects.exclude(concert__isnull=True).exclude(raw_venue__organisation=F('concert__relationconcertorganisation__organisation')).distinct()
 
 
 class ConcertListView(ListView):
