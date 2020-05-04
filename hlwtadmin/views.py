@@ -193,7 +193,8 @@ class ConcertsMergeForm(forms.ModelForm):
         fields = ['primary_object', 'alias_objects']
         widgets = {
             'artist': autocomplete.ModelSelect2(
-                url='artist_autocomplete'
+                url='artist_autocomplete',
+                attrs={'data-html': True},
             ),
             'primary_object': autocomplete.ModelSelect2(
                 url='concert_autocomplete',
