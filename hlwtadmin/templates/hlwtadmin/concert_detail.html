@@ -93,8 +93,8 @@
                 <th>Gigfinder</th>
                 <th>Concertannouncement</th>
                 <th>Venue</th>
-                <th>GPS</th>
-                <th>Organisation</th>
+                <th>Related organisation</th>
+                <th>Has organisation</th>
             </tr>
             {% for relation in concert.concertannouncement_set.all %}
                 <tr>
@@ -121,7 +121,7 @@
                         <a href="{% url 'venue_detail' relation.raw_venue.id %}">{{ relation.raw_venue }}</a>
                     </td>
                     <td>
-                    {% if relation.far_from_concert %}
+                    {% if not relation.venue_organisation_is_in_concert_related_organisation %}
                         {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="GPS issue" />
                     {% endif %}
                     </td>

@@ -162,6 +162,10 @@ class ConcertAnnouncement(models.Model):
     class Meta:
         ordering = ['-date']
 
+    def venue_organisation_is_in_concert_related_organisation(self):
+        orgs = set(RelationConcertOrganisation.objects.filter(concert=self.concert).values_list("organisation", flat=True))
+        return self.raw_venue.organisation.pk in orgs
+
     def _exists_non_cancelled_masterconcert_on_date_with_artist(self):
         try:
             return Concert.objects.filter(date=self.date).exclude(ignore=True).exclude(cancelled=True).filter(relationconcertartist__artist=self.artist).filter(relationconcertorganisation__organisation__location=self.most_likely_clean_location()).first()
