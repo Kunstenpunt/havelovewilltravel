@@ -154,7 +154,8 @@ def index(request):
         'num_announcements': ConcertAnnouncement.objects.count(),
         'num_locations': Location.objects.count(),
         'num_excluded_artists': Artist.objects.filter(exclude=True).count(),
-        'num_included_artists': Artist.objects.filter(include=True).count()
+        'num_included_artists': Artist.objects.filter(include=True).count(),
+        'num_unassignable_venues': Venue.objects.filter(non_assignable=True).count()
     }
 
     # Render the HTML template index.html with the data in the context variable
