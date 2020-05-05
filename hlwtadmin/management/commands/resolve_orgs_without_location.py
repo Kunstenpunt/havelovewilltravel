@@ -15,7 +15,7 @@ class Command(BaseCommand):
         #locs = read_excel("hlwtadmin/management/commands/hlwtadmin_locations.xlsx")
         #cl = locs.to_dict('index')
 
-        with open("hlwtadmin/management/commands/cl.json", "r", "utf-8") as f:
+        with open("hlwtadmin/management/commands/clocs.json", "r", "utf-8") as f:
             cl = load(f)
 
         for organisation in Organisation.objects.filter(location__isnull=True):
@@ -23,11 +23,13 @@ class Command(BaseCommand):
             if venue:
                 print(venue)
                 org, stad, land, bron, *rest = venue.raw_venue.split("|")
-                print("trying with", stad, land)
+                print("input is", stad, land)
+                print("trying to find a better match with", venue.raw_location, venue.raw_location in cl)
+                input()
                 if venue.raw_location in cl:
                     stad = cl[venue.raw_location]["clean city"]
                     land = cl[venue.raw_location]["clean country"]
-                    print("wait a second, found something better", stad, land)
+                    print("wait a found something better", stad, land)
 
                     print("hunting a location for", stad, land)
                     country = Country.objects.filter(name=land).first()
