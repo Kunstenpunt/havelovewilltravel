@@ -15,8 +15,8 @@ class Command(BaseCommand):
         #locs = read_excel("hlwtadmin/management/commands/hlwtadmin_locations.xlsx")
         #cl = locs.to_dict('index')
 
-        with open("hlwtadmin/management/commands/cl.json", "w", "utf-8") as f:
-            cl = dump(cl, f)
+        with open("hlwtadmin/management/commands/cl.json", "r", "utf-8") as f:
+            cl = load(f)
 
         for organisation in Organisation.objects.filter(location__isnull=True):
             venue = Venue.objects.filter(organisation=organisation).first()
