@@ -647,13 +647,13 @@ class LocationListView(ListView):
         filter_search = self.request.GET.get('filtersearch', None)
         order = self.request.GET.get('orderby', 'country')
         if filter_search and filter_val:
-            return Location.objects.filter(city__unaccent__icontains=filter_search).filter(country__name=filter_val).order_by(order)
+            return Location.objects.filter(city__unaccent__icontains=filter_search).filter(country__name=filter_val).annotate(num_organisations=Count('organisation')).order_by(order)
         if not filter_search and filter_val:
-            return Location.objects.filter(country__name=filter_val).order_by(order)
+            return Location.objects.filter(country__name=filter_val).annotate(num_organisations=Count('organisation')).order_by(order)
         if filter_search and not filter_val:
-            return Location.objects.filter(city__unaccent__icontains=filter_search).order_by(order)
+            return Location.objects.filter(city__unaccent__icontains=filter_search).annotate(num_organisations=Count('organisation')).order_by(order)
         if not filter_search and not filter_val:
-            return Location.objects.all().order_by(order)
+            return Location.objects.all().annotate(num_organisations=Count('organisation')).order_by(order)
 
 
 class SparseLocationListView(ListView):
