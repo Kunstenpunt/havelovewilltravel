@@ -12,8 +12,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        locs = read_excel("hlwtadmin/management/commands/hlwtadmin_locations.xlsx")
-        cl = locs.to_dict('index')
+        #locs = read_excel("hlwtadmin/management/commands/hlwtadmin_locations.xlsx")
+        #cl = locs.to_dict('index')
 
         with open("hlwtadmin/management/commands/cl.json", "w", "utf-8") as f:
             cl = dump(cl, f)
