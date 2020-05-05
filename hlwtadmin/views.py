@@ -406,7 +406,7 @@ class OrganisationlessConcertListView(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Concert.objects.filter(relationconcertorganisation__organisation__isnull=True)
+        return Concert.objects.filter(relationconcertorganisation__organisation__isnull=True).exclude(ignore=True).exclude(cancelled=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -793,7 +793,7 @@ class OrganisationsWithoutConcertsListView(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.filter(relationconcertorganisation__organisation=None)
+        return Organisation.objects.filter(relationconcertorganisation__organisation=None).filter(venue=None)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
