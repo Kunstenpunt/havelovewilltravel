@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        #locs = read_excel("hlwtadmin/management/commands/hlwtadmin_locations.xlsx")
+        #locs = read_excel("hlwtadmin/management/commands/hlwtadmin_locations.xlsx", index_col=0)
         #cl = locs.to_dict('index')
 
         with open("hlwtadmin/management/commands/clocs.json", "r", "utf-8") as f:
