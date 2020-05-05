@@ -25,7 +25,6 @@ class Command(BaseCommand):
                 org, stad, land, bron, *rest = venue.raw_venue.split("|")
                 print("input is", stad, land)
                 print("trying to find a better match with", venue.raw_location, venue.raw_location in cl)
-                input()
                 if venue.raw_location in cl:
                     stad = cl[venue.raw_location]["clean city"]
                     land = cl[venue.raw_location]["clean country"]
