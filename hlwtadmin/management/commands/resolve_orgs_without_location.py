@@ -3,7 +3,7 @@ from hlwtadmin.models import Artist, GigFinderUrl, GigFinder, ConcertAnnouncemen
 from django.core.management.base import BaseCommand, CommandError
 
 from pandas import read_excel
-from json import load
+from json import load, dump
 from codecs import open
 
 class Command(BaseCommand):
@@ -12,8 +12,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        with open("hlwtadmin/management/commands/cl.json", "r", "utf-8") as f:
-            cl = load(f)
+        locs = read_excel("hlwtadmin/management/commands/hlwtadmin_locations.xlsx")
+        cl = locs.to_dict('index')
+
+        with open("hlwtadmin/management/commands/cl.json", "w", "utf-8") as f:
+            cl = dump(cl, f)
 
         for organisation in Organisation.objects.filter(location__isnull=True):
             venue = Venue.objects.filter(organisation=organisation).first()
