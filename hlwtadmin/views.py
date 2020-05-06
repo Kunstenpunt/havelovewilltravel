@@ -332,14 +332,13 @@ class ConcertListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_start'] = self.request.GET.get('filter_start', '1900-01-01')
-        context['filter_end'] = self.request.GET.get('filter_end', '2999-12-31')
-        context['num_concerts'] = Concert.objects.filter(date__gte=context['filter_start']).filter(date__lte=context['filter_end']).count()
+        context['filter_start'] = self.request.GET.get('filter_start', '2019-01-01')
+        context['filter_end'] = self.request.GET.get('filter_end', '2025-12-31')
         return context
 
     def get_queryset(self):
-        filter_start = self.request.GET.get('filter_start', '1900-01-01')
-        filter_end = self.request.GET.get('filter_end', '2999-12-31')
+        filter_start = self.request.GET.get('filter_start', '2019-01-01')
+        filter_end = self.request.GET.get('filter_end', '2025-12-31')
         new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end)
         return new_context
 
@@ -350,16 +349,13 @@ class ConcertsWithMultipleOrganisationsInDifferentCountries(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_start'] = self.request.GET.get('filter_start', '1900-01-01')
-        context['filter_end'] = self.request.GET.get('filter_end', '2999-12-31')
-        context['num_concerts'] = Concert.objects.annotate(
-            num_countries=Count('relationconcertorganisation__organisation__location', distinct=True)).filter(
-            num_countries__gte=2).count()
+        context['filter_start'] = self.request.GET.get('filter_start', '2019-01-01')
+        context['filter_end'] = self.request.GET.get('filter_end', '2025-12-31')
         return context
 
     def get_queryset(self):
-        filter_start = self.request.GET.get('filter_start', '1900-01-01')
-        filter_end = self.request.GET.get('filter_end', '2999-12-31')
+        filter_start = self.request.GET.get('filter_start', '2019-01-01')
+        filter_end = self.request.GET.get('filter_end', '2025-12-31')
         new_context = Concert.objects.annotate(num_countries=Count('relationconcertorganisation__organisation__location', distinct=True)).filter(num_countries__gte=2)
         return new_context
 
@@ -373,7 +369,6 @@ class RecentlyAddedConcertListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.exclude(verified=True).exclude(ignore=True).order_by('-created_at').count()
         return context
 
 
@@ -386,7 +381,6 @@ class UpcomingConcertListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['num_concerts'] = Concert.objects.filter(date__gte=datetime.now().date()).order_by('date', 'relationconcertorganisation__organisation__location__country').count()
         return context
 
 

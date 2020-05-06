@@ -20,7 +20,7 @@
     <div style="margin-left:20px;margin-top:20px">
         <h4>Artists</h4>
         <ul>
-            {% for relation in concert.relationconcertartist_set.all %}
+            {% for relation in concert.artistsqs %}
               <li>
                   <a href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a>
                   {% if perms.hlwtadmin.can_update_relationconcerartist %}<a href="{% url 'relationconcertartist_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
@@ -37,7 +37,7 @@
     <div style="margin-left:20px;margin-top:20px">
         <h4>Organisations</h4>
         <ul>
-            {% for relation in concert.relationconcertorganisation_set.all %}
+            {% for relation in concert.organisationqs %}
                 <li>
                     {{ relation.relation_type.all|join:"," }}
                     {% if relation.organisation%}
@@ -85,7 +85,7 @@
     <hr>
     {% endif %}
 
-    {% if concert.concertannouncement_set.all %}
+    {% if concert.concertannouncements %}
     <div style="margin-left:20px;margin-top:20px">
         <h4>Based on</h4>
         <table border="1">
@@ -93,9 +93,8 @@
                 <th>Gigfinder</th>
                 <th>Concertannouncement</th>
                 <th>Venue</th>
-                <th>Issues</th>
             </tr>
-            {% for relation in concert.concertannouncement_set.all %}
+            {% for relation in concert.concertannouncements %}
                 <tr>
                     <td>
                         <a target="_blank" href="{{ relation.gigfinder.base_url}}{{ relation.gigfinder_concert_id }}">
@@ -118,17 +117,6 @@
                     </td>
                     <td valign="top">
                         <a href="{% url 'venue_detail' relation.raw_venue.id %}">{{ relation.raw_venue }}</a>
-                    </td>
-                    <td>
-                    {% if not relation.venue_organisation_is_in_concert_related_organisation %}
-                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="Venue organisation is not in related organisations" />
-                    {% endif %}
-                    {% if not relation.raw_venue.organisation and not relation.raw_venue.non_assignable %}
-                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="Venue has no related organisation" />
-                    {% endif %}
-                    {% if relation.clean_loc_certainty %}
-                        {% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/danger.gif' %}" alt="GPS issue" title="Potential difference between raw venue location and location of related organisation" />
-                    {% endif %}
                     </td>
                 </tr>
             {% endfor %}

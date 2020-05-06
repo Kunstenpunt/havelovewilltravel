@@ -283,10 +283,19 @@ class Concert(models.Model):
         return self.title
 
     def artists(self):
-        return ", ".join([rel.artist.name for rel in RelationConcertArtist.objects.filter(concert__id=self.id)])
+        return ", ".join([rel.artist.name for rel in self.artistsqs() if rel.artist])
+
+    def artistsqs(self):
+        return RelationConcertArtist.objects.select_related('artist').filter(concert__id=self.id)
 
     def organisations(self):
-        return ", ".join([rel.organisation.name for rel in RelationConcertOrganisation.objects.filter(concert__id=self.id) if rel.organisation])
+        return ", ".join([rel.organisation.name for rel in self.organisationsqs() if rel.organisation])
+
+    def organisationsqs(self):
+        return RelationConcertOrganisation.objects.select_related('organisation__location__country').filter(concert__id=self.id)
+
+    def concertannouncements(self):
+        return ConcertAnnouncement.objects.select_related('gigfinder').filter(concert=self)
 
     def is_upcoming(self):
         return self.date >= datetime.now().date() if self.date else True

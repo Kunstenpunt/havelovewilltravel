@@ -6,9 +6,9 @@
     <form method="get" action="{% url 'concerts' %}">
         <p>
             <label for="filter_start">From:</label>
-            <input type="date" id="filter_start" name="filter_start">
+            <input type="date" id="filter_start" name="filter_start" value="2020-01-01">
             <label for="filter_end">From:</label>
-            <input type="date" id="filter_end" name="filter_end">
+            <input type="date" id="filter_end" name="filter_end" value="2025-12-31">
         </p>
         <p><input type="submit" name="submit" value="submit"/></p>
     </form>
@@ -33,12 +33,12 @@
           {% if not concert.is_confirmed and not concert.verified %}(Unconfirmed){% endif %}
         </td>
         <td valign="top">
-          {% for relation in concert.relationconcertartist_set.all %}
+          {% for relation in concert.artistsqs %}
             <a href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a><br>
           {% endfor %}
         </td>
         <td valign="top">
-          {% for relation in concert.relationconcertorganisation_set.all %}
+          {% for relation in concert.organisationsqs %}
             {% if relation.organisation %}
               <a href="{% url 'organisation_detail' relation.organisation.id %}">{{ relation.organisation.name }}</a>
             {% else %}
@@ -55,7 +55,7 @@
         </td>
         <td valign="top">{{ concert.genre.all|join:"<br>" }}</td>
         <td valign="top">
-          {% for ca in concert.concertannouncement_set.all %}
+          {% for ca in concert.concertannouncements %}
             {% if ca.deleted is not True %}
             <a target="_blank" href="{{ ca.gigfinder.base_url }}{{ ca.gigfinder_concert_id }}">
                 {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
@@ -87,7 +87,7 @@
         <a href="?{% param_replace page=paginator.num_pages %}">Last</a>
       {% endif %}
 
-      <p>Objects {{ page_obj.start_index }}—{{ page_obj.end_index }} of {{ num_concerts }}</p>
+      <p>Objects {{ page_obj.start_index }}—{{ page_obj.end_index }}</p>
     {% endif %}
   {% else %}
     <p>There are no concerts in the library.</p>
