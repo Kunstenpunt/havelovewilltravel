@@ -122,7 +122,8 @@ class LocationAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.exclude(id=first_selected)
 
         if self.q:
-            qs = qs.filter(Q(city__unaccent__icontains=self.q) | Q(country__name__unaccent__icontains=self.q))
+            #qs = qs.filter(Q(city__unaccent__icontains=self.q) | Q(country__name__unaccent__icontains=self.q))
+            qs = qs.filter(city__unaccent__icontains=self.q)
         return qs
 
 
