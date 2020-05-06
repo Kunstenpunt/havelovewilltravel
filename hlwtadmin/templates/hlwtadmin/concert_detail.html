@@ -37,10 +37,10 @@
     <div style="margin-left:20px;margin-top:20px">
         <h4>Organisations</h4>
         <ul>
-            {% for relation in concert.organisationqs %}
+            {% for relation in concert.organisationsqs %}
                 <li>
                     {{ relation.relation_type.all|join:"," }}
-                    {% if relation.organisation%}
+                    {% if relation.organisation %}
                         <a href="{% url 'organisation_detail' relation.organisation.pk %}">{{ relation.organisation.name }}</a>
                     {% else %}
                       Missing organisation
