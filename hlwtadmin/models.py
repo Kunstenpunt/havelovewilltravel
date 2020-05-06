@@ -17,6 +17,22 @@ from math import sqrt
 import os
 from collections import Counter
 
+from django.db.models import CharField, Lookup, TextField
+
+
+class LikeLookup(Lookup):
+    lookup_name = 'like'
+
+    def as_sql(self, compiler, connection):
+        lhs, lhs_params = self.process_lhs(compiler, connection)
+        rhs, rhs_params = self.process_rhs(compiler, connection)
+        params = lhs_params + rhs_params
+        return '%s LIKE %s' % (lhs, rhs), params
+
+
+CharField.register_lookup(LikeLookup)
+TextField.register_lookup(LikeLookup)
+
 
 # Create your models here.
 class GigFinder(models.Model):
