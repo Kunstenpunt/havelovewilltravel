@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'i)h8$l^$#(sb2q!_7t_zu+h9eymm!k
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'hlwtadmin.herokuapp.com']
-INTERNAL_IPS = ['127.0.0.1']
+INTERNAL_IPS = ['127.0.0.1', 'hlwtadmin.herokuapp.com']
 
 
 # Application definition
