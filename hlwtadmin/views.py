@@ -27,7 +27,7 @@ class SubcountryAutocompleteFromList(autocomplete.Select2ListView):
             qs = qs.filter(country=country)
 
         if self.q:
-            qs = qs.filter(subcountry__unaccent__icontains=self.q)
+            qs = qs.filter(subcountry__unaccent__iregex=self.q)
         return set(qs.values_list("subcountry", flat=True))
 
 
@@ -45,7 +45,7 @@ class ConcertAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.exclude(id=first_selected)
 
         if self.q:
-            qs = qs.filter(title__unaccent__icontains=self.q)
+            qs = qs.filter(title__unaccent__iregex=self.q)
         return qs
 
     def get_result_label(self, item):
@@ -62,7 +62,7 @@ class ConcertAnnouncementAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = ConcertAnnouncement.objects.all()
         if self.q:
-            qs = qs.filter(title__unaccent__icontains=self.q)
+            qs = qs.filter(title__unaccent__iregex=self.q)
         return qs
 
 
@@ -70,7 +70,7 @@ class ArtistAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Artist.objects.all()
         if self.q:
-            qs = qs.filter(name__unaccent__icontains=self.q)
+            qs = qs.filter(name__unaccent__iregex=self.q)
         return qs
 
     def get_result_label(self, item):
@@ -91,7 +91,7 @@ class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.exclude(id=first_selected)
 
         if self.q:
-            qs = qs.filter(name__unaccent__icontains=self.q)
+            qs = qs.filter(name__unaccent__iregex=self.q)
         return qs
 
     def get_result_label(self, item):
@@ -122,7 +122,7 @@ class LocationAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.exclude(id=first_selected)
 
         if self.q:
-            #qs = qs.filter(Q(city__unaccent__icontains=self.q) | Q(country__name__unaccent__icontains=self.q))
+            #qs = qs.filter(Q(city__unaccent__iregex=self.q) | Q(country__name__unaccent__iregex=self.q))
             qs = qs.filter(city__unaccent__iregex=self.q)
         return qs
 
@@ -131,7 +131,7 @@ class CountryAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Country.objects.all()
         if self.q:
-            qs = qs.filter(name__unaccent__icontains=self.q)
+            qs = qs.filter(name__unaccent__iregex=self.q)
         return qs
 
 
@@ -139,7 +139,7 @@ class VenueAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Venue.objects.all()
         if self.q:
-            qs = qs.filter(raw_venue__unaccent__icontains=self.q)
+            qs = qs.filter(raw_venue__unaccent__iregex=self.q)
         return qs
 
 
@@ -528,14 +528,14 @@ class ArtistListView(ListView):
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
         new_context = Artist.objects.filter(
-            name__unaccent__icontains=filter_val
+            name__unaccent__iregex=filter_val
         )
         return new_context
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
-        context['num_artists'] = Artist.objects.filter(name__unaccent__icontains=context['filter']).count()
+        context['num_artists'] = Artist.objects.filter(name__unaccent__iregex=context['filter']).count()
         return context
 
 
@@ -780,12 +780,12 @@ class FullOrganisationListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
-        context['num_organisations'] = Organisation.objects.filter(name__unaccent__icontains=context['filter']).exclude(relationconcertorganisation__organisation=None).count()
+        context['num_organisations'] = Organisation.objects.filter(name__unaccent__iregex=context['filter']).exclude(relationconcertorganisation__organisation=None).count()
         return context
 
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
-        new_context = Organisation.objects.filter(name__unaccent__icontains=filter_val,).exclude(relationconcertorganisation__organisation=None)
+        new_context = Organisation.objects.filter(name__unaccent__iregex=filter_val,).exclude(relationconcertorganisation__organisation=None)
         return new_context
 
 
