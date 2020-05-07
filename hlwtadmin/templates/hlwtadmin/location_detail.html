@@ -40,6 +40,7 @@
     <div style="margin-left:20px;margin-top:20px">
         <ul>
             {% if perms.hlwtadmin.can_update_location %}<li><a href="{% url 'location_update' location.id %}">Update this location</a></li>{% endif %}
+            {% if perms.hlwtadmin.can_delete_location %}<li><a href="{% url 'location_delete' location.id %}">Delete this location</a></li>{% endif %}
         </ul>
     </div>
 
