@@ -148,7 +148,7 @@ def index(request):
 
     # Generate counts of some of the main objects
     context = {
-        'num_concerts': Concert.objects.all().count(),
+        'num_concerts': Concert.objects.count(),
         'num_artists': Artist.objects.count(),
         'num_organisations': Organisation.objects.count(),
         'num_venues': Venue.objects.count(),
@@ -156,7 +156,6 @@ def index(request):
         'num_locations': Location.objects.count(),
         'num_excluded_artists': Artist.objects.filter(exclude=True).count(),
         'num_included_artists': Artist.objects.filter(include=True).count(),
-        'num_unassignable_venues': Venue.objects.filter(non_assignable=True).count()
     }
 
     # Render the HTML template index.html with the data in the context variable
@@ -700,7 +699,7 @@ class OrganisationListView(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.filter(venue__isnull=True).filter(relationconcertorganisation__organisation=None).filter(verified=False)
+        return Organisation.objects.select_related('organisation__location').filter(venue__isnull=True).filter(relationconcertorganisation__organisation=None).filter(verified=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -712,7 +711,7 @@ class OrganisationListView2(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.filter(location__isnull=True).exclude(verified=True)
+        return Organisation.objects.select_related('organisation__location').filter(location__isnull=True).exclude(verified=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -724,7 +723,7 @@ class OrganisationListView3(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.filter(latitude__isnull=True).exclude(verified=True)
+        return Organisation.objects.select_related('organisation__location').filter(latitude__isnull=True).exclude(verified=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -736,7 +735,7 @@ class OrganisationListView4(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.filter(genre__isnull=True).exclude(verified=True)
+        return Organisation.objects.select_related('organisation__location').filter(genre__isnull=True).exclude(verified=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -748,7 +747,7 @@ class OrganisationListView5(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.filter(disambiguation__isnull=True)
+        return Organisation.objects.select_related('organisation__location').filter(disambiguation__isnull=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -760,7 +759,7 @@ class UnverifiedOrganisationListView(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.exclude(verified=True)
+        return Organisation.objects.select_related('organisation__location').exclude(verified=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -774,12 +773,11 @@ class FullOrganisationListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
-        context['num_organisations'] = Organisation.objects.filter(name__unaccent__iregex=context['filter']).exclude(relationconcertorganisation__organisation=None).count()
         return context
 
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
-        new_context = Organisation.objects.filter(name__unaccent__iregex=filter_val,).exclude(relationconcertorganisation__organisation=None)
+        new_context = Organisation.objects.select_related('organisation__location').filter(name__unaccent__iregex=filter_val,).exclude(relationconcertorganisation__organisation=None)
         return new_context
 
 
@@ -788,7 +786,7 @@ class OrganisationsWithoutConcertsListView(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.filter(relationconcertorganisation__organisation=None).filter(venue=None)
+        return Organisation.objects.select_related('organisation__location').filter(relationconcertorganisation__organisation=None).filter(venue=None)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -54,7 +54,7 @@
         <a href="?{% param_replace page=paginator.num_pages %}">Last</a>
       {% endif %}
 
-      <p>Objects {{ page_obj.start_index }}—{{ page_obj.end_index }} of {{ num_organisations }}</p>
+      <p>Objects {{ page_obj.start_index }}—{{ page_obj.end_index }}</p>
     {% endif %}
   {% else %}
     <p>There are no organisations in the library.</p>
