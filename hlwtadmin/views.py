@@ -632,7 +632,6 @@ class LocationListView(ListView):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
         context['filtersearch'] = self.request.GET.get('filtersearch', '')
-        context['num_locations'] = Location.objects.filter(city__unaccent__iregex=context['filtersearch']).filter(country__name=context['filter']).count()
         context['countries'] = Country.objects.all()
         return context
 
@@ -641,13 +640,13 @@ class LocationListView(ListView):
         filter_search = self.request.GET.get('filtersearch', None)
         order = self.request.GET.get('orderby', 'country')
         if filter_search and filter_val:
-            return Location.objects.filter(city__unaccent__iregex=filter_search).filter(country__name=filter_val).annotate(num_organisations=Count('organisation')).order_by(order)
+            return Location.objects.filter(city__unaccent__iregex=filter_search).filter(country__name=filter_val).annotate(num_organisations=Count('organisation')).order_by(order, 'city')
         if not filter_search and filter_val:
-            return Location.objects.filter(country__name=filter_val).annotate(num_organisations=Count('organisation')).order_by(order)
+            return Location.objects.filter(country__name=filter_val).annotate(num_organisations=Count('organisation')).order_by(order, 'city')
         if filter_search and not filter_val:
-            return Location.objects.filter(city__unaccent__iregex=filter_search).annotate(num_organisations=Count('organisation')).order_by(order)
+            return Location.objects.filter(city__unaccent__iregex=filter_search).annotate(num_organisations=Count('organisation')).order_by(order, 'city')
         if not filter_search and not filter_val:
-            return Location.objects.all().annotate(num_organisations=Count('organisation')).order_by(order)
+            return Location.objects.all().annotate(num_organisations=Count('organisation')).order_by(order, 'city')
 
 
 class SparseLocationListView(ListView):

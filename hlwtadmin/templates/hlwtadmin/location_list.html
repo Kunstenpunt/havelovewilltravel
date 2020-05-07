@@ -17,6 +17,7 @@
                 <option value="city">Order by city name</option>
                 <option value="verified">Order by verified status</option>
                 <option value="-num_organisations">Order by amount of organisations per location</option>
+                <option value="subcountry">Order by subcountry</option>
             </select>
         </p>
         <p>
@@ -57,7 +58,7 @@
         <a href="?{% param_replace page=paginator.num_pages %}">Last</a>
       {% endif %}
 
-      <p>Objects {{ page_obj.start_index }}—{{ page_obj.end_index }} of {{ num_locations }}</p>
+      <p>Objects {{ page_obj.start_index }}—{{ page_obj.end_index }}</p>
     {% endif %}
 
   {% else %}
