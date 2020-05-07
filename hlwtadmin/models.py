@@ -316,6 +316,13 @@ class Concert(models.Model):
             if ca.recently_seen() or ca.frequently_seen():
                 return True
 
+    def delete(self):
+        RelationConcertOrganisation.objects.filter(concert=self).all().delete()
+        RelationConcertArtist.objects.filter(concert=self).all().delete()
+        RelationConcertConcert.objects.filter(concert_a=self).all().delete()
+        RelationConcertConcert.objects.filter(concert_b=self).all().delete()
+        super(Concert, self).delete()
+
     def save(self, *args, **kwargs):
         send = False
         if self.id and send:

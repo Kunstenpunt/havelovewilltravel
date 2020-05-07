@@ -493,6 +493,9 @@ class ConcertDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        ignore_concertannouncements = self.kwargs["concert_delete_with_ca_on_ignore"]
+        if ignore_concertannouncements == 1:
+            ConcertAnnouncement.objects.filter(concert=self.object).update(ignore=True, concert=None)
         return context
 
 

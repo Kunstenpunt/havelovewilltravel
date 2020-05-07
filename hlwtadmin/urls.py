@@ -19,6 +19,7 @@ urlpatterns = [
     path('concert/create/', views.ConcertCreate.as_view(), name='concert_create'),
     path('concert/<int:pk>/update/', views.ConcertUpdate.as_view(), name='concert_update'),
     path('concert/<int:pk>/delete/', views.ConcertDelete.as_view(), name='concert_delete'),
+    path('concert/<int:pk>/delete/<int:concert_delete_with_ca_on_ignore>', views.ConcertDelete.as_view(), name='concert_delete_with_ca_on_ignore'),
     # artists
     path('artists/', views.ArtistListView.as_view(), name='artists'),
     path('includeartists/', views.IncludeArtistListView.as_view(), name='includeartists'),
