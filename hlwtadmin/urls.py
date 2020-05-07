@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views, models
+from django.views.generic.base import TemplateView
+
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -100,7 +102,9 @@ urlpatterns = [
     path('concertsmerge/create/', views.ConcertsMergeCreate.as_view(model=models.ConcertsMerge), name='concertsmerge_create'),
     path('concertsmerge/<str:pk>/confirm/', views.ConcertsMergeDelete.as_view(model=models.ConcertsMerge), name='concertsmerge_delete'),
     path('locationsmerge/create/', views.LocationsMergeCreate.as_view(model=models.LocationsMerge), name='locationsmerge_create'),
-    path('locationsmerge/<str:pk>/confirm/', views.LocationsMergeDelete.as_view(model=models.LocationsMerge), name='locationsmerge_delete')
+    path('locationsmerge/<str:pk>/confirm/', views.LocationsMergeDelete.as_view(model=models.LocationsMerge), name='locationsmerge_delete'),
+    # robots
+    path("robots.txt", TemplateView.as_view(template_name="robots.txt", content_type="text/plain"))
 ]
 
 from django.conf import settings
