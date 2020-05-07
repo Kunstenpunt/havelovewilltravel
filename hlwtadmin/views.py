@@ -699,7 +699,7 @@ class OrganisationListView(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.select_related('organisation__location').filter(venue__isnull=True).filter(relationconcertorganisation__organisation=None).filter(verified=False)
+        return Organisation.objects.select_related('location__country').filter(venue__isnull=True).filter(relationconcertorganisation__organisation=None).filter(verified=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -711,7 +711,7 @@ class OrganisationListView2(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.select_related('organisation__location').filter(location__isnull=True).exclude(verified=True)
+        return Organisation.objects.select_related('location__country').filter(location__isnull=True).exclude(verified=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -723,7 +723,7 @@ class OrganisationListView3(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.select_related('organisation__location').filter(latitude__isnull=True).exclude(verified=True)
+        return Organisation.objects.select_related('location__country').filter(latitude__isnull=True).exclude(verified=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -735,7 +735,7 @@ class OrganisationListView4(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.select_related('organisation__location').filter(genre__isnull=True).exclude(verified=True)
+        return Organisation.objects.select_related('location__country').filter(genre__isnull=True).exclude(verified=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -747,7 +747,7 @@ class OrganisationListView5(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.select_related('organisation__location').filter(disambiguation__isnull=True)
+        return Organisation.objects.select_related('location__country').filter(disambiguation__isnull=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -759,7 +759,7 @@ class UnverifiedOrganisationListView(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.select_related('organisation__location').exclude(verified=True)
+        return Organisation.objects.select_related('location__country').exclude(verified=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -777,7 +777,7 @@ class FullOrganisationListView(ListView):
 
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
-        new_context = Organisation.objects.select_related('organisation__location').filter(name__unaccent__iregex=filter_val,).exclude(relationconcertorganisation__organisation=None)
+        new_context = Organisation.objects.select_related('location__country').filter(name__unaccent__iregex=filter_val,).exclude(relationconcertorganisation__organisation=None)
         return new_context
 
 
@@ -786,7 +786,7 @@ class OrganisationsWithoutConcertsListView(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.select_related('organisation__location').filter(relationconcertorganisation__organisation=None).filter(venue=None)
+        return Organisation.objects.select_related('location__country').filter(relationconcertorganisation__organisation=None).filter(venue=None)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
