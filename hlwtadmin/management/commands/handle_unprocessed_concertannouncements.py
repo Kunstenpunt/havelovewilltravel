@@ -8,7 +8,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True):
+        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True).filter(id=34273):
             print("working on", concertannouncement, concertannouncement.pk)
             masterconcert = self._exists_non_cancelled_masterconcert_on_date_with_artist(concertannouncement)
             if masterconcert:
@@ -38,8 +38,8 @@ class Command(BaseCommand):
 
     @staticmethod
     def _is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(self, masterconcert):
-        masterconcert_organisations = [rel.organisation for rel in RelationConcertOrganisation.objects.filter(concert=masterconcert)]
-        return self.raw_venue.organisation and self.raw_venue.organisation not in masterconcert_organisations
+        rel = RelationConcertOrganisation.objects.filter(concert=masterconcert).filter(organisation=self.raw_venue.organisation).first()
+        return rel is not None
 
     @staticmethod
     def _relate_concertannouncement_to_masterconcert(self, masterconcert):
@@ -48,7 +48,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def _relate_organisation_related_to_venue_also_to_the_masterconcert(self, masterconcert):
-        if not self.raw_venue.non_assignable and self.raw_venue.organisation.name is not "None":
+        if not self.raw_venue.non_assignable and self.raw_venue.organisation is not None:
             rco = RelationConcertOrganisation.objects.create(
                 concert=masterconcert,
                 organisation=self.raw_venue.organisation,
@@ -57,14 +57,18 @@ class Command(BaseCommand):
 
     @staticmethod
     def _relate_organisation_related_to_masterconcert_to_venue(self, masterconcert):
-        org = RelationConcertOrganisation.objects.filter(concert=masterconcert).first()
-        if org:
-            self.raw_venue.organisation = org.organisation
-            self.raw_venue.save()
+        if not self.raw_venue.non_assignable:
+            org = RelationConcertOrganisation.objects.filter(concert=masterconcert).first()
+            if org:
+                self.raw_venue.organisation = org.organisation
+                self.raw_venue.save()
 
     @staticmethod
     def _venue_is_not_related_to_organisation(self):
-        return self.raw_venue.organisation is None
+        if not self.raw_venue.non_assignable:
+            return self.raw_venue.organisation is None
+        else:
+            return False
 
     @staticmethod
     def _create_new_unverified_organisation_and_relate_to_venue(self):
