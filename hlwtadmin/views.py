@@ -624,6 +624,15 @@ class LocationUpdateView(UpdateView):
         return context
 
 
+class LocationDeleteView(DeleteView):
+    model = Location
+    success_url = reverse_lazy('locations')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class LocationListView(ListView):
     model = Location
     paginate_by = 30

@@ -32,6 +32,7 @@ urlpatterns = [
     path('sparselocations/', views.SparseLocationListView.as_view(), name='sparse_locations'),
     path('location/<int:pk>', views.LocationDetailView.as_view(), name='location_detail'),
     path('location/<int:pk>/update', views.LocationUpdateView.as_view(), name='location_update'),
+    path('location/<int:pk>/delete', views.LocationDeleteView.as_view(), name='location_delete'),
     path('location/create', views.LocationCreate.as_view(), name='location_create'),
     # organisations
     path('sparseorganisation/', views.OrganisationListView.as_view(), name='sparse_organisations'),
