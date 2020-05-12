@@ -27,7 +27,6 @@
     <div style="margin-left:20px;margin-top:20px">
         <ul>
             {% if perms.hlwtadmin.can_update_concertannouncement %}<li><a href="{% url 'concertannouncement_update' concertannouncement.id %}">Update this concert announcement</a></li>{% endif %}
-            <li><a href="{% url 'concertannouncement_detail' concertannouncement.id %}">View this concert announcement</a></li>
         </ul>
     </div>
 
