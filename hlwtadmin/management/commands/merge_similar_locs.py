@@ -15,7 +15,7 @@ class Command(BaseCommand):
             print("searching similar locs for", loc, loc.id)
             mergelocs = []
             for simloc in Location.objects.filter(country=loc.country).filter(city__iregex="^" + loccity + "$"):
-                if simloc != loc and (simloc.subcountry == loc.subcountry or simloc.subcountry is None):
+                if simloc != loc and (simloc.subcountry == loc.subcountry or simloc.subcountry is None) and (simloc.zipcode == loc.zipcode or simloc.zipcode is None):
                     print("\tThe given location is very similar to", simloc, simloc.id)
                     mergelocs.append(simloc)
 
