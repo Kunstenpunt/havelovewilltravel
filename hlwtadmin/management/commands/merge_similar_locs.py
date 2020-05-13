@@ -8,19 +8,21 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for loc in Location.objects.filter(verified=True):
+        for loc in Location.objects.order_by('-verified', 'country', '-subcountry'):
+            print(loc.city, loc.country, loc.verified)
             loccity = loc.city
             loccity = loccity.replace("-", ".").replace("é", "[eé]").replace("è", "[eè]")
             print("searching similar locs for", loc, loc.id)
             mergelocs = []
-            for simloc in Location.objects.exclude(verified=True).filter(country=loc.country).filter(city__iregex="^" + loccity + "$"):
-                print("\tThe given location is very similar to", simloc, simloc.id)
-                mergelocs.append(simloc)
+            for simloc in Location.objects.filter(country=loc.country).filter(city__iregex="^" + loccity + "$"):
+                if simloc != loc and (simloc.subcountry == loc.subcountry or simloc.subcountry is None):
+                    print("\tThe given location is very similar to", simloc, simloc.id)
+                    mergelocs.append(simloc)
 
             if len(mergelocs) > 0:
                 loc_merge = LocationsMerge.objects.create(
                     primary_object=loc
                 )
                 loc_merge.alias_objects.set(mergelocs)
-                loc_merge.delete()
                 input()
+                loc_merge.delete()
