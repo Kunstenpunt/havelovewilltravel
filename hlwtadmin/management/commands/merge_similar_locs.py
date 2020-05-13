@@ -20,9 +20,12 @@ class Command(BaseCommand):
                     mergelocs.append(simloc)
 
             if len(mergelocs) > 0:
-                loc_merge = LocationsMerge.objects.create(
-                    primary_object=loc
-                )
-                loc_merge.alias_objects.set(mergelocs)
-                input()
-                loc_merge.delete()
+                try:
+                    loc_merge = LocationsMerge.objects.create(
+                        primary_object=loc
+                    )
+                    loc_merge.alias_objects.set(mergelocs)
+                    input()
+                    loc_merge.delete()
+                except Exception as e:
+                    pass
