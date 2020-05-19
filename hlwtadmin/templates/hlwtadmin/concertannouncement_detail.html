@@ -6,6 +6,8 @@
     <div style="margin-left:20px;margin-top:20px">
         <p>Related artist: {% if concertannouncement.artist %} <a href="{% url 'artist_detail' concertannouncement.artist.mbid %}">{{ concertannouncement.artist }}</a> {% endif %}</p>
         <p>Date: {{ concertannouncement.date }}, Time: {{ concertannouncement.time }}</p>
+        <p>Until date: {{ concertannouncement.until_date }}</p>
+        <p>Is festival: {{ concertannouncement.is_festival }}</p>
         <p>Gigfinder: <a target="_blank" href="{{ concertannouncement.gigfinder.base_url}}{{ concertannouncement.gigfinder_concert_id }}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ concertannouncement.gigfinder }}.png" alt="{{ concertannouncement.gigfinder }}" /></a></p>
         <p>Last seen on: {{ concertannouncement.last_seen_on }}</p>
         <p>Created at: {{ concertannouncement.created_at }}</p>
