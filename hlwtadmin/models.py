@@ -128,7 +128,7 @@ class ConcertAnnouncement(models.Model):
         return False
 
     def clean_location_from_assignments(self):
-        loclist = [venue.organisation.location for venue in Venue.objects.filter(raw_location=self.raw_venue.raw_location).exclude(organisation=None)]
+        loclist = [venue.organisation.location for venue in Venue.objects.select_related('organisation__location').filter(raw_location=self.raw_venue.raw_location).exclude(organisation=None)]
         if len(loclist) > 0:
             return Counter(loclist).most_common(1)[0][0]
 
