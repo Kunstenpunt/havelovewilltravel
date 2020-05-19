@@ -269,6 +269,7 @@ class Venue(models.Model):
 class Concert(models.Model):
     title = models.CharField(max_length=200)
     date = models.DateField(blank=True, null=True)
+    until_date = models.DateField(blank=True, null=True, default=None)
     time = models.TimeField(blank=True, null=True)
     cancelled = models.BooleanField(default=False, blank=True, null=True)
     verified = models.BooleanField(default=False, blank=True, null=True)
