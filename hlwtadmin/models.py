@@ -84,6 +84,8 @@ class ConcertAnnouncement(models.Model):
     title = models.CharField(max_length=200)
     artist = models.ForeignKey("Artist", on_delete=models.PROTECT)
     date = models.DateField()
+    until_date = models.DateField(null=True, blank=True, default=None)
+    is_festival = models.BooleanField(null=True, blank=True, default=None)
     time = models.TimeField(null=True, blank=True)
     gigfinder = models.ForeignKey("GigFinder", on_delete=models.PROTECT)
     gigfinder_concert_id = models.CharField(max_length=250, blank=True, null=True)

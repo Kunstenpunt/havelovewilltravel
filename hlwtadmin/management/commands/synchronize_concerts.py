@@ -482,6 +482,8 @@ class SongkickLeecher(PlatformLeecher):
                             title=concert["titel"][0:199],
                             artist=Artist.objects.filter(mbid=mbid).first(),
                             date=concert["datum"].isoformat(),
+                            until_date=concert["einddatum"].isoformat(),
+                            is_festival=concert["is_festival"],
                             gigfinder=self.gf,
                             gigfinder_concert_id=concert["event_id"],
                             last_seen_on=datetime.now(),
@@ -505,9 +507,13 @@ class SongkickLeecher(PlatformLeecher):
 
     def map_platform_to_schema(self, event, band, mbid, other):
         concertdate = dateparse(event["start"]["date"]).date()
+        end_date = dateparse(event["end"]["date"]).date() if "end" in event else None
+        is_festival = event["type"] == "Festival"
         return {
             "titel": event["displayName"].strip().rstrip(concertdate.strftime("%B %d, %Y")),
             "datum": concertdate,
+            "einddatum": end_date,
+            "is_festival": is_festival,
             "artiest": other["artist_name"],
             "artiest_id": str(other["artist_id"]),
             "artiest_mb_naam": band.name,

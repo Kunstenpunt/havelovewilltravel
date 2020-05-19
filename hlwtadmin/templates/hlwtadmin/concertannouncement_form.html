@@ -8,6 +8,8 @@
     <li>Artist: <a href="{% url 'artist_detail' concertannouncement.artist.mbid %}">{{ concertannouncement.artist }}</a></li>
     <li>Date: {{ concertannouncement.date }}</li>
     <li>Time: {{ concertannouncement.time }}</li>
+    <li>End date: {{ concertannouncement.until_date }}</li>
+    <li>Is festival: {{ concertannouncement.is_festival }}</li>
     <li>Gigfinder: {{ concertannouncement.gigfinder }}</li>
       <li>Gigfinder id: <a href="{{ concertannouncement.gigfinder.base_name }}{{ concertannouncement.gigfinder_concert_id }}">{{ concertannouncement.gigfinder_concert_id }}</a></li>
     <li>Last seen on: {{ concertannouncement.last_seen_on }}</li>
