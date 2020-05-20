@@ -8,7 +8,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for concert in Concert.objects.filter(relationconcertartist__artist__mbid="d5693dce-e41a-4094-97e6-8c620368295c"):
+        for concert in Concert.objects.filter(relationconcertartist__artist__mbid="80b48852-3950-4374-82d3-6ae9187fb077"):
             print("found concert", concert, concert.id)
             for ca in ConcertAnnouncement.objects.filter(concert=concert):
                 print("found announcement", ca, ca.id)
