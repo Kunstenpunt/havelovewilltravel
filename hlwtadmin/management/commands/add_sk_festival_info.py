@@ -61637,8 +61637,9 @@ class Command(BaseCommand):
             ca = ConcertAnnouncement.objects.filter(gigfinder__name__contains="songkick").filter(gigfinder_concert_id=gigfinder_id).first()
             print(ca.id, ca)
             ca.is_festival = True
-            if row[1]:
-                until = dateparser.parse(row[1]).date()
+            parse = dateparser.parse(row[1])
+            if parse:
+                until = parse.date()
                 print(until)
                 ca.until_date = until
                 ca.save(update_fields=['is_festival', 'until_date'])
