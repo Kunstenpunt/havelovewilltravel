@@ -61641,12 +61641,11 @@ class Command(BaseCommand):
             ca.save(update_fields=['is_festival', 'until_date'])
 
             concert = ca.concert
-            print(concert.id, concert)
             if concert:
+                print(concert.id, concert)
                 concert.until_date = dateparser.parse(row[1])
                 concert.save(update_fields=['until_date'])
 
                 rels = RelationConcertOrganisation.objects.filter(concert=concert.id)
                 for rel in rels:
                     rel.organisation.organisation_type.add(2)
-            input()
