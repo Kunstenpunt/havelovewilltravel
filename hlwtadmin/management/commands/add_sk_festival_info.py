@@ -10,7 +10,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        latest = read_excel("hlwtadmin/fixtures/latest.xlsx")
+        latest = read_excel("latest.xlsx")
 
         sk_festivals = latest[(latest["source"] == "songkick") & (latest["event_type"] == "festival")]
 
