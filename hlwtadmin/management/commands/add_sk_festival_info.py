@@ -61637,17 +61637,18 @@ class Command(BaseCommand):
             ca = ConcertAnnouncement.objects.filter(gigfinder__name__contains="songkick").filter(gigfinder_concert_id=gigfinder_id).first()
             print(ca.id, ca)
             ca.is_festival = True
-            until = dateparser.parse(row[1]).date()
-            print(until)
-            ca.until_date = until
-            ca.save(update_fields=['is_festival', 'until_date'])
+            if row[1]:
+                until = dateparser.parse(row[1]).date()
+                print(until)
+                ca.until_date = until
+                ca.save(update_fields=['is_festival', 'until_date'])
 
-            concert = ca.concert
-            if concert:
-                print(concert.id, concert)
-                concert.until_date = until
-                concert.save(update_fields=['until_date'])
+                concert = ca.concert
+                if concert:
+                    print(concert.id, concert)
+                    concert.until_date = until
+                    concert.save(update_fields=['until_date'])
 
-                rels = RelationConcertOrganisation.objects.filter(concert=concert.id)
-                for rel in rels:
-                    rel.organisation.organisation_type.add(2)
+                    rels = RelationConcertOrganisation.objects.filter(concert=concert.id)
+                    for rel in rels:
+                        rel.organisation.organisation_type.add(2)
