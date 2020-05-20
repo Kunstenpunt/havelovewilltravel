@@ -13,7 +13,7 @@
     <div style="margin-left:20px;margin-top:20px">
         <h4>Date</h4>
         <ul>
-            <li>{{ concert.date }}</li>
+            <li>{{ concert.date }} {% if concert.until_date %}- {{ concert.until_date }}{% endif %}</li>
         </ul>
     </div>
 
@@ -129,12 +129,8 @@
         <h4>Details</h4>
         <table border="1">
             <tr>
-                <td>Titel</td>
+                <td>Title</td>
                 <td>{{ concert.title }}</td>
-            </tr>
-            <tr>
-                <td>Datum</td>
-                <td>{{ concert.date }}</td>
             </tr>
             <tr>
                 <td>Genre</td>
