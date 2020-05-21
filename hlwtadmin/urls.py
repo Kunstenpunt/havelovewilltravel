@@ -49,6 +49,7 @@ urlpatterns = [
     path('organisation/create/', views.OrganisationCreate.as_view(), name='organisation_create'),
     path('organisation/<int:pk>/update/', views.OrganisationUpdate.as_view(), name='organisation_update'),
     path('organisation/<int:pk>/delete/', views.OrganisationDelete.as_view(), name='organisation_delete'),
+    path('organisation/<int:pk>/delete/<int:organisation_delete_with_venue_consequences>', views.OrganisationDelete.as_view(), name='organisation_delete_with_venue_consequences'),
     # rawvenues
     path('venues/', views.VenueListView.as_view(), name='venues'),
     path('sparsevenues/', views.SparseVenueListView.as_view(), name='sparsevenues'),

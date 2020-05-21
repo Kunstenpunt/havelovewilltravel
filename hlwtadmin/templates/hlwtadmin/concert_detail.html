@@ -202,6 +202,12 @@
             {% if perms.hlwtadmin.can_create_relationconcertorganisation %}<li><a href="{% url 'relationconcertorganisation_create' concert.id %}">Relate this concert to an organisation</a></li>{% endif %}
             {% if perms.hlwtadmin.can_create_relationconcertartist %}<li><a href="{% url 'relationconcertartist_create' concert.id %}">Relate this concert to an artist</a></li>{% endif %}
             {% if perms.hlwtadmin.can_create_relationartistartist %}<li><a href="{% url 'relationconcertconcert_create' concert.id %}">Relate concert to another concert</a></li>{% endif %}
+        </ul>
+    </div>
+
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Special ctions</h4>
+        <ul>
             {% if perms.hlwtadmin.can_delete_concert %}<li><a href="{% url 'concert_delete_with_ca_on_ignore' concert.id 1 %}">Delete this concert, and the relations to artists and organisations, and set all related announcements on ignore.</a>{% endif %}
             {% if perms.hlwtadmin.can_delete_concert %}<li><a href="{% url 'concert_delete_with_ca_on_ignore' concert.id 2 %}">Delete this concert, and the relations to artists and organisations, and delete the related announcements.</a></li>{% endif %}
         </ul>
