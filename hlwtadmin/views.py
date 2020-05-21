@@ -467,6 +467,18 @@ class OnlyDeletedSetlistAnnouncementConcertListView(ListView):
         return context
 
 
+class ConcertsWithMoreThanOneArtist(ListView):
+    model = Concert
+    paginate_by = 30
+
+    def get_queryset(self):
+        return Concert.objects.annotate(num_artists=Count('relationconcertartist')).filter(num_artists__gt=1)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class ConcertForm(forms.ModelForm):
     class Meta:
         model = Concert
