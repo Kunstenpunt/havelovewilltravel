@@ -455,6 +455,18 @@ class NoAnnouncementConcertListView(ListView):
         return context
 
 
+class OnlyDeletedSetlistAnnouncementConcertListView(ListView):
+    model = Concert
+    paginate_by = 30
+
+    def get_queryset(self):
+        return Concert.objects.annotate(num_announcements=Count('concertannouncement')).filter(num_announcements=1).filter(concertannouncement__gigfinder__name__contains="setlist").order_by('concertannouncement__last_seen_on')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class ConcertForm(forms.ModelForm):
     class Meta:
         model = Concert
