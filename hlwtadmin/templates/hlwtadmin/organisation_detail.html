@@ -120,6 +120,14 @@
         {% endif %}
     </div>
 
+    {% if organisation.identifiersqs %}
+    <hr>
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Image via the wikidata identifier</h4> # TODO check if identifierqs is wikidata
+        <a target="_blank" href="" class="my-link"><img src="" class="my-image" id="{{ organisation.identifiersqs.first.identifier.identifier }}"></a>
+    </div>
+    {% endif %}
+
     <hr>
 
     <div style="margin-left:20px;margin-top:20px">
@@ -195,8 +203,8 @@
             {% for relation in organisation.identifiersqs %}
                 <li>
                     <a target="_blank" href="{{ relation.identifier.service.base_url }}{{ relation.identifier.identifier }}">{{ relation.identifier }}</a>
-                    {% if perms.hlwtadmin.can_update_externalidentifier %}<a href="{% url 'identifier_update' relation.identifier.id %}">Edit the identifier</a>{% endif %}
-                    {% if perms.hlwtadmin.can_delete_relationorganisationidentifier %}<a href="{% url 'relationorganisationidentifier_delete' relation.id organisation.id %}">Delete the link to this identifier</a>{% endif %}
+                    {% if perms.hlwtadmin.can_update_externalidentifier %}[<a href="{% url 'identifier_update' relation.identifier.id %}">Edit the identifier</a>]{% endif %}
+                    {% if perms.hlwtadmin.can_delete_relationorganisationidentifier %}[<a href="{% url 'relationorganisationidentifier_delete' relation.id organisation.id %}">Delete the link to this identifier</a>]{% endif %}
                 </li>
             {% endfor %}
         </ul>
@@ -224,3 +232,26 @@
     </div>
 
 {% endblock %}
+
+{% block javascript %}
+<script>
+    var myImage = document.querySelector('.my-image');
+    var myLink = document.querySelector('.my-link');
+    var fname;
+
+    fetch('http://www.wikidata.org/w/api.php?action=wbgetclaims&property=P18&format=json&origin=*&entity=' + myImage.id)
+        .then(function(response) {
+            return response.json();
+        }).then(function(json) {
+            fname = json["claims"]["P18"][0]["mainsnak"]["datavalue"]["value"];
+            console.log(fname);
+        }).then(function(fn) {
+    fetch("https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&formatversion=2&prop=imageinfo&iiprop=url&iiurlwidth=320&titles=File:" + encodeURIComponent(fname))
+        .then(function(response) {
+            return response.json();
+        }).then(function(json) {
+            myImage.src = json["query"]["pages"][0]["imageinfo"][0]["thumburl"];
+            myLink.href = json["query"]["pages"][0]["imageinfo"][0]["descriptionurl"];
+        });})
+  </script>
+{% endblock javascript %}

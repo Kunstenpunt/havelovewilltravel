@@ -94,6 +94,11 @@
         {% endif %}
     </div>
 
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Image from wikidata</h4>
+            <a target="_blank" href="" class="my-link"><img width="300px" src="" class="my-image" id="{{ artist.mbid }}"></a>
+    </div>
+
     {% if artist.artista.all or artist.artistb.all %}
     <div style="margin-left:20px;margin-top:20px">
 
@@ -148,4 +153,32 @@
             {% if perms.hlwtadmin.can_update_artist %}<li><a href="{% url 'artist_update' artist.mbid %}">Update artist</a></li>{% endif %}
         </ul>
     </div>
+
 {% endblock %}
+
+{% block javascript %}
+<script>
+    var myImage = document.querySelector('.my-image');
+    var myLink = document.querySelector('.my-link');
+    function makeSPARQLQuery( endpointUrl, sparqlQuery, doneCallback ) {
+        var settings = {
+            headers: { Accept: 'application/sparql-results+json' },
+            data: { query: sparqlQuery }
+        };
+        return $.ajax( endpointUrl, settings ).then( doneCallback );
+    }
+
+    var endpointUrl = 'https://query.wikidata.org/sparql',
+        sparqlQuery = "SELECT ?artist ?image\n" +
+            "WHERE {\n" +
+            "  ?artist wdt:P18 ?image.\n" +
+            "  ?artist wdt:P434 \"" + myImage.id + "\".\n" +
+            "}";
+
+    makeSPARQLQuery( endpointUrl, sparqlQuery, function( data ) {
+            myImage.src = data["results"]["bindings"][0]["image"]["value"];
+            myLink.href = data["results"]["bindings"][0]["artist"]["value"];
+        }
+    );
+  </script>
+{% endblock javascript %}
