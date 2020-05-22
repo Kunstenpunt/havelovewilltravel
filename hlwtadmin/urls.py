@@ -37,6 +37,12 @@ urlpatterns = [
     path('location/<int:pk>/update', views.LocationUpdateView.as_view(), name='location_update'),
     path('location/<int:pk>/delete', views.LocationDeleteView.as_view(), name='location_delete'),
     path('location/create', views.LocationCreate.as_view(), name='location_create'),
+
+    # identifiers
+    path('identifier/<int:pk>/update', views.IdentifierUpdateView.as_view(), name='identifier_update'),
+    path('identifier/<int:pk>/delete', views.IdentifierDeleteView.as_view(), name='identifier_delete'),
+    path('identifier/create', views.IdentifierCreate.as_view(), name='identifier_create'),
+
     # organisations
     path('sparseorganisation/', views.OrganisationListView.as_view(), name='sparse_organisations'),
     path('sparseorganisation2/', views.OrganisationListView2.as_view(), name='sparse_organisations2'),
@@ -92,6 +98,12 @@ urlpatterns = [
     path('relationorganisationorganisation/create/<int:pk>', views.RelationOrganisationOrganisationCreate.as_view(), name='relationorganisationorganisation_create'),
     path('relationorganisationorganisation/<int:pk>/update/', views.RelationOrganisationOrganisationUpdate.as_view(), name='relationorganisationorganisation_update'),
     path('relationorganisationorganisation/<int:pk>/delete/<int:organisationid>', views.RelationOrganisationOrganisationDelete.as_view(), name='relationorganisationorganisation_delete'),
+
+    # relationorganisationidentifier
+    path('relationorganisationidentifier/create/<int:pk>', views.RelationOrganisationIdentifierCreate.as_view(), name='relationorganisationidentifier_create'),
+    path('relationorganisationidentifier/<int:pk>/update/', views.RelationOrganisationIdentifierUpdate.as_view(), name='relationorganisationidentifier_update'),
+    path('relationorganisationidentifier/<int:pk>/delete/<int:organisationid>', views.RelationOrganisationIdentifierDelete.as_view(), name='relationorganisationidentifier_delete'),
+
     # autocompletes
     path('artist-autocomplete/', views.ArtistAutocomplete.as_view(model=models.Artist), name='artist_autocomplete'),
     path('concert-autocomplete/', views.ConcertAutocomplete.as_view(model=models.Concert, create_field='title'), name='concert_autocomplete'),
@@ -100,6 +112,7 @@ urlpatterns = [
     path('country-autocomplete/', views.CountryAutocomplete.as_view(model=models.Country, create_field='name'), name='country_autocomplete'),
     path('venue-autocomplete/', views.VenueAutocomplete.as_view(model=models.Venue, create_field='raw_venue'), name='venue_autocomplete'),
     path('subcountry-autocomplete-list/', views.SubcountryAutocompleteFromList.as_view(), name='subcountry_autocomplete_list'),
+    path('identifier-autocomplete/', views.IdentifierAutocomplete.as_view(model=models.ExternalIdentifier, create_field='identifier'), name='identifier_autocomplete'),
     # merge
     path('organisationsmerge/create/', views.OrganisationsMergeCreate.as_view(model=models.OrganisationsMerge), name='organisationsmerge_create'),
     path('organisationsmerge/<str:pk>/confirm/', views.OrganisationsMergeDelete.as_view(model=models.OrganisationsMerge), name='organisationsmerge_delete'),

@@ -430,6 +430,9 @@ class Organisation(models.Model):
     def enddate(self):
         return self.end_date.strftime("%Y/%m/%d"[0:self.end_date_precision]) if self.end_date else "?"
 
+    def identifiersqs(self):
+        return RelationOrganisationIdentifier.objects.select_related('identifier').filter(organisation=self)
+
     class Meta:
         ordering = ['name']
 
@@ -690,3 +693,50 @@ class RelationConcertConcertType(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ExternalIdentifierService(models.Model):
+    name = models.CharField(max_length=200)
+    base_url = models.URLField()
+
+    def __str__(self):
+        return self.name
+
+
+class ExternalIdentifier(models.Model):
+    identifier = models.CharField(max_length=200)
+    service = models.ForeignKey("ExternalIdentifierService", on_delete=models.PROTECT, null=True, blank=True)
+
+    def __str__(self):
+        return self.identifier + " (" + (self.service.name if self.service else "No service provided") + ")"
+
+
+class RelationOrganisationIdentifier(models.Model):
+    YEAR = 2
+    MONTH = 5
+    DAY = 8
+    PRECISION = (
+        (YEAR, 'Precise up to the year'),
+        (MONTH, 'Precise up to the month'),
+        (DAY, 'Precise up to the day')
+    )
+    start_date = models.DateField(blank=True, null=True)
+    start_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
+    end_date = models.DateField(blank=True, null=True)
+    end_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
+    organisation = models.ForeignKey("Organisation", on_delete=models.PROTECT)
+    identifier = models.ForeignKey("ExternalIdentifier", on_delete=models.PROTECT)
+
+    def __str__(self):
+        startdate = self.start_date.strptime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
+        enddate = self.end_date.strptime("%Y/%m/%d"[0:self.end_date_precision]) if self.end_date else "?"
+        return self.organisation.name + " " + self.identifier.identifier + " (" + self.identifier.service.name + ")" + " (" + startdate + "-" + enddate + ")"
+
+    def startdate(self):
+        return self.start_date.strftime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
+
+    def enddate(self):
+        return self.end_date.strptime("%Y/%m/%d"[0:self.end_date_precision]) if self.end_date else "?"
+
+    def get_absolute_url(self):
+        return reverse('relationorganisationidentifier_update', args=[str(self.id)])

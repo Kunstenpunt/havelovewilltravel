@@ -14,7 +14,8 @@ from django.views.generic.list import MultipleObjectMixin
 
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, RelationConcertConcert, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
-    RelationArtistArtist, OrganisationsMerge, ConcertsMerge, LocationsMerge, GigFinderUrl
+    RelationArtistArtist, OrganisationsMerge, ConcertsMerge, LocationsMerge, GigFinderUrl, RelationOrganisationIdentifier, \
+    ExternalIdentifier
 
 
 class SubcountryAutocompleteFromList(autocomplete.Select2ListView):
@@ -63,6 +64,14 @@ class ConcertAnnouncementAutocomplete(autocomplete.Select2QuerySetView):
         qs = ConcertAnnouncement.objects.all()
         if self.q:
             qs = qs.filter(title__unaccent__iregex=self.q)
+        return qs
+
+
+class IdentifierAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = ExternalIdentifier.objects.all()
+        if self.q:
+            qs = qs.filter(identifier__istartswith=self.q)
         return qs
 
 
@@ -1328,3 +1337,96 @@ class RecentlyAddedOrganisationListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+
+class RelationOrganisationIdentifierForm(forms.ModelForm):
+    class Meta:
+        model = RelationOrganisationIdentifier
+        fields = ['organisation', 'identifier', 'start_date', 'start_date_precision', 'end_date', 'end_date_precision']
+        widgets = {
+            'organisation': autocomplete.ModelSelect2(
+                url='organisation_autocomplete',
+                attrs={'data-html': True}
+            ),
+            'identifier': autocomplete.ModelSelect2(
+                url='identifier_autocomplete'
+            )
+        }
+
+
+class RelationOrganisationIdentifierCreate(CreateView):
+    form_class = RelationOrganisationIdentifierForm
+    model = RelationOrganisationIdentifier
+
+    def get_initial(self):
+        organisation = get_object_or_404(Organisation, pk=self.kwargs.get("pk"))
+        return {
+            'organisation': organisation,
+        }
+
+    def get_success_url(self):
+        return reverse_lazy('organisation_detail', kwargs={"pk": self.kwargs.get("pk")})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class RelationOrganisationIdentifierUpdate(UpdateView):
+    form_class = RelationOrganisationIdentifierForm
+    model = RelationOrganisationIdentifier
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        relation = get_object_or_404(RelationOrganisationIdentifier, pk=self.kwargs.get("pk"))
+        return reverse_lazy('organisation_detail', kwargs={"pk": relation.organisation.id})
+
+
+class RelationOrganisationIdentifierDelete(DeleteView):
+    model = RelationOrganisationIdentifier
+
+    def get_success_url(self):
+        return reverse_lazy('organisation_detail', kwargs={"pk": self.kwargs.get("organisationid")})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class IdentifierCreate(CreateView):
+    model = ExternalIdentifier
+    fields = fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('identifier_update', kwargs={"pk": self.kwargs.get("pk")})
+
+
+class IdentifierUpdateView(UpdateView):
+    model = ExternalIdentifier
+    fields = fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('identifier_update', kwargs={"pk": self.kwargs.get("pk")})
+
+
+class IdentifierDeleteView(DeleteView):
+    model = ExternalIdentifier
+    fields = fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('identifier_update', kwargs={"pk": self.kwargs.get("pk")})
