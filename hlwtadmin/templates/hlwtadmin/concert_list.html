@@ -10,6 +10,15 @@
             <label for="filter_end">From:</label>
             <input type="date" id="filter_end" name="filter_end" value="2025-12-31">
         </p>
+        <p>
+            <label for="filter">Country:</label>
+            <select id="filter" name="filter">
+                <option value="">No selection</option>
+                {% for country in countries %}
+                    <option value="{{ country.name }}"{% if country.name == filter %} selected {% endif %}>{{ country.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
         <p><input type="submit" name="submit" value="submit"/></p>
     </form>
   {% endif %}
