@@ -91,7 +91,7 @@
         <td valign="top">{{ concert.genre.all|join:"<br>" }}</td>
         <td valign="top">
           {% for ca in concert.concertannouncements %}
-            <a target="_blank" href=""{{ ca.gigfinder.base_url }}{% if ca.gigfinder.name == 'podiumfestivalinfo' %}   {% else %}{{ ca.gigfinder_concert_id }}{% endif %}"">
+            <a target="_blank" href="{{ ca.gigfinder.base_url }}{% if ca.gigfinder.name == 'podiumfestivalinfo' %} {{ ca.artist.name }} {{ ca.date }} 'site:podiuminfo.nl'  {% else %}{{ ca.gigfinder_concert_id }}{% endif %}">
                 {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
             </a>
             <a href="{% url 'concertannouncement_detail' ca.pk %}" title="{{ ca }}">{{ ca|truncatechars:30 }}</a>
