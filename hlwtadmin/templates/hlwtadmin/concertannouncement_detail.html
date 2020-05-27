@@ -8,7 +8,7 @@
         <p>Date: {{ concertannouncement.date }}, Time: {{ concertannouncement.time }}</p>
         <p>Until date: {{ concertannouncement.until_date }}</p>
         <p>Is festival: {{ concertannouncement.is_festival }}</p>
-        <p>Gigfinder: <a target="_blank" href="{{ concertannouncement.gigfinder.base_url}}{{ concertannouncement.gigfinder_concert_id }}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ concertannouncement.gigfinder }}.png" alt="{{ concertannouncement.gigfinder }}" /></a></p>
+        <p>Gigfinder: <a target="_blank" href="{{ ca.gigfinder.base_url }}{% if ca.gigfinder.name == 'podiumfestivalinfo' %} {{ ca.artist.name }} {{ ca.date }} 'site:podiuminfo.nl'  {% else %}{{ ca.gigfinder_concert_id }}{% endif %}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ concertannouncement.gigfinder }}.png" alt="{{ concertannouncement.gigfinder }}" /></a></p>
         <p>Last seen on: {{ concertannouncement.last_seen_on }}</p>
         <p>Created at: {{ concertannouncement.created_at }}</p>
         <p>Updated at: {{ concertannouncement.updated_at }}</p>
