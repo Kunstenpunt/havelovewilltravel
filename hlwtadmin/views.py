@@ -824,11 +824,16 @@ class FullOrganisationListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
+        context['countries'] = Country.objects.all()
         return context
 
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
-        new_context = Organisation.objects.select_related('location__country').filter(name__unaccent__iregex=filter_val,) #.exclude(relationconcertorganisation__organisation=None)
+        filter_country = self.request.GET.get('filter_country', None)
+        if filter_country:
+            new_context = Organisation.objects.select_related('location__country').filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
+        else:
+            new_context = Organisation.objects.select_related('location__country').filter(name__unaccent__iregex=filter_val,) #.exclude(relationconcertorganisation__organisation=None)
         return new_context
 
 

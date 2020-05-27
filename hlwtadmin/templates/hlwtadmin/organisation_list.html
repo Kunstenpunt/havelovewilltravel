@@ -4,6 +4,15 @@
   <h1>Organisation List</h1>
 
     <form method="get" action="{% url 'organisations' %}">
+      <p>
+            <label for="filter_country">Country:</label>
+            <select id="filter_country" name="filter_country">
+                <option value="">No selection</option>
+                {% for country in countries %}
+                    <option value="{{ country.name }}"{% if country.name == filter %} selected {% endif %}>{{ country.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
         <p>
             <label for="filter">Search term:</label>
             <input type="text" id="filter" name="filter"/>
