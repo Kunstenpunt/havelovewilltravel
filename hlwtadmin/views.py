@@ -4,11 +4,11 @@ from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
 from django import forms
 from dal import autocomplete
-from django.db.models import Q, Exists, Count, F
+from django.db.models import Q, Exists, Count, F, Max
 from django.db.models.functions import Length
 from django.utils.html import format_html
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.views.generic.list import MultipleObjectMixin
 
@@ -463,6 +463,18 @@ class NoAnnouncementConcertListView(ListView):
 
     def get_queryset(self):
         return Concert.objects.filter(concertannouncement=None).exclude(verified=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class MaybeDeletedOrCancelledConcertListView(ListView):
+    model = Concert
+    paginate_by = 30
+
+    def get_queryset(self):
+        return Concert.objects.exclude(concertannouncement__isnull=True).exclude(concertannouncement__last_seen_on__isnull=True).filter(date__lt=datetime(datetime.now().year, 1, 1)).annotate(last_seen_on=Max('concertannouncement__last_seen_on')).annotate(duration=F('date') - F('last_seen_on')).exclude(duration__gt=timedelta(days=0)).exclude(verified=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

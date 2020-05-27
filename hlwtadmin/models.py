@@ -119,6 +119,9 @@ class ConcertAnnouncement(models.Model):
     def recently_seen(self):
         return timedelta(days=30) > (datetime.today().date() - self.last_seen_on)
 
+    def maybe_deleted_or_cancelled(self):
+        return self.date > self.last_seen_on
+
     def frequently_seen(self):
         return self.seen_count > 3
 
