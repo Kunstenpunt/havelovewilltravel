@@ -97,7 +97,7 @@
             {% for relation in concert.concertannouncements %}
                 <tr>
                     <td>
-                        <a target="_blank" href="{{ ca.gigfinder.base_url }}{% if ca.gigfinder.name == 'podiumfestivalinfo' %} {{ ca.artist.name }} {{ ca.date }} 'site:podiuminfo.nl'  {% else %}{{ ca.gigfinder_concert_id }}{% endif %}">
+                        <a target="_blank" href="{{ relation.gigfinder.base_url }}{% if relation.gigfinder.name == 'podiumfestivalinfo' %} {{ relation.artist.name }} {{ relation.date }} 'site:podiuminfo.nl'  {% else %}{{ relation.gigfinder_concert_id }}{% endif %}">
                         {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ relation.gigfinder }}.png" alt="{{ relation.gigfinder }}" />
                         </a>
                     </td>
