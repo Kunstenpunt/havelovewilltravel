@@ -211,7 +211,7 @@ class ConcertAnnouncement(models.Model):
         else:
             specific_concert = Concert.objects.filter(until_date__isnull=True).filter(date__gte=self.date).filter(
                     date__lte=self.until_date).exclude(ignore=True).exclude(cancelled=True).filter(
-                    relationconcertartist_artist=self.artist).filter(
+                    relationconcertartist__artist=self.artist).filter(
                     relationconcertorganisation__organisation__location=self.most_likely_clean_location())
             if specific_concert:
                 return specific_concert.first()
