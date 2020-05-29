@@ -749,7 +749,7 @@ class GigfinderURLListView(ListView):
 class OrganisationForm(forms.ModelForm):
     class Meta:
         model = Organisation
-        fields = ['name', 'disambiguation', 'website', 'organisation_type', 'genre', 'address', 'location', 'verified', 'start_date', 'start_date_precision', 'end_date', 'end_date_precision', 'latitude', 'longitude', 'annotation', 'active', 'capacity']
+        fields = ['name', 'sort_name', 'disambiguation', 'website', 'organisation_type', 'genre', 'address', 'location', 'verified', 'start_date', 'start_date_precision', 'end_date', 'end_date_precision', 'latitude', 'longitude', 'annotation', 'active', 'capacity']
         widgets = {
             'location': autocomplete.ModelSelect2(
                 url='location_autocomplete'

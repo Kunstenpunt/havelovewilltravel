@@ -227,7 +227,7 @@ class ConcertAnnouncement(models.Model):
             if not country:
                 country = Country.objects.filter(iso_code=land.lower()).first()
             loc = Location.objects.filter(city__istartswith=stad).filter(country=country).first()
-            org = Organisation.objects.create(name=name,
+            org = Organisation.objects.create(name=name, sort_name=name,
                                               annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
                                               location=loc, verified=False)
             org.save()
@@ -403,6 +403,7 @@ class Organisation(models.Model):
         (DAY, 'Precise up to the day')
     )
     name = models.CharField(max_length=200)
+    sort_name = models.CharField(max_length=200)
     disambiguation = models.CharField(max_length=200, blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
@@ -437,7 +438,7 @@ class Organisation(models.Model):
         return RelationOrganisationIdentifier.objects.select_related('identifier').filter(organisation=self)
 
     class Meta:
-        ordering = ['name']
+        ordering = ['sort_name']
 
 
 class OrganisationType(models.Model):
