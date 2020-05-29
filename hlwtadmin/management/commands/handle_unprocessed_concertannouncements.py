@@ -13,9 +13,6 @@ class Command(BaseCommand):
             masterconcert = self._exists_non_cancelled_masterconcert_on_date_with_artist(concertannouncement)
             if masterconcert:
                 print("found a masterconcert", masterconcert, masterconcert.pk)
-                if masterconcert.title == "nan":
-                    masterconcert.title = concertannouncement.title
-                    masterconcert.save()
                 self._relate_concertannouncement_to_masterconcert(concertannouncement, masterconcert)
                 if self._is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(concertannouncement, masterconcert):
                     self._relate_organisation_related_to_venue_also_to_the_masterconcert(concertannouncement, masterconcert)

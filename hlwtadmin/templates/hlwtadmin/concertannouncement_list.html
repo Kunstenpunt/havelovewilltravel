@@ -6,7 +6,7 @@
   <ul>
     {% for concertannouncement in concertannouncement_list %}
       <li>
-        <a href="{{ concertannouncement.get_absolute_url }}">{{ concertannouncement.title }}</a> ({{ concertannouncement.date }})
+        <a href="{{ concertannouncement.get_absolute_url }}">{{ concertannouncement.title }}</a> ({{ concertannouncement.date }} -- {{ concertannouncement.until_date }})
       </li>
     {% endfor %}
   </ul>
