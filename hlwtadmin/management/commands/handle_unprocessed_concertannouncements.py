@@ -8,30 +8,80 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True).filter(id=34273):
+        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True).filter(id=189402):
             print("working on", concertannouncement, concertannouncement.pk)
-            masterconcert = self._exists_non_cancelled_masterconcert_on_date_with_artist(concertannouncement)
-            if masterconcert:
-                print("found a masterconcert", masterconcert, masterconcert.pk)
-                self._relate_concertannouncement_to_masterconcert(concertannouncement, masterconcert)
-                if self._is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(concertannouncement, masterconcert):
-                    self._relate_organisation_related_to_venue_also_to_the_masterconcert(concertannouncement, masterconcert)
+
+            if self._concertannouncement_has_daterange(concertannouncement):
+                print("CA with date range")
+                masterconcert = self._exists_non_cancelled_masterconcert_within_daterange_in_location_with_artist(concertannouncement)
+                if masterconcert:
+                    print("found a MC to relate to")
+                    self._relate_concertannouncement_to_masterconcert(concertannouncement, masterconcert)
                 else:
-                    self._relate_organisation_related_to_masterconcert_to_venue(concertannouncement, masterconcert)
+                    print("making a new MC")
+                    if self._venue_is_not_related_to_organisation(concertannouncement):
+                        self._create_new_unverified_organisation_and_relate_to_venue(concertannouncement)
+                    self._create_new_masterconcert_with_concertannouncement_organisation_artist(concertannouncement)
             else:
-                print("not found anything, making something from scratch")
-                if self._venue_is_not_related_to_organisation(concertannouncement):
-                    self._create_new_unverified_organisation_and_relate_to_venue(concertannouncement)
-                self._create_new_masterconcert_with_concertannouncement_organisation_artist(concertannouncement)
+                print("CA has specific date")
+                masterconcert = self._exists_non_cancelled_masterconcert_on_date_in_location_with_artist(concertannouncement)
+                if masterconcert:
+                    print("found a MC to relate to")
+                    self._relate_concertannouncement_to_masterconcert(concertannouncement, masterconcert)
+                    self._perhaps_specify_masterconcert_date(concertannouncement)
+                    if self._is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(concertannouncement, masterconcert):
+                        self._relate_organisation_related_to_venue_also_to_the_masterconcert(concertannouncement, masterconcert)
+                    else:
+                        self._relate_organisation_related_to_masterconcert_to_venue(concertannouncement, masterconcert)
+                else:
+                    print("making new MC")
+                    if self._venue_is_not_related_to_organisation(concertannouncement):
+                        self._create_new_unverified_organisation_and_relate_to_venue(concertannouncement)
+                    self._create_new_masterconcert_with_concertannouncement_organisation_artist(concertannouncement)
 
     @staticmethod
-    def _exists_non_cancelled_masterconcert_on_date_with_artist(self):
-        try:
-            return Concert.objects.filter(date=self.date).exclude(ignore=True).exclude(cancelled=True).filter(
-                relationconcertartist__artist=self.artist).filter(
-                relationconcertorganisation__organisation__location=self.most_likely_clean_location()).first()
-        except IndexError:
-            return None
+    def _concertannouncement_has_daterange(self):
+        return self.date < self.until_date if self.until_date else False
+
+    @staticmethod
+    def venue_organisation_is_in_concert_related_organisation(self):
+        orgs = set(RelationConcertOrganisation.objects.filter(concert=self.concert).values_list("organisation", flat=True))
+        return self.raw_venue.organisation.pk in orgs
+
+    @staticmethod
+    def _exists_non_cancelled_masterconcert_within_daterange_in_location_with_artist(self):
+        period_concert = Concert.objects.exclude(until_date__isnull=True).filter(date__lte=self.date).filter(
+                    until_date__gte=self.until_date).exclude(ignore=True).exclude(cancelled=True).filter(
+                    relationconcertartist__artist=self.artist).filter(
+                    relationconcertorganisation__organisation__location=self.most_likely_clean_location())
+        if period_concert:
+            return period_concert.first()
+        else:
+            specific_concert = Concert.objects.filter(until_date__isnull=True).filter(date__lte=self.date).filter(
+                    date__gte=self.until_date).exclude(ignore=True).exclude(cancelled=True).filter(
+                    relationconcertartist__artist=self.artist).filter(
+                    relationconcertorganisation__organisation__location=self.most_likely_clean_location())
+            if specific_concert:
+                return specific_concert.first()
+            else:
+                return None
+
+    @staticmethod
+    def _exists_non_cancelled_masterconcert_on_date_in_location_with_artist(self):
+        period_concert = Concert.objects.filter(until_date__isnull=False).filter(date__lte=self.date).filter(
+            until_date__gte=self.date).exclude(ignore=True).exclude(cancelled=True).filter(
+            relationconcertartist__artist=self.artist).filter(
+            relationconcertorganisation__organisation__location=self.most_likely_clean_location())
+        if period_concert:
+            return period_concert.first()
+        else:
+            specific_concert = Concert.objects.filter(until_date__isnull=True).filter(date=self.date).exclude(
+                ignore=True).exclude(cancelled=True).filter(relationconcertartist__artist=self.artist).filter(
+                relationconcertorganisation__organisation__location=self.most_likely_clean_location())
+            if specific_concert:
+                return specific_concert.first()
+            else:
+                return None
 
     @staticmethod
     def _is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(self, masterconcert):
@@ -44,6 +94,13 @@ class Command(BaseCommand):
         self.save()
 
     @staticmethod
+    def _perhaps_specify_masterconcert_date(self):
+        if self.concert.until_date:
+            self.concert.date = self.date
+            self.concert.until_date = None
+            self.concert.save()
+
+    @staticmethod
     def _relate_organisation_related_to_venue_also_to_the_masterconcert(self, masterconcert):
         if not self.raw_venue.non_assignable and self.raw_venue.organisation is not None:
             rco = RelationConcertOrganisation.objects.create(
@@ -54,11 +111,12 @@ class Command(BaseCommand):
 
     @staticmethod
     def _relate_organisation_related_to_masterconcert_to_venue(self, masterconcert):
-        if not self.raw_venue.non_assignable:
+        if not self.raw_venue.non_assignable and self.raw_venue.organisation is None:
             org = RelationConcertOrganisation.objects.filter(concert=masterconcert).first()
             if org:
-                self.raw_venue.organisation = org.organisation
-                self.raw_venue.save()
+                if org.location == self.clean_location_from_string():
+                    self.raw_venue.organisation = org.organisation
+                    self.raw_venue.save()
 
     @staticmethod
     def _venue_is_not_related_to_organisation(self):
@@ -89,7 +147,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def _create_new_masterconcert_with_concertannouncement_organisation_artist(self):
-        mc = Concert.objects.create(title=self.title, date=self.date, latitude=self.latitude, longitude=self.longitude)
+        mc = Concert.objects.create(title=self.title, date=self.date, until_date=(self.until_date if self.until_date else None), latitude=self.latitude, longitude=self.longitude)
         mc.save()
         for genre in self.artist.genre.all():
             mc.genre.add(genre)
