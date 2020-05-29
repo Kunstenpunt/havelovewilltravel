@@ -141,11 +141,13 @@ class FacebookScraper(PlatformLeecher):
         try:
             ld = loads(soup.find("script", {"type": "application/ld+json"}).text)
             datum = dateparse(ld["startDate"]).date()
+            einddatum = dateparse(ld["endDate"]).date()
             location = self._get_location(ld)
             titel = ld["name"]
             event_data = {
                 "event_id": event_id,
                 "datum": datum,
+                "einddatum": einddatum,
                 "land": location["country"],
                 "stad": location["city"],
                 "venue": location["venue"],
@@ -206,6 +208,7 @@ class FacebookScraper(PlatformLeecher):
                                 title=concert["titel"],
                                 artist=Artist.objects.filter(mbid=mbid).first(),
                                 date=concert["datum"].isoformat(),
+                                until_date=concert["einddatum"].isoformat(),
                                 gigfinder=self.gf,
                                 gigfinder_concert_id=concert["event_id"],
                                 last_seen_on=datetime.now(),
