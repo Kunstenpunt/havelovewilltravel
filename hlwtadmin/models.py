@@ -202,19 +202,21 @@ class ConcertAnnouncement(models.Model):
         return self.raw_venue.organisation.pk in orgs
 
     def _exists_non_cancelled_masterconcert_within_daterange_in_location_with_artist(self):
-        try:
-            try:
-                return Concert.objects.exclude(until_date__isnull=True).filter(date__gte=self.date).filter(
+        period_concert = Concert.objects.exclude(until_date__isnull=True).filter(date__gte=self.date).filter(
                     until_date__lte=self.until_date).exclude(ignore=True).exclude(cancelled=True).filter(
                     relationconcertartist__artist=self.artist).filter(
-                    relationconcertorganisation__organisation__location=self.most_likely_clean_location()).first()
-            except IndexError:
-                return Concert.objects.filter(until_date__isnull=True).filter(date__gte=self.date).filter(
+                    relationconcertorganisation__organisation__location=self.most_likely_clean_location())
+        if period_concert:
+            return period_concert.first()
+        else:
+            specific_concert = Concert.objects.filter(until_date__isnull=True).filter(date__gte=self.date).filter(
                     date__lte=self.until_date).exclude(ignore=True).exclude(cancelled=True).filter(
                     relationconcertartist_artist=self.artist).filter(
-                    relationconcertorganisation__organisation__location=self.most_likely_clean_location()).first()
-        except IndexError:
-            return None
+                    relationconcertorganisation__organisation__location=self.most_likely_clean_location())
+            if specific_concert:
+                return specific_concert.first()
+            else:
+                return None
 
     def _exists_non_cancelled_masterconcert_on_date_in_location_with_artist(self):
         try:
