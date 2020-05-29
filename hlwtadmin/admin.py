@@ -50,7 +50,7 @@ admin.site.register(RelationConcertConcert)
 admin.site.register(RelationConcertConcertType)
 
 admin.site.register(RelationLocationLocation)
-admin.site.register(RelationLocationType)
+admin.site.register(RelationLocationLocationType)
 
 admin.site.register(RelationOrganisationIdentifier)
 
