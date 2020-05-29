@@ -9,11 +9,11 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for venue in Venue.objects.exclude(organisation__isnull=True).exclude(organisation__location__country__isnull=True):
+        for venue in Venue.objects.exclude(organisation__isnull=True).exclude(organisation__location__country__isnull=True).exclude(non_assignable=True):
             print(venue, venue.pk)
             org_loc = venue.organisation.location
             likely_location = venue.concertannouncement_set.first().clean_location_from_string()
-            if likely_location:
+            if likely_location and likely_location.pk != 34789:
                 print(org_loc, likely_location, org_loc == likely_location)
                 if org_loc != likely_location:
                     print(org_loc.pk, org_loc, likely_location, likely_location.pk)
