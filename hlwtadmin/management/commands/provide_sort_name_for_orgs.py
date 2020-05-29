@@ -15,6 +15,7 @@ class Command(BaseCommand):
         for org in Organisation.objects.all():
             print(org.name)
             sort_name = org.name
+            sort_name = sub("^\s", "", sort_name)
             sort_name = sub("^the", "", sort_name, flags=IGNORECASE)
             sort_name = sub("20\d\d$", "", sort_name)
             sort_name = sub("\bfestival$", "", sort_name, flags=IGNORECASE)
