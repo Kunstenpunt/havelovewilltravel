@@ -95,6 +95,11 @@ urlpatterns = [
     path('relationconcertconcert/<str:pk>/update/', views.RelationConcertConcertUpdate.as_view(), name='relationconcertconcert_update'),
     path('relationconcertconcert/<str:pk>/delete/<str:concertid>', views.RelationConcertConcertDelete.as_view(), name='relationconcertconcert_delete'),
 
+    # relationlocationlocation
+    path('relationlocationlocation/create/<str:pk>', views.RelationLocationLocationCreate.as_view(), name='relationlocationlocation_create'),
+    path('relationlocationlocation/<str:pk>/update/', views.RelationLocationLocationUpdate.as_view(), name='relationlocationlocation_update'),
+    path('relationlocationlocation/<str:pk>/delete/<str:locationid>', views.RelationLocationLocationDelete.as_view(), name='relationlocationlocation_delete'),
+
     # relationorganisationorganisation
     path('relationorganisationorganisation/create/<int:pk>', views.RelationOrganisationOrganisationCreate.as_view(), name='relationorganisationorganisation_create'),
     path('relationorganisationorganisation/<int:pk>/update/', views.RelationOrganisationOrganisationUpdate.as_view(), name='relationorganisationorganisation_update'),

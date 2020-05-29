@@ -15,7 +15,7 @@ from django.views.generic.list import MultipleObjectMixin
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, RelationConcertConcert, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
     RelationArtistArtist, OrganisationsMerge, ConcertsMerge, LocationsMerge, GigFinderUrl, RelationOrganisationIdentifier, \
-    ExternalIdentifier
+    ExternalIdentifier, RelationLocationLocation, RelationLocationLocationType
 
 
 class SubcountryAutocompleteFromList(autocomplete.Select2ListView):
@@ -1452,3 +1452,59 @@ class IdentifierDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('identifier_update', kwargs={"pk": self.kwargs.get("pk")})
+
+
+class RelationLocationLocationForm(forms.ModelForm):
+    class Meta:
+        model = RelationLocationLocation
+        fields = ['location_a', 'relation_type', 'location_b']
+        widgets = {
+            'location_a': autocomplete.ModelSelect2(
+                url='location_autocomplete'
+            ),
+            'location_b': autocomplete.ModelSelect2(
+                url='location_autocomplete'
+            )
+        }
+
+
+class RelationLocationLocationCreate(CreateView):
+    form_class = RelationLocationLocationForm
+    model = RelationLocationLocation
+
+    def get_initial(self):
+        location = get_object_or_404(Location, pk=self.kwargs.get("pk"))
+        return {
+            'location_a': location,
+        }
+
+    def get_success_url(self):
+        return reverse_lazy('location_detail', kwargs={"pk": self.kwargs.get("pk")})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class RelationLocationLocationUpdate(UpdateView):
+    form_class = RelationLocationLocationForm
+    model = RelationLocationLocation
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        relation = get_object_or_404(RelationLocationLocation, pk=self.kwargs.get("pk"))
+        return reverse_lazy('location_detail', kwargs={"pk": relation.location_a.id})
+
+
+class RelationLocationLocationDelete(DeleteView):
+    model = RelationLocationLocation
+
+    def get_success_url(self):
+        return reverse_lazy('location_detail', kwargs={"pk": self.kwargs.get("locationid")})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context

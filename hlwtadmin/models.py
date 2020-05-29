@@ -699,6 +699,25 @@ class RelationConcertConcertType(models.Model):
         return self.name
 
 
+class RelationLocationLocation(models.Model):
+    location_a = models.ForeignKey("Location", on_delete=models.PROTECT, related_name='locationa')
+    location_b = models.ForeignKey("Location", on_delete=models.PROTECT, related_name='locationb')
+    relation_type = models.ManyToManyField("RelationLocationLocationType", blank=True)
+
+    def __str__(self):
+        return str(self.location_a) + " " + self.relation_type + " " + str(self.location_b)
+
+    def get_absolute_url(self):
+        return reverse('relationlocationlocation_update', args=[str(self.id)])
+
+
+class RelationLocationLocationType(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
 class ExternalIdentifierService(models.Model):
     name = models.CharField(max_length=200)
     base_url = models.URLField()
