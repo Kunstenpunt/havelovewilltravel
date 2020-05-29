@@ -17,6 +17,5 @@ class Command(BaseCommand):
                 print(org_loc, likely_location, org_loc == likely_location)
                 if org_loc != likely_location:
                     print(org_loc.pk, org_loc, likely_location, likely_location.pk)
-                    input()
                     venue.organisation = None
                     venue.save(update_fields=["organisation"])
