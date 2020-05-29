@@ -4,7 +4,8 @@ from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, ConcertsMerge,\
     OrganisationType, OrganisationsMerge, GigFinder, GigFinderUrl, RelationArtistArtist, RelationConcertOrganisationType, \
     RelationConcertConcertType, RelationArtistArtistType, RelationOrganisationOrganisationType, RelationConcertArtistType, \
-    RelationConcertConcert, RelationOrganisationIdentifier, ExternalIdentifier, ExternalIdentifierService, LocationsMerge
+    RelationConcertConcert, RelationOrganisationIdentifier, ExternalIdentifier, ExternalIdentifierService, LocationsMerge, \
+    RelationLocationLocationType, RelationLocationLocation
 
 from simple_history.admin import SimpleHistoryAdmin
 
@@ -47,6 +48,9 @@ admin.site.register(RelationArtistArtistType)
 
 admin.site.register(RelationConcertConcert)
 admin.site.register(RelationConcertConcertType)
+
+admin.site.register(RelationLocationLocation)
+admin.site.register(RelationLocationType)
 
 admin.site.register(RelationOrganisationIdentifier)
 
