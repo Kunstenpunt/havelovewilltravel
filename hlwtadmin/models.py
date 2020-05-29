@@ -275,7 +275,7 @@ class ConcertAnnouncement(models.Model):
             pass
 
     def _create_new_masterconcert_with_concertannouncement_organisation_artist(self):
-        mc = Concert.objects.create(title=self.title, date=self.date, latitude=self.latitude, longitude=self.longitude)
+        mc = Concert.objects.create(title=self.title, date=self.date, until_date=(self.until_date if self.until_date else None), latitude=self.latitude, longitude=self.longitude)
         mc.save()
         for genre in self.artist.genre.all():
             mc.genre.add(genre)
