@@ -194,16 +194,17 @@ class FacebookScraper(PlatformLeecher):
                 for concert in events:
                     if isinstance(concert, dict) and "event_id" in concert:
                         concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
-                        if not concertannouncement:
-                            venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
-                            venue = Venue.objects.filter(raw_venue=venue_name).first()
-                            if not venue:
-                                venue = Venue.objects.create(
-                                    raw_venue=venue_name,
-                                    raw_location="|".join([concert["stad"], concert["land"], self.platform])
-                                )
-                                venue.save()
 
+                        venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
+                        venue = Venue.objects.filter(raw_venue=venue_name).first()
+                        if not venue:
+                            venue = Venue.objects.create(
+                                raw_venue=venue_name,
+                                raw_location="|".join([concert["stad"], concert["land"], self.platform])
+                            )
+                            venue.save()
+
+                        if not concertannouncement:
                             ca = ConcertAnnouncement.objects.create(
                                 title=concert["titel"],
                                 artist=Artist.objects.filter(mbid=mbid).first(),
@@ -223,6 +224,8 @@ class FacebookScraper(PlatformLeecher):
                                 concertannouncement.title = concert["titel"]
                             if concert["datum"] != concertannouncement.date:
                                 concertannouncement.date = concert["datum"]
+                            if venue != concertannouncement.raw_venue:
+                                concertannouncement.raw_venue = venue
                             if concert["latitude"] != concertannouncement.latitude:
                                 concertannouncement.latitude = concert["latitude"]
                             if concert["longitude"] != concertannouncement.longitude:
@@ -266,16 +269,17 @@ class BandsInTownLeecher(PlatformLeecher):
                 if isinstance(concert, dict):
                     concert = self.map_platform_to_schema(concert, band, mbid, {})
                     concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
-                    if not concertannouncement:
-                        venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
-                        venue = Venue.objects.filter(raw_venue=venue_name).first()
-                        if not venue:
-                            venue = Venue.objects.create(
-                                raw_venue=venue_name[0:199],
-                                raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
-                            )
-                            venue.save()
 
+                    venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
+                    venue = Venue.objects.filter(raw_venue=venue_name).first()
+                    if not venue:
+                        venue = Venue.objects.create(
+                            raw_venue=venue_name[0:199],
+                            raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
+                        )
+                        venue.save()
+
+                    if not concertannouncement:
                         ca = ConcertAnnouncement.objects.create(
                             title=concert["titel"][0:199],
                             artist=Artist.objects.filter(mbid=mbid).first(),
@@ -294,6 +298,8 @@ class BandsInTownLeecher(PlatformLeecher):
                             concertannouncement.title = concert["titel"][0:199].replace(u"\x00", '')
                         if concert["datum"] != concertannouncement.date:
                             concertannouncement.date = concert["datum"]
+                        if venue != concertannouncement.raw_venue:
+                            concertannouncement.raw_venue = venue
                         if concert["latitude"] != concertannouncement.latitude:
                             concertannouncement.latitude = concert["latitude"]
                         if concert["longitude"] != concertannouncement.longitude:
@@ -366,16 +372,17 @@ class SetlistFmLeecher(PlatformLeecher):
                 if isinstance(concert, dict):
                     print("setlist", concert)
                     concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
-                    if not concertannouncement:
-                        venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
-                        venue = Venue.objects.filter(raw_venue=venue_name).first()
-                        if not venue:
-                            venue = Venue.objects.create(
-                                raw_venue=venue_name[0:199],
-                                raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
-                            )
-                            venue.save()
 
+                    venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
+                    venue = Venue.objects.filter(raw_venue=venue_name).first()
+                    if not venue:
+                        venue = Venue.objects.create(
+                            raw_venue=venue_name[0:199],
+                            raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
+                        )
+                        venue.save()
+
+                    if not concertannouncement:
                         ca = ConcertAnnouncement.objects.create(
                             title=concert["titel"][0:199],
                             artist=Artist.objects.filter(mbid=mbid).first(),
@@ -394,6 +401,8 @@ class SetlistFmLeecher(PlatformLeecher):
                             concertannouncement.title = concert["titel"][0:199]
                         if concert["datum"] != concertannouncement.date:
                             concertannouncement.date = concert["datum"]
+                        if venue != concertannouncement.raw_venue:
+                            concertannouncement.raw_venue = venue
                         if concert["latitude"] != concertannouncement.latitude:
                             concertannouncement.latitude = concert["latitude"]
                         if concert["longitude"] != concertannouncement.longitude:
@@ -471,16 +480,17 @@ class SongkickLeecher(PlatformLeecher):
             for concert in events:
                 if isinstance(concert, dict):
                     concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
-                    if not concertannouncement:
-                        venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
-                        venue = Venue.objects.filter(raw_venue=venue_name).first()
-                        if not venue:
-                            venue = Venue.objects.create(
-                                raw_venue=venue_name[0:199],
-                                raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
-                            )
-                            venue.save()
 
+                    venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
+                    venue = Venue.objects.filter(raw_venue=venue_name).first()
+                    if not venue:
+                        venue = Venue.objects.create(
+                            raw_venue=venue_name[0:199],
+                            raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
+                        )
+                        venue.save()
+
+                    if not concertannouncement:
                         ca = ConcertAnnouncement.objects.create(
                             title=concert["titel"][0:199],
                             artist=Artist.objects.filter(mbid=mbid).first(),
@@ -501,6 +511,8 @@ class SongkickLeecher(PlatformLeecher):
                             concertannouncement.title = concert["titel"]
                         if concert["datum"] != concertannouncement.date:
                             concertannouncement.date = concert["datum"]
+                        if venue != concertannouncement.raw_venue:
+                            concertannouncement.raw_venue = venue
                         if concert["latitude"] != concertannouncement.latitude:
                             concertannouncement.latitude = concert["latitude"]
                         if concert["longitude"] != concertannouncement.longitude:

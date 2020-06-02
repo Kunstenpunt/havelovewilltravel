@@ -189,6 +189,12 @@ class ConcertAnnouncement(models.Model):
                 self.concert.latitude = self.latitude
                 self.concert.longitude = self.longitude
                 self.concert.save()
+            if self.raw_venue.organisation:
+                rel = RelationConcertOrganisation.objects.create(
+                    concert=self.concert,
+                    organisation=self.raw_venue.organisation
+                )
+                rel.save()
         super(ConcertAnnouncement, self).save(*args, **kwargs)
 
     class Meta:
