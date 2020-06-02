@@ -14,7 +14,6 @@ class Command(BaseCommand):
             if venue.concertannouncement_set.first():
                 likely_location = venue.concertannouncement_set.first().clean_location_from_string()
                 if likely_location and likely_location.pk != 34789:
-                    print(org_loc, likely_location, org_loc == likely_location)
                     if org_loc != likely_location:
                         print("\t".join([venue.raw_venue, str(venue.pk),
                                          venue.organisation.name, str(venue.organisation.id),
