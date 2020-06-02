@@ -224,6 +224,8 @@ class FacebookScraper(PlatformLeecher):
                                 concertannouncement.title = concert["titel"]
                             if concert["datum"] != concertannouncement.date:
                                 concertannouncement.date = concert["datum"]
+                            if concert["einddatum"] != concertannouncement.until_date:
+                                concertannouncement.until_date = concert["einddatum"]
                             if venue != concertannouncement.raw_venue:
                                 concertannouncement.raw_venue = venue
                             if concert["latitude"] != concertannouncement.latitude:
@@ -511,6 +513,10 @@ class SongkickLeecher(PlatformLeecher):
                             concertannouncement.title = concert["titel"]
                         if concert["datum"] != concertannouncement.date:
                             concertannouncement.date = concert["datum"]
+                        if concert["einddatum"] != concertannouncement.until_date:
+                            concertannouncement.until_date = concert["einddatum"]
+                        if concert["is_festival"] != concertannouncement.is_festival:
+                            concertannouncement.is_festival = concert["is_festival"]
                         if venue != concertannouncement.raw_venue:
                             concertannouncement.raw_venue = venue
                         if concert["latitude"] != concertannouncement.latitude:
