@@ -535,7 +535,7 @@ class SongkickLeecher(PlatformLeecher):
             "artiest_mb_id": mbid,
             "stad": ",".join([i.strip() for i in event["location"]["city"].split(",")[0:-1]]),
             "land": event["location"]["city"].split(",")[-1].strip(),
-            "venue": event["displayName"].strip() if event["type"] == "Festival" else event["venue"]["displayName"].strip(),
+            "venue": event["displayName"].strip().replace(str(concertdate.year), "") if event["type"] == "Festival" else event["venue"]["displayName"].strip(),
             "latitude": event["venue"]["lat"],
             "longitude": event["venue"]["lng"],
             "source": self.platform,
