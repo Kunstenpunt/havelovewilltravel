@@ -30,7 +30,7 @@ class Command(BaseCommand):
             data = loads(html) if html is not None else {}
             try:
                 result = data["resultsPage"]["results"]["event"]
-                print(dumps(result, indent=4))
+                #print(dumps(result, indent=4))
 
                 # if is festival or has end date
                 if result["type"] == "Festival" or "end" in result:
@@ -62,8 +62,12 @@ class Command(BaseCommand):
                         # couple new raw venue to announcement
                         ca.raw_venue = venue
 
-                        # update announcement
-                        ca.save(update_fields=['raw_venue', 'until_date', 'is_festival'])
+                    print("about to change", ca.pk, "and setting is_festival to", result["type"] == "Festival",
+                          "until_date to", dateparse(result["end"]["date"]).date() if "end" in result else None,
+                          "and raw_venue to", venue)
+                    input()
+                    # update announcement
+                    ca.save(update_fields=['raw_venue', 'until_date', 'is_festival'])
 
             except KeyError:
                 print(ca.pk, "not available anymore")
