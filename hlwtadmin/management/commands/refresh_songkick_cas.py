@@ -7,6 +7,7 @@ from requests import get
 from json import loads, dumps
 
 from dateparser import parse as dateparse
+from datetime import datetime
 
 import time
 
@@ -19,7 +20,7 @@ class Command(BaseCommand):
         sk_api_key = GigFinder.objects.filter(name="www.songkick.com").first().api_key
 
         # loop through all announcements of songkick that are not ignored
-        for ca in ConcertAnnouncement.objects.filter(gigfinder__name="www.songkick.com").exclude(ignore=True):
+        for ca in ConcertAnnouncement.objects.filter(gigfinder__name="www.songkick.com").exclude(ignore=True).filter(date=datetime(2017, 7, 8)):
 
             print("working on", ca, ca.pk)
 
