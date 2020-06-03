@@ -21,13 +21,13 @@ class Command(BaseCommand):
         platform = GigFinder.objects.filter(name="www.songkick.com").first()
 
         # loop through all announcements of songkick that are not ignored
-        for ca in ConcertAnnouncement.objects.filter(gigfinder__name="www.songkick.com").exclude(ignore=True).filter(date=datetime(2017, 7, 8)):
+        for ca in ConcertAnnouncement.objects.filter(gigfinder__name="www.songkick.com").exclude(ignore=True).order_by('pk'):
 
             print("working on", ca, ca.pk)
 
             # fetch data from songkick
             sk_url = "https://api.songkick.com/api/3.0/events/" + ca.gigfinder_concert_id +".json?apikey=" + sk_api_key
-            time.sleep(2.0)
+            time.sleep(0.5)
             html = get(sk_url).text
             data = loads(html) if html is not None else {}
             try:
@@ -50,24 +50,17 @@ class Command(BaseCommand):
                             )
                             venue.save()
 
-
-                        print("about to change", ca.pk, "and setting is_festival to", result["type"] == "Festival", "until_date to", dateparse(result["end"]["date"]).date() if "end" in result else None, "and raw_venue to", venue)
-                        input()
-
                         # decouple raw venue from organisation
+                        print("about to change raw_venue to", venue)
                         ca.raw_venue.organisation = None
                         ca.raw_venue.save()
 
-                        # decouple raw venue from concert announcement
-                        ca.raw_venue = None
-
-                        # couple new raw venue to announcement
+                        # couple new raw venue to concert announcement
                         ca.raw_venue = venue
 
+                    # update announcement
                     print("about to change", ca.pk, "and setting is_festival to", result["type"] == "Festival",
                           "until_date to", dateparse(result["end"]["date"]).date() if "end" in result else None)
-                    input()
-                    # update announcement
                     ca.save(update_fields=['raw_venue', 'until_date', 'is_festival'])
 
             except KeyError:
