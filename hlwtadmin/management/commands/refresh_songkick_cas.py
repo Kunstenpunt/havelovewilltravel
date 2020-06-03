@@ -33,7 +33,7 @@ class Command(BaseCommand):
                 #print(dumps(result, indent=4))
 
                 # if is festival or has end date
-                if result["type"] == "Festival" or "end" in result:
+                if (result["type"] == "Festival" and ca.is_festival != result["type"] == "Festival") or ("end" in result and ca.until_date != dateparse(result["end"]["date"]).date()):
                     ca.is_festival = result["type"] == "Festival"
                     ca.until_date = dateparse(result["end"]["date"]).date() if "end" in result else None
 
