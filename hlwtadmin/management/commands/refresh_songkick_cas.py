@@ -41,12 +41,12 @@ class Command(BaseCommand):
 
                     # if is festival and has unknown in venue name, change venue to festival name
                     if result["type"] == "Festival" and "unknown" in ca.raw_venue.raw_venue.lower():
-                        venue_name = "|".join([result["displayName"], ",".join(result["location"]["city"].split(",")[0:-1]), result["location"]["city"].split(",")[-1], platform])
+                        venue_name = "|".join([result["displayName"], ",".join(result["location"]["city"].split(",")[0:-1]), result["location"]["city"].split(",")[-1], platform.name])
                         venue = Venue.objects.filter(raw_venue=venue_name).first()
                         if not venue:
                             venue = Venue.objects.create(
                                 raw_venue=venue_name[0:199],
-                                raw_location="|".join([",".join(result["location"]["city"].split(",")[0:-1]), result["location"]["city"].split(",")[-1], platform])[0:199]
+                                raw_location="|".join([",".join(result["location"]["city"].split(",")[0:-1]), result["location"]["city"].split(",")[-1], platform.name])[0:199]
                             )
                             venue.save()
 
