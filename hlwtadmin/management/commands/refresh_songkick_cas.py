@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Count
 
 from requests import get
-from json import loads
+from json import loads, dumps
 
 from dateparser import parse as dateparse
 
@@ -21,7 +21,7 @@ class Command(BaseCommand):
         # loop through all announcements of songkick that are not ignored
         for ca in ConcertAnnouncement.objects.filter(gigfinder__name="www.songkick.com").exclude(ignore=True):
 
-            print("working on", ca)
+            print("working on", ca, ca.pk)
 
             # fetch data from songkick
             sk_url = "https://api.songkick.com/api/3.0/events/" + ca.gigfinder_concert_id +".json?apikey=" + sk_api_key
@@ -30,6 +30,7 @@ class Command(BaseCommand):
             data = loads(html) if html is not None else {}
             try:
                 result = data["resultsPage"]["results"]["event"]
+                print(dumps(result, indent=4))
 
                 # if is festival or has end date
                 if result["type"] == "Festival" or "end" in result:
