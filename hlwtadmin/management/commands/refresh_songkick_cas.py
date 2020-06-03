@@ -18,6 +18,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         sk_api_key = GigFinder.objects.filter(name="www.songkick.com").first().api_key
+        platform = GigFinder.objects.filter(name="www.songkick.com").first()
 
         # loop through all announcements of songkick that are not ignored
         for ca in ConcertAnnouncement.objects.filter(gigfinder__name="www.songkick.com").exclude(ignore=True).filter(date=datetime(2017, 7, 8)):
@@ -40,12 +41,12 @@ class Command(BaseCommand):
 
                     # if is festival and has unknown in venue name, change venue to festival name
                     if result["type"] == "Festival" and "unknown" in ca.raw_venue.raw_venue.lower():
-                        venue_name = "|".join([result["displayName"], ",".join(result["location"]["city"].split(",")[0:-1]), result["location"]["city"].split(",")[-1], self.platform])
+                        venue_name = "|".join([result["displayName"], ",".join(result["location"]["city"].split(",")[0:-1]), result["location"]["city"].split(",")[-1], platform])
                         venue = Venue.objects.filter(raw_venue=venue_name).first()
                         if not venue:
                             venue = Venue.objects.create(
                                 raw_venue=venue_name[0:199],
-                                raw_location="|".join([",".join(result["location"]["city"].split(",")[0:-1]), result["location"]["city"].split(",")[-1], self.platform])[0:199]
+                                raw_location="|".join([",".join(result["location"]["city"].split(",")[0:-1]), result["location"]["city"].split(",")[-1], platform])[0:199]
                             )
                             venue.save()
 
