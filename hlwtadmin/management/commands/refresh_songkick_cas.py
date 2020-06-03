@@ -63,8 +63,7 @@ class Command(BaseCommand):
                         ca.raw_venue = venue
 
                     print("about to change", ca.pk, "and setting is_festival to", result["type"] == "Festival",
-                          "until_date to", dateparse(result["end"]["date"]).date() if "end" in result else None,
-                          "and raw_venue to", venue)
+                          "until_date to", dateparse(result["end"]["date"]).date() if "end" in result else None)
                     input()
                     # update announcement
                     ca.save(update_fields=['raw_venue', 'until_date', 'is_festival'])
