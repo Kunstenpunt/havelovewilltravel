@@ -23,14 +23,12 @@ class Command(BaseCommand):
                 print(concert.pk, concert, "with multiple announcements, and at least one is precise")
                 if concert.until_date is not None or concert.date != list(precise_date)[0]:
                     print("\tadjusting date and until date")
-                    input()
                     concert.until_date = None
                     concert.date = list(precise_date)[0]
                     concert.save(update_fields=['until_date', 'date'])
                 for ca in concert.concertannouncements():
                     if ca.until_date is not None:
                         print("\tremoving a vague announcement from this concert")
-                        input()
                         ca.concert = None
                         ca.save(update_fields=['concert'])
             elif len(precise_date) > 1:
