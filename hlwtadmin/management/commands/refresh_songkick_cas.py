@@ -21,12 +21,13 @@ class Command(BaseCommand):
         platform = GigFinder.objects.filter(name="www.songkick.com").first()
 
         # loop through all announcements of songkick that are not ignored
-        for ca in ConcertAnnouncement.objects.filter(gigfinder__name="www.songkick.com").exclude(ignore=True).filter(id__gt=0).order_by('pk'):
+        for ca in ConcertAnnouncement.objects.filter(gigfinder__name="www.songkick.com").exclude(ignore=True).filter(id__gt=157115).order_by('pk'):
 
             print("working on", ca, ca.pk)
 
             # fetch data from songkick
             sk_url = "https://api.songkick.com/api/3.0/events/" + ca.gigfinder_concert_id +".json?apikey=" + sk_api_key
+            print(sk_url)
             time.sleep(0.5)
             html = get(sk_url).text
             data = loads(html) if html is not None else {}
