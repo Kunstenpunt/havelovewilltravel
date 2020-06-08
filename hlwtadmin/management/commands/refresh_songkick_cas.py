@@ -21,7 +21,7 @@ class Command(BaseCommand):
         platform = GigFinder.objects.filter(name="www.songkick.com").first()
 
         # loop through all announcements of songkick that are not ignored
-        for ca in ConcertAnnouncement.objects.filter(gigfinder__name="www.songkick.com").exclude(ignore=True).filter(id__gt=157591).order_by('pk'):
+        for ca in ConcertAnnouncement.objects.filter(gigfinder__name="songkick").exclude(ignore=True).filter(id__gt=0).order_by('pk'):
 
             print("working on", ca, ca.pk)
 
