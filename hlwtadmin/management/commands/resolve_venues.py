@@ -40,7 +40,7 @@ class Command(BaseCommand):
             location_pk[(city, country)] = loc.id
             country_pk[country] = loc.country.id if loc.country else None
 
-        venues_without_org = Venue.objects.exclude(raw_venue__icontains="|none|none|").exclude("||").exclude(raw_venue__istartswith="unknown").filter(organisation__isnull=True).filter(non_assignable=False)#.filter(pk__gt=100000)
+        venues_without_org = Venue.objects.exclude(raw_venue__icontains="|none|none|").exclude(raw_venue__icontains="||").exclude(raw_venue__istartswith="unknown").filter(organisation__isnull=True).filter(non_assignable=False)#.filter(pk__gt=100000)
         for venue in venues_without_org:
             try:
                 name_prop, stad, land, bron, *rest = venue.raw_venue.split("|")
