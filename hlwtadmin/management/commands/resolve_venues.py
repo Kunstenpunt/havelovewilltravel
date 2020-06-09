@@ -93,12 +93,10 @@ class Command(BaseCommand):
                             name=name_prop_clean
                         )
                         print("about to save", org)
-                        input()
                         org.save()
                         print("created org", org, org.location)
 
                     print("about to connect", venue, "with", org)
-                    input()
                     venue.organisation = org
                     venue.save()
                     print("venue is now", venue, venue.organisation)
