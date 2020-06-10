@@ -52,8 +52,11 @@ class Command(BaseCommand):
                 name_prop, stad, land, bron, *rest = venue.raw_venue.split("|")
                 print(name_prop, stad, land)
                 ca = ConcertAnnouncement.objects.filter(raw_venue=venue).first()
-                lat = ca.latitude
-                lon = ca.longitude
+                lat = None
+                lon = None
+                if ca:
+                    lat = ca.latitude
+                    lon = ca.longitude
 
                 raw_loc = venue.raw_location.replace("| ", "|").lower()
                 print("trying to find a better match with", raw_loc, raw_loc in cl)
