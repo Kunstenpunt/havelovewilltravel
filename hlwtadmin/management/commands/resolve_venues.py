@@ -34,9 +34,9 @@ class Command(BaseCommand):
 
         locations = Location.objects.all()
         for loc in locations:
-            city = loc.city.lower()
-            state = loc.subcountry.lower()
-            country = loc.country.name.lower() if loc.country else None
+            city = loc.city
+            state = loc.subcountry
+            country = loc.country.name if loc.country else None
             location_pk[(city, country)] = loc.id
             country_pk[country] = loc.country.id if loc.country else None
 
