@@ -34,9 +34,9 @@ class Command(BaseCommand):
 
         locations = Location.objects.all()
         for loc in locations:
-            city = loc.city
-            state = loc.subcountry
-            country = loc.country.name if loc.country else None
+            city = loc.city.lower()
+            state = loc.subcountry.lower()
+            country = loc.country.name.lower() if loc.country else None
             location_pk[(city, country)] = loc.id
             country_pk[country] = loc.country.id if loc.country else None
 
@@ -49,15 +49,21 @@ class Command(BaseCommand):
                 lat = ca.latitude
                 lon = ca.longitude
 
-                print("trying to find a better match with", venue.raw_location, venue.raw_location in cl)
                 raw_loc = venue.raw_location.replace("| ", "|")
+                print("trying to find a better match with", raw_loc, raw_loc in cl)
                 if raw_loc in cl:
                     stad = cl[raw_loc]["clean_city"]
                     land = cl[raw_loc]["clean_country"]
                     print("wait a found something better", stad, land)
+                else:
+                    raw_loc = raw_loc.replace("www.songkick.com", "songkick")
+                    if raw_loc in cl:
+                        stad = cl[raw_loc]["clean_city"]
+                        land = cl[raw_loc]["clean_country"]
+                        print("wait a found something better", stad, land)
 
                 try:
-                    loc = Location.objects.filter(id=location_pk[(stad, land)]).first()
+                    loc = Location.objects.filter(id=location_pk[(stad.strip(), land.strip())]).first()
                     print("found loc", loc)
                 except KeyError:
                     # try:
