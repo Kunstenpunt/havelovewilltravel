@@ -50,9 +50,10 @@ class Command(BaseCommand):
                 lon = ca.longitude
 
                 print("trying to find a better match with", venue.raw_location, venue.raw_location in cl)
-                if venue.raw_location in cl:
-                    stad = cl[venue.raw_location]["clean_city"]
-                    land = cl[venue.raw_location]["clean_country"]
+                raw_loc = venue.raw_location.replace("| ", "|")
+                if raw_loc in cl:
+                    stad = cl[raw_loc]["clean_city"]
+                    land = cl[raw_loc]["clean_country"]
                     print("wait a found something better", stad, land)
 
                 try:
