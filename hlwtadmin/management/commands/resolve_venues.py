@@ -14,13 +14,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         cl_temp = {}
         for venue in Venue.objects.exclude(organisation__isnull=True):
+            print(venue, venue.pk)
             key = venue.raw_location
-            clean_loc = venue.organisation.location
+            clean_loc = venue.organisation.location if venue.organisation else None
             clean_city = clean_loc.city
             clean_country = clean_loc.country.name if clean_loc.country else None
-            if key not in cl_temp:
-                cl_temp[key] = []
-            cl_temp[key].append((clean_city, clean_country))
+            if clean_loc:
+                if key not in cl_temp:
+                    cl_temp[key] = []
+                cl_temp[key].append((clean_city, clean_country))
 
         cl = {}
         for key in cl_temp:
