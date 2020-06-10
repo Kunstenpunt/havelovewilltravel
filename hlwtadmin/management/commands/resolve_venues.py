@@ -25,7 +25,7 @@ class Command(BaseCommand):
                 if key not in cl_temp:
                     cl_temp[key] = []
                 cl_temp[key].append((clean_city, clean_country))
-            time.sleep(0.05)
+            sleep(0.05)
 
         cl = {}
         for key in cl_temp:
