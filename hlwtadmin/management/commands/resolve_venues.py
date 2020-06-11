@@ -14,6 +14,19 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
+
+        mapper = {
+            "Ã¼": "ü",
+            "Ã¨": "è",
+            "ÃŸ": "ß",
+            "Ã´": "ô",
+            "Ã©": "é",
+            "Ã¶": "ö",
+            "Ã‰": "É",
+            "Ãº": "ú",
+            "Ã¢": "â"
+        }
+
         cl_temp = {}
         for venue in Venue.objects.exclude(organisation__isnull=True):
             try:
@@ -58,14 +71,18 @@ class Command(BaseCommand):
                     lat = ca.latitude
                     lon = ca.longitude
 
+                for key in mapper:
+                    raw_loc = raw_loc.replace(key, mapper[key])
+
                 raw_loc = venue.raw_location.replace("| ", "|").lower()
+
                 print("trying to find a better match with", raw_loc, raw_loc in cl)
                 if raw_loc in cl:
                     stad = cl[raw_loc]["clean_city"]
                     land = cl[raw_loc]["clean_country"]
                     print("wait a found something better", stad, land)
                 else:
-                    raw_loc = raw_loc.replace("www.songkick.com", "songkick")
+                    raw_loc = raw_loc.replace("www.setlist.fm", "setlist")
                     if raw_loc in cl:
                         stad = cl[raw_loc]["clean_city"]
                         land = cl[raw_loc]["clean_country"]
@@ -93,27 +110,31 @@ class Command(BaseCommand):
                 if loc:
                     try:
                         name_prop_clean = sub("\d\d\d\d$", "", name_prop).strip()
+                        for key in mapper:
+                            name_prop_clean = name_prop_clean.replace(key, mapper[key])
                         print("original name", name_prop, "so cleaned this would be", name_prop_clean)
-                        org = Organisation.objects.filter(name=name_prop_clean).filter(location__pk=loc.pk).first()
+                        org = Organisation.objects.filter(name__iexact=name_prop_clean).filter(location__pk=loc.pk).first()
                         print("checking for org", name_prop_clean, "with location", loc, "and found", org)
                     except (KeyError, AttributeError):
                         org = None
 
-                    if org is None:
-                        print("no org found, making one")
-                        org = Organisation.objects.create(
-                            location=loc,
-                            verified=False,
-                            latitude=lat,
-                            longitude=lon,
-                            name=name_prop_clean
-                        )
-                        print("about to save", org)
-                        org.save()
-                        print("created org", org, org.location)
+                    # if org is None:
+                    #     print("no org found, making one")
+                    #     org = Organisation.objects.create(
+                    #         location=loc,
+                    #         verified=False,
+                    #         latitude=lat,
+                    #         longitude=lon,
+                    #         name=name_prop_clean
+                    #     )
+                    #     print("about to save", org)
+                    #     org.save()
+                    #     print("created org", org, org.location)
 
-                    print("about to connect", venue, "with", org)
-                    venue.organisation = org
+                    if org:
+                        print("about to connect", venue, "with", org)
+                        venue.organisation = org
+                    input("do save of venue?")
                     venue.save()
                     print("venue is now", venue, venue.organisation)
 
