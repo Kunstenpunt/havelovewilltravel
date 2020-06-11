@@ -929,6 +929,18 @@ class SparseVenueListView(ListView):
         return context
 
 
+class VenuesWithoutAnnouncementsListView(ListView):
+    model = Venue
+    paginate_by = 30
+
+    def get_queryset(self):
+        return Venue.objects.filter(concertannouncement__isnull=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class UnassignableVenueListView(ListView):
     model = Venue
     paginate_by = 30

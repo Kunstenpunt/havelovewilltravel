@@ -62,6 +62,7 @@ urlpatterns = [
     # rawvenues
     path('venues/', views.VenueListView.as_view(), name='venues'),
     path('sparsevenues/', views.SparseVenueListView.as_view(), name='sparsevenues'),
+    path('venues_without_concertannouncements/', views.VenuesWithoutAnnouncementsListView.as_view(), name='venues_without_concertannouncements'),
     path('unassignable_venues/', views.UnassignableVenueListView.as_view(), name='unassignable_venues'),
     path('venue/<int:pk>', views.VenueDetailView.as_view(), name='venue_detail'),
     path('venue/create/', views.VenueCreate.as_view(), name='venue_create'),
