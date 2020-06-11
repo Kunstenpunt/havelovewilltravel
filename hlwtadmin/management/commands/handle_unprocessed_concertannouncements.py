@@ -10,6 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True).filter(id=189402):
             print("working on", concertannouncement, concertannouncement.pk)
+            input()
 
             if self._concertannouncement_has_daterange(concertannouncement):
                 print("CA with date range")
@@ -38,6 +39,7 @@ class Command(BaseCommand):
                     if self._venue_is_not_related_to_organisation(concertannouncement):
                         self._create_new_unverified_organisation_and_relate_to_venue(concertannouncement)
                     self._create_new_masterconcert_with_concertannouncement_organisation_artist(concertannouncement)
+            input()
 
     @staticmethod
     def _concertannouncement_has_daterange(self):
