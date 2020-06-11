@@ -22,7 +22,7 @@ class Command(BaseCommand):
         platform = GigFinder.objects.filter(name="www.setlist.fm").first()
 
         # loop through all announcements of setlist that are not ignored
-        for ca in ConcertAnnouncement.objects.filter(gigfinder__name="www.setlist.fm").exclude(ignore=True).filter(id__gt=0).order_by('pk'):
+        for ca in ConcertAnnouncement.objects.filter(gigfinder__name="www.setlist.fm").exclude(ignore=True).filter(id__gt=240168).order_by('pk'):
 
             print("working on", ca, ca.pk)
 
