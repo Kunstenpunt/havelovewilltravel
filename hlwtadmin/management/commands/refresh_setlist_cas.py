@@ -32,12 +32,13 @@ class Command(BaseCommand):
             r = get(url, headers=headers)
             try:
                 response = loads(r.text)
+                response["message"] = "ok"
             except decoder.JSONDecodeError:
                 response = {"message": "Limit Exceeded"}
 
             print(response)
 
-            if "message" in response and response["message"] != "Limit Exceeded":
+            if response["message"] != "Limit Exceeded":
                 try:
 
                     concert = self.map_platform_to_schema(response, ca.artist, ca.artist.mbid, platform.name)
