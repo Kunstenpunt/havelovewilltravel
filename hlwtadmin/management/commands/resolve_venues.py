@@ -118,19 +118,19 @@ class Command(BaseCommand):
                     except (KeyError, AttributeError):
                         org = None
 
-                    # if org is None:
-                    #     print("no org found, making one")
-                    #     org = Organisation.objects.create(
-                    #         location=loc,
-                    #         verified=False,
-                    #         latitude=lat,
-                    #         longitude=lon,
-                    #         name=name_prop_clean,
-                    #         sort_name=name_prop_clean
-                    #     )
-                    #     print("about to save", org)
-                    #     org.save()
-                    #     print("created org", org, org.location)
+                    if org is None:
+                        print("no org found, making one")
+                        org = Organisation.objects.create(
+                            location=loc,
+                            verified=False,
+                            latitude=lat,
+                            longitude=lon,
+                            name=name_prop_clean,
+                            sort_name=name_prop_clean
+                        )
+                        print("about to save", org)
+                        org.save()
+                        print("created org", org, org.location)
 
                     if org:
                         print("about to connect", venue, "with", org)
