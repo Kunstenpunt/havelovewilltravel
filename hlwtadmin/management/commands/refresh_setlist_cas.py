@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 response = loads(r.text)
                 response["message"] = "ok"
             except decoder.JSONDecodeError:
-                response = {"message": "Limit Exceeded"}
+                response = {"message": "nok"}
 
             print(response)
 
@@ -69,9 +69,10 @@ class Command(BaseCommand):
                         ca.ignore = False
                         ca.save()
 
-                        if ca.concert.ignore:
-                            ca.concert.ignore = False
-                            ca.concert.save()
+                        if ca.concert:
+                            if ca.concert.ignore:
+                                ca.concert.ignore = False
+                                ca.concert.save()
 
                 except KeyError as e:
                     print("\tno announcement found, setting it on ignore", ca.pk)
