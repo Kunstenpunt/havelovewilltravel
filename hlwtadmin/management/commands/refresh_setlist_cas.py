@@ -37,7 +37,7 @@ class Command(BaseCommand):
 
             print(response)
 
-            if response["message"] != "Limit Exceeded":
+            if "message" in response and response["message"] != "Limit Exceeded":
                 try:
 
                     concert = self.map_platform_to_schema(response, ca.artist, ca.artist.mbid, platform.name)
