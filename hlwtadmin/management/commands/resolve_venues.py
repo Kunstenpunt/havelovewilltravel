@@ -38,7 +38,7 @@ class Command(BaseCommand):
                     if key not in cl_temp:
                         cl_temp[key] = []
                     cl_temp[key].append((clean_city, clean_country))
-            except KeyError:
+            except Exception as e:
                 pass
 
         cl = {}
