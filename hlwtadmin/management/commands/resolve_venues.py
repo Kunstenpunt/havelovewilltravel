@@ -135,12 +135,8 @@ class Command(BaseCommand):
                     if org:
                         print("about to connect", venue, "with", org)
                         venue.organisation = org
-                    doit = input("do save of venue?")
-                    if len(doit) == 0:
-                        venue.save()
-                        print("venue is now", venue, venue.organisation)
-                    else:
-                        print("not done it")
+                    venue.save()
+                    print("venue is now", venue, venue.organisation)
 
             except (KeyError, ValueError):
                 pass
