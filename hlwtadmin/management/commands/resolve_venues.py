@@ -71,10 +71,10 @@ class Command(BaseCommand):
                     lat = ca.latitude
                     lon = ca.longitude
 
+                raw_loc = venue.raw_location
                 for key in mapper:
                     raw_loc = raw_loc.replace(key, mapper[key])
-
-                raw_loc = venue.raw_location.replace("| ", "|").lower()
+                raw_loc = raw_loc.replace("| ", "|").lower()
 
                 print("trying to find a better match with", raw_loc, raw_loc in cl)
                 if raw_loc in cl:
@@ -125,7 +125,8 @@ class Command(BaseCommand):
                     #         verified=False,
                     #         latitude=lat,
                     #         longitude=lon,
-                    #         name=name_prop_clean
+                    #         name=name_prop_clean,
+                    #         sort_name=name_prop_clean
                     #     )
                     #     print("about to save", org)
                     #     org.save()
@@ -134,9 +135,12 @@ class Command(BaseCommand):
                     if org:
                         print("about to connect", venue, "with", org)
                         venue.organisation = org
-                    input("do save of venue?")
-                    venue.save()
-                    print("venue is now", venue, venue.organisation)
+                    doit = input("do save of venue?")
+                    if len(doit) == 0:
+                        venue.save()
+                        print("venue is now", venue, venue.organisation)
+                    else:
+                        print("not done it")
 
             except (KeyError, ValueError):
                 pass
