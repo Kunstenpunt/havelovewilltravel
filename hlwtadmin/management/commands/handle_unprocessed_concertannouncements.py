@@ -132,16 +132,19 @@ class Command(BaseCommand):
         try:
             name_prop, stad, land, bron = self.raw_venue.raw_venue.split("|")
             name = name_prop if len(name_prop.strip()) > 0 else self.raw_venue.raw_venue
-            if name not in ("None", "nan"):
-                country = Country.objects.filter(name=land).first()
-                if not country:
-                    country = Country.objects.filter(iso_code=land.lower()).first()
-                loc = Location.objects.filter(city__istartswith=stad).filter(country=country).first()
-                org = Organisation.objects.create(name=name, sort_name=name,
-                                                  annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
-                                                  location=loc, verified=False)
-                org.save()
-                if self.raw_venue.organisation is None and not self.raw_venue.non_assignable:
+            loc = None
+            org = None
+            if land.lower() != "none" or stad.lower( != "none") or land != "" or stad != "":
+                if name not in ("None", "nan"):
+                    country = Country.objects.filter(name=land).first()
+                    if not country:
+                        country = Country.objects.filter(iso_code=land.lower()).first()
+                    loc = Location.objects.filter(city__istartswith=stad).filter(country=country).first()
+                    org = Organisation.objects.create(name=name, sort_name=name,
+                                                      annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
+                                                      location=loc, verified=False)
+                    org.save()
+                if self.raw_venue.organisation is None and not self.raw_venue.non_assignable and org is not None:
                     self.raw_venue.organisation = org
                     self.raw_venue.save()
         except ValueError:
