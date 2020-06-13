@@ -24,3 +24,8 @@ class Command(BaseCommand):
             venue.raw_venue = venue.raw_venue.replace("|facebook", "|www.facebook.com")
             venue.raw_location = venue.raw_location.replace("|facebook", "|www.facebook.com")
             venue.save()
+
+        for venue in Venue.objects.filter(raw_venue__endswith="setlist"):
+            venue.raw_venue = venue.raw_venue.replace("|setlist", "|www.setlist.fm")
+            venue.raw_location = venue.raw_location.replace("|setlist", "|www.setlist.fm")
+            venue.save()
