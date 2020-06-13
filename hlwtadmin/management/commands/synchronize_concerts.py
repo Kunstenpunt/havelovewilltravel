@@ -354,7 +354,7 @@ class SetlistFmLeecher(PlatformLeecher):
         p = 1
         retrieved_hits = 0
         while retrieved_hits < total_hits:
-            headers = {"x-api-key": self.platform_access_granter, "Accept": "application/json"}
+            headers = {"x-api-key": self.platform_access_granter, "Accept": "application/json", "Accept-charset": "unicode-1-1"}
             r = get("https://api.setlist.fm/rest/1.0/artist/{1}/setlists?p={0}".format(p, mbid), headers=headers)
             try:
                 response = loads(r.text)
