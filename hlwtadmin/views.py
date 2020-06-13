@@ -953,11 +953,12 @@ class OrganisationDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        venue_consequences = self.kwargs["organisation_delete_with_venue_consequences"]
-        if venue_consequences < 2:
-            Venue.objects.filter(organisation=self.object).update(organisation=None)
-        if venue_consequences == 2:
-            Venue.objects.filter(organisation=self.object).update(organisation=None, non_assignable=True)
+        if "organisation_delete_with_venue_consequences" in self.kwargs:
+            venue_consequences = self.kwargs["organisation_delete_with_venue_consequences"]
+            if venue_consequences < 2:
+                Venue.objects.filter(organisation=self.object).update(organisation=None)
+            if venue_consequences == 2:
+                Venue.objects.filter(organisation=self.object).update(organisation=None, non_assignable=True)
         return context
 
 
