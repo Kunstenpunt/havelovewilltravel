@@ -281,7 +281,7 @@ class ConcertAnnouncement(models.Model):
             name = name_prop if len(name_prop.strip()) > 0 else self.raw_venue.raw_venue
             loc = None
             org = None
-            if land.lower() != "none" or stad.lower( != "none") or land != "" or stad != "":
+            if land.lower() != "none" or stad.lower() != "none" or land != "" or stad != "":
                 if name not in ("None", "nan"):
                     country = Country.objects.filter(name=land).first()
                     if not country:
