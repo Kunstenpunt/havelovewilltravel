@@ -137,7 +137,7 @@ class Command(BaseCommand):
                 if not country:
                     country = Country.objects.filter(iso_code=land.lower()).first()
                 loc = Location.objects.filter(city__istartswith=stad).filter(country=country).first()
-                org = Organisation.objects.create(name=name,
+                org = Organisation.objects.create(name=name, sort_name=name,
                                                   annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
                                                   location=loc, verified=False)
                 org.save()
