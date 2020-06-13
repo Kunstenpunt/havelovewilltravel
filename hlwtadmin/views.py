@@ -761,72 +761,120 @@ class OrganisationListView(ListView):
     model = Organisation
     paginate_by = 30
 
-    def get_queryset(self):
-        return Organisation.objects.select_related('location__country').filter(venue__isnull=True).filter(relationconcertorganisation__organisation=None).filter(verified=False)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter'] = self.request.GET.get('filter', '')
+        context['countries'] = Country.objects.all()
         return context
+
+    def get_queryset(self):
+        filter_val = self.request.GET.get('filter', '')
+        filter_country = self.request.GET.get('filter_country', None)
+        if filter_country:
+            new_context = Organisation.objects.select_related('location__country').filter(venue__isnull=True).filter(relationconcertorganisation__organisation=None).filter(verified=False).filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
+        else:
+            new_context = Organisation.objects.select_related('location__country').filter(venue__isnull=True).filter(relationconcertorganisation__organisation=None).filter(verified=False).filter(name__unaccent__iregex=filter_val,) #.exclude(relationconcertorganisation__organisation=None)
+        return new_context
 
 
 class OrganisationListView2(ListView):
     model = Organisation
     paginate_by = 30
 
-    def get_queryset(self):
-        return Organisation.objects.select_related('location__country').filter(location__isnull=True).exclude(verified=True)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter'] = self.request.GET.get('filter', '')
+        context['countries'] = Country.objects.all()
         return context
+
+    def get_queryset(self):
+        filter_val = self.request.GET.get('filter', '')
+        filter_country = self.request.GET.get('filter_country', None)
+        if filter_country:
+            new_context = Organisation.objects.select_related('location__country').filter(location__isnull=True).exclude(verified=True).filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
+        else:
+            new_context = Organisation.objects.select_related('location__country').filter(location__isnull=True).exclude(verified=True).filter(name__unaccent__iregex=filter_val,) #.exclude(relationconcertorganisation__organisation=None)
+        return new_context
 
 
 class OrganisationListView3(ListView):
     model = Organisation
     paginate_by = 30
 
-    def get_queryset(self):
-        return Organisation.objects.select_related('location__country').filter(latitude__isnull=True).exclude(verified=True)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter'] = self.request.GET.get('filter', '')
+        context['countries'] = Country.objects.all()
         return context
+
+    def get_queryset(self):
+        filter_val = self.request.GET.get('filter', '')
+        filter_country = self.request.GET.get('filter_country', None)
+        if filter_country:
+            new_context = Organisation.objects.select_related('location__country').filter(latitude__isnull=True).exclude(verified=True).filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
+        else:
+            new_context = Organisation.objects.select_related('location__country').filter(latitude__isnull=True).exclude(verified=True).filter(name__unaccent__iregex=filter_val,) #.exclude(relationconcertorganisation__organisation=None)
+        return new_context
 
 
 class OrganisationListView4(ListView):
     model = Organisation
     paginate_by = 30
 
-    def get_queryset(self):
-        return Organisation.objects.select_related('location__country').filter(genre__isnull=True).exclude(verified=True)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter'] = self.request.GET.get('filter', '')
+        context['countries'] = Country.objects.all()
         return context
+
+    def get_queryset(self):
+        filter_val = self.request.GET.get('filter', '')
+        filter_country = self.request.GET.get('filter_country', None)
+        if filter_country:
+            new_context = Organisation.objects.select_related('location__country').filter(genre__isnull=True).exclude(verified=True).filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
+        else:
+            new_context = Organisation.objects.select_related('location__country').filter(genre__isnull=True).exclude(verified=True).filter(name__unaccent__iregex=filter_val,) #.exclude(relationconcertorganisation__organisation=None)
+        return new_context
 
 
 class OrganisationListView5(ListView):
     model = Organisation
     paginate_by = 30
 
-    def get_queryset(self):
-        return Organisation.objects.select_related('location__country').filter(disambiguation__isnull=True)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter'] = self.request.GET.get('filter', '')
+        context['countries'] = Country.objects.all()
         return context
+
+    def get_queryset(self):
+        filter_val = self.request.GET.get('filter', '')
+        filter_country = self.request.GET.get('filter_country', None)
+        if filter_country:
+            new_context = Organisation.objects.select_related('location__country').filter(disambiguation__isnull=True).filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
+        else:
+            new_context = Organisation.objects.select_related('location__country').filter(disambiguation__isnull=True).filter(name__unaccent__iregex=filter_val,) #.exclude(relationconcertorganisation__organisation=None)
+        return new_context
 
 
 class UnverifiedOrganisationListView(ListView):
     model = Organisation
     paginate_by = 30
 
-    def get_queryset(self):
-        return Organisation.objects.select_related('location__country').exclude(verified=True)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter'] = self.request.GET.get('filter', '')
+        context['countries'] = Country.objects.all()
         return context
+
+    def get_queryset(self):
+        filter_val = self.request.GET.get('filter', '')
+        filter_country = self.request.GET.get('filter_country', None)
+        if filter_country:
+            new_context = Organisation.objects.select_related('location__country').exclude(verified=True).filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
+        else:
+            new_context = Organisation.objects.select_related('location__country').exclude(verified=True).filter(name__unaccent__iregex=filter_val,) #.exclude(relationconcertorganisation__organisation=None)
+        return new_context
 
 
 class FullOrganisationListView(ListView):
@@ -854,10 +902,18 @@ class OrganisationsWithoutConcertsListView(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return Organisation.objects.select_related('location__country').filter(relationconcertorganisation__organisation=None).filter(venue=None)
+        filter_val = self.request.GET.get('filter', '')
+        filter_country = self.request.GET.get('filter_country', None)
+        if filter_country:
+            new_context = Organisation.objects.select_related('location__country').filter(relationconcertorganisation__organisation=None).filter(venue=None).filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
+        else:
+            new_context = Organisation.objects.select_related('location__country').filter(relationconcertorganisation__organisation=None).filter(venue=None).filter(name__unaccent__iregex=filter_val)
+        return new_context
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter'] = self.request.GET.get('filter', '')
+        context['countries'] = Country.objects.all()
         return context
 
 
