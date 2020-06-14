@@ -1113,6 +1113,18 @@ class ConcertAnnouncementListView(ListView):
         return context
 
 
+class IgnoredConcertAnnouncementListView(ListView):
+    model = ConcertAnnouncement
+    paginate_by = 30
+
+    def get_queryset(self):
+        return ConcertAnnouncement.objects.filter(ignore=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class ConcertAnnouncementDetailView(DetailView):
     model = ConcertAnnouncement
 

@@ -73,6 +73,7 @@ urlpatterns = [
     path('gigfinderurls/', views.GigfinderURLListView.as_view(), name='gigfinderurls'),
     # concertannouncement
     path('concertannouncements/', views.ConcertAnnouncementListView.as_view(), name='concertannouncements'),
+    path('ignored_concertannouncements/', views.IgnoredConcertAnnouncementListView.as_view(), name='ignored_concertannouncements'),
     path('allconcertannouncements/', views.AllConcertAnnouncementListView.as_view(), name='allconcertannouncements'),
     path('concertannouncement/<int:pk>', views.ConcertAnnouncementDetailView.as_view(), name='concertannouncement_detail'),
     path('concertannouncement/create/', views.ConcertAnnouncementCreate.as_view(), name='concertannouncement_create'),
