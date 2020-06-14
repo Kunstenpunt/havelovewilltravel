@@ -11,7 +11,6 @@ urlpatterns = [
     path('artistless_concerts/', views.ArtistlessConcertListView.as_view(), name='artistless_concerts'),
     path('recently_added_concerts/', views.RecentlyAddedConcertListView.as_view(), name='recently_added_concerts'),
     path('upcoming_concerts/', views.UpcomingConcertListView.as_view(), name='upcoming_concerts'),
-    path('concerts_without_gps/', views.NoGpsConcertListView.as_view(), name='concerts_without_gps'),
     path('concerts_without_genre/', views.NoGenreConcertListView.as_view(), name='concerts_without_genre'),
     path('concerts_without_title/', views.NoTitleConcertListView.as_view(), name='concerts_without_title'),
     path('concerts_without_announcements/', views.NoAnnouncementConcertListView.as_view(), name='concerts_without_announcements'),

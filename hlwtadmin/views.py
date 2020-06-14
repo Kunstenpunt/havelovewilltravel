@@ -443,18 +443,6 @@ class OrganisationlessConcertListView(ListView):
         return context
 
 
-class NoGpsConcertListView(ListView):
-    model = Concert
-    paginate_by = 30
-
-    def get_queryset(self):
-        return Concert.objects.filter(latitude__isnull=True).exclude(verified=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
-
 class NoGenreConcertListView(ListView):
     model = Concert
     paginate_by = 30
