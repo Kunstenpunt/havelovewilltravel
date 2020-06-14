@@ -356,6 +356,28 @@ class ConcertListView(ListView):
         return new_context
 
 
+class IgnoredConcertListView(ListView):
+    model = Concert
+    paginate_by = 30
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_start'] = self.request.GET.get('filter_start', '2020-01-01')
+        context['filter_end'] = self.request.GET.get('filter_end', '2999-12-31')
+        context['countries'] = Country.objects.all()
+        return context
+
+    def get_queryset(self):
+        filter_start = self.request.GET.get('filter_start', '2020-01-01')
+        filter_end = self.request.GET.get('filter_end', '2999-12-31')
+        filter_val = self.request.GET.get('filter', None)
+        if filter_val:
+            new_context = Concert.objects.filter(ignore=True).filter(date__gte=filter_start).filter(date__lte=filter_end).filter(relationconcertorganisation__organisation__location__country__name=filter_val)
+        else:
+            new_context = Concert.objects.filter(ignore=True).filter(date__gte=filter_start).filter(date__lte=filter_end)
+        return new_context
+
+
 class ConcertsWithMultipleOrganisationsInDifferentCountries(ListView):
     model = Concert
     paginate_by = 30

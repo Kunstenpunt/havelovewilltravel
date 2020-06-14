@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     # concerts
     path('concerts/', views.ConcertListView.as_view(), name='concerts'),
+    path('ignored_concerts/', views.IgnoredConcertListView.as_view(), name='ignored_concerts'),
     path('organisationless_concerts/', views.OrganisationlessConcertListView.as_view(), name='organisationless_concerts'),
     path('artistless_concerts/', views.ArtistlessConcertListView.as_view(), name='artistless_concerts'),
     path('recently_added_concerts/', views.RecentlyAddedConcertListView.as_view(), name='recently_added_concerts'),
