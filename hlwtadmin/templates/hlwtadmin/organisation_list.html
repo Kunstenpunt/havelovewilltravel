@@ -31,7 +31,7 @@
     {% for organisation in organisation_list %}
       <tr>
         <td>
-          <a href="{{ organisation.get_absolute_url }}">{{ organisation.name }}</a> <i>({{ organisation.disambiguation }})</i>
+          <a href="{{ organisation.get_absolute_url }}">{{ organisation.name }} <i>({{ organisation.disambiguation }})</i></a>
         </td>
         <td>{{ organisation.organisation_type.all|join:"," }}</td>
         <td>{{ organisation.genre.all|join:"," }}</td>
