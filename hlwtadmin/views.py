@@ -893,9 +893,9 @@ class OrganisationListView6(ListView):
         filter_val = self.request.GET.get('filter', '')
         filter_country = self.request.GET.get('filter_country', None)
         if filter_country:
-            new_context = Organisation.objects.select_related('location__country').filter(sort_name__isnull=True).filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
+            new_context = Organisation.objects.select_related('location__country').filter(sort_name="").filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
         else:
-            new_context = Organisation.objects.select_related('location__country').filter(sort_name__isnull=True).filter(name__unaccent__iregex=filter_val,) #.exclude(relationconcertorganisation__organisation=None)
+            new_context = Organisation.objects.select_related('location__country').filter(sort_name="").filter(name__unaccent__iregex=filter_val,) #.exclude(relationconcertorganisation__organisation=None)
         return new_context
 
 
