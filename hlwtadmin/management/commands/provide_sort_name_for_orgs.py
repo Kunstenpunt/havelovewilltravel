@@ -12,7 +12,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for org in Organisation.objects.filter(sort_name__isnull=True):
+        for org in Organisation.objects.filter(sort_name=""):
             print(org.name)
             sort_name = org.name
             sort_name = sub("^\s", "", sort_name)
