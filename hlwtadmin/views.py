@@ -905,9 +905,9 @@ class OrganisationsWithoutConcertsListView(ListView):
         filter_val = self.request.GET.get('filter', '')
         filter_country = self.request.GET.get('filter_country', None)
         if filter_country:
-            new_context = Organisation.objects.select_related('location__country').filter(relationconcertorganisation__organisation=None).filter(venue=None).filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
+            new_context = Organisation.objects.select_related('location__country').filter(relationconcertorganisation__isnull=True).filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
         else:
-            new_context = Organisation.objects.select_related('location__country').filter(relationconcertorganisation__organisation=None).filter(venue=None).filter(name__unaccent__iregex=filter_val)
+            new_context = Organisation.objects.select_related('location__country').filter(relationconcertorganisation__isnull=True).filter(name__unaccent__iregex=filter_val)
         return new_context
 
     def get_context_data(self, **kwargs):
