@@ -12,7 +12,6 @@ urlpatterns = [
     path('recently_added_concerts/', views.RecentlyAddedConcertListView.as_view(), name='recently_added_concerts'),
     path('upcoming_concerts/', views.UpcomingConcertListView.as_view(), name='upcoming_concerts'),
     path('concerts_without_genre/', views.NoGenreConcertListView.as_view(), name='concerts_without_genre'),
-    path('concerts_without_title/', views.NoTitleConcertListView.as_view(), name='concerts_without_title'),
     path('concerts_without_announcements/', views.NoAnnouncementConcertListView.as_view(), name='concerts_without_announcements'),
     path('concerts_with_multiple_organisations_in_different_countries/', views.ConcertsWithMultipleOrganisationsInDifferentCountries.as_view(), name='concerts_with_multiple_organisations_in_different_countries'),
     path('concerts_with_more_than_one_artist/', views.ConcertsWithMoreThanOneArtist.as_view(), name='concerts_with_more_than_one_artist'),

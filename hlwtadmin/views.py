@@ -455,18 +455,6 @@ class NoGenreConcertListView(ListView):
         return context
 
 
-class NoTitleConcertListView(ListView):
-    model = Concert
-    paginate_by = 30
-
-    def get_queryset(self):
-        return Concert.objects.annotate(text_len=Length('title')).filter(text_len__lt=5)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
-
 class NoAnnouncementConcertListView(ListView):
     model = Concert
     paginate_by = 30
