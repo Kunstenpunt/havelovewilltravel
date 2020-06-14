@@ -2,8 +2,7 @@
 
 {% block content %}
   <h1>Concert List</h1>
-  {% if request.path == '/hlwtadmin/concerts/'%}
-    <form method="get" action="{% url 'concerts' %}">
+    <form method="get" action="{% url request.resolver_match.url_name %}">
         <p>
             <label for="filter_start">From:</label>
             <input type="date" id="filter_start" name="filter_start" value="2020-01-01">
@@ -21,7 +20,6 @@
         </p>
         <p><input type="submit" name="submit" value="submit"/></p>
     </form>
-  {% endif %}
 
   {% if concert_list %}
   <table border="1">

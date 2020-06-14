@@ -334,18 +334,16 @@ class RelationConcertOrganisationsListView(ListView):
         return ConcertAnnouncement.objects.exclude(concert__isnull=True).exclude(raw_venue__organisation=F('concert__relationconcertorganisation__organisation')).distinct()
 
 
-class ConcertListView(ListView):
-    model = Concert
-    paginate_by = 30
-
+class DefaultConcertListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_start'] = self.request.GET.get('filter_start', '2020-01-01')
-        context['filter_end'] = self.request.GET.get('filter_end', '2999-12-31')
-        context['countries'] = Country.objects.all()
+        context['filter_start'] = self.request.GET.get('filter_start', '2019-01-01')
+        context['filter_end'] = self.request.GET.get('filter_end', '2025-12-31')
+        context['filter'] = self.request.GET.get('filter', None)
+        context['countries'] = Country.objects.all().distinct()
         return context
 
-    def get_queryset(self):
+    def apply_filters(self):
         filter_start = self.request.GET.get('filter_start', '2020-01-01')
         filter_end = self.request.GET.get('filter_end', '2999-12-31')
         filter_val = self.request.GET.get('filter', None)
@@ -356,127 +354,84 @@ class ConcertListView(ListView):
         return new_context
 
 
-class IgnoredConcertListView(ListView):
-    model = Concert
-    paginate_by = 30
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['filter_start'] = self.request.GET.get('filter_start', '2020-01-01')
-        context['filter_end'] = self.request.GET.get('filter_end', '2999-12-31')
-        context['countries'] = Country.objects.all()
-        return context
-
-    def get_queryset(self):
-        filter_start = self.request.GET.get('filter_start', '2020-01-01')
-        filter_end = self.request.GET.get('filter_end', '2999-12-31')
-        filter_val = self.request.GET.get('filter', None)
-        if filter_val:
-            new_context = Concert.objects.filter(ignore=True).filter(date__gte=filter_start).filter(date__lte=filter_end).filter(relationconcertorganisation__organisation__location__country__name=filter_val)
-        else:
-            new_context = Concert.objects.filter(ignore=True).filter(date__gte=filter_start).filter(date__lte=filter_end)
-        return new_context
-
-
-class ConcertsWithMultipleOrganisationsInDifferentCountries(ListView):
-    model = Concert
-    paginate_by = 30
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['filter_start'] = self.request.GET.get('filter_start', '2019-01-01')
-        context['filter_end'] = self.request.GET.get('filter_end', '2025-12-31')
-        return context
-
-    def get_queryset(self):
-        filter_start = self.request.GET.get('filter_start', '2019-01-01')
-        filter_end = self.request.GET.get('filter_end', '2025-12-31')
-        new_context = Concert.objects.annotate(num_countries=Count('relationconcertorganisation__organisation__location', distinct=True)).filter(num_countries__gte=2)
-        return new_context
-
-
-class RecentlyAddedConcertListView(ListView):
+class ConcertListView(DefaultConcertListView):
     model = Concert
     paginate_by = 30
 
     def get_queryset(self):
-        return Concert.objects.exclude(verified=True).exclude(ignore=True).order_by('-created_at')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        return self.apply_filters()
 
 
-class UpcomingConcertListView(ListView):
+class IgnoredConcertListView(DefaultConcertListView):
     model = Concert
     paginate_by = 30
 
     def get_queryset(self):
-        return Concert.objects.filter(date__gte=datetime.now().date()).order_by('date', 'relationconcertorganisation__organisation__location__country')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        return self.apply_filters().filter(ignore=True)
 
 
-class ArtistlessConcertListView(ListView):
+class ConcertsWithMultipleOrganisationsInDifferentCountries(DefaultConcertListView):
     model = Concert
     paginate_by = 30
 
     def get_queryset(self):
-        return Concert.objects.filter(relationconcertartist__artist__isnull=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        return self.apply_filters().annotate(num_countries=Count('relationconcertorganisation__organisation__location', distinct=True)).filter(num_countries__gte=2)
 
 
-class OrganisationlessConcertListView(ListView):
+class RecentlyAddedConcertListView(DefaultConcertListView):
     model = Concert
     paginate_by = 30
 
     def get_queryset(self):
-        return Concert.objects.filter(relationconcertorganisation__organisation__isnull=True).exclude(ignore=True).exclude(cancelled=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        return self.apply_filters().exclude(verified=True).exclude(ignore=True).order_by('-created_at')
 
 
-class NoGenreConcertListView(ListView):
+class UpcomingConcertListView(DefaultConcertListView):
     model = Concert
     paginate_by = 30
 
     def get_queryset(self):
-        return Concert.objects.filter(genre__isnull=True).exclude(verified=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        return self.apply_filters().filter(date__gte=datetime.now().date()).order_by('date', 'relationconcertorganisation__organisation__location__country')
 
 
-class NoAnnouncementConcertListView(ListView):
+class ArtistlessConcertListView(DefaultConcertListView):
     model = Concert
     paginate_by = 30
 
     def get_queryset(self):
-        return Concert.objects.filter(concertannouncement=None).exclude(verified=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        return self.apply_filters().filter(relationconcertartist__artist__isnull=True)
 
 
-class ConcertsWithMoreThanOneArtist(ListView):
+class OrganisationlessConcertListView(DefaultConcertListView):
     model = Concert
     paginate_by = 30
 
     def get_queryset(self):
-        return Concert.objects.annotate(num_artists=Count('relationconcertartist')).filter(num_artists__gt=1)
+        return self.apply_filters().filter(relationconcertorganisation__organisation__isnull=True).exclude(ignore=True).exclude(cancelled=True)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+
+class NoGenreConcertListView(DefaultConcertListView):
+    model = Concert
+    paginate_by = 30
+
+    def get_queryset(self):
+        return self.apply_filters().filter(genre__isnull=True).exclude(verified=True)
+
+
+class NoAnnouncementConcertListView(DefaultConcertListView):
+    model = Concert
+    paginate_by = 30
+
+    def get_queryset(self):
+        return self.apply_filters().filter(concertannouncement=None).exclude(verified=True)
+
+
+class ConcertsWithMoreThanOneArtist(DefaultConcertListView):
+    model = Concert
+    paginate_by = 30
+
+    def get_queryset(self):
+        return self.apply_filters().annotate(num_artists=Count('relationconcertartist')).filter(num_artists__gt=1)
 
 
 class ConcertForm(forms.ModelForm):
