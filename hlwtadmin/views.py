@@ -491,18 +491,6 @@ class NoAnnouncementConcertListView(ListView):
         return context
 
 
-class MaybeDeletedOrCancelledConcertListView(ListView):
-    model = Concert
-    paginate_by = 30
-
-    def get_queryset(self):
-        return Concert.objects.exclude(concertannouncement__isnull=True).filter(date__lt=datetime(datetime.now().year, 1, 1)).exclude(concertannouncement__last_seen_on__gte=datetime(datetime.now().year, 1, 1)).exclude(verified=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
-
 class OnlyDeletedSetlistAnnouncementConcertListView(ListView):
     model = Concert
     paginate_by = 30
