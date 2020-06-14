@@ -50,6 +50,7 @@ urlpatterns = [
     path('organisations_without_gps/', views.OrganisationListView3.as_view(), name='organisations_without_gps'),
     path('organisations_without_genre/', views.OrganisationListView4.as_view(), name='organisations_without_genre'),
     path('organisations_without_disambiguation/', views.OrganisationListView5.as_view(), name='organisations_without_disambiguation'),
+    path('organisations_without_sortname/', views.OrganisationListView6.as_view(), name='organisations_without_sortname'),
     path('organisations_without_concerts/', views.OrganisationsWithoutConcertsListView.as_view(), name='organisations_without_concerts'),
     path('unverified_organisations/', views.UnverifiedOrganisationListView.as_view(), name='unverified_organisations'),
     path('recently_added_organisations/', views.RecentlyAddedOrganisationListView.as_view(), name='recently_added_organisations'),
