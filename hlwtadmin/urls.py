@@ -7,8 +7,8 @@ urlpatterns = [
     # concerts
     path('concerts/', views.ConcertListView.as_view(), name='concerts'),
     path('ignored_concerts/', views.IgnoredConcertListView.as_view(), name='ignored_concerts'),
-    path('organisationless_concerts/', views.OrganisationlessConcertListView.as_view(), name='organisationless_concerts'),
-    path('artistless_concerts/', views.ArtistlessConcertListView.as_view(), name='artistless_concerts'),
+    path('concerts_without_organisations/', views.ConcertsWithoutOrganisationsListView.as_view(), name='concerts_without_organisations'),
+    path('concerts_without_artists/', views.ConcertsWithoutArtistsListView.as_view(), name='concerts_without_artists'),
     path('recently_added_concerts/', views.RecentlyAddedConcertListView.as_view(), name='recently_added_concerts'),
     path('upcoming_concerts/', views.UpcomingConcertListView.as_view(), name='upcoming_concerts'),
     path('concerts_without_genre/', views.NoGenreConcertListView.as_view(), name='concerts_without_genre'),
@@ -30,7 +30,7 @@ urlpatterns = [
     path('artist/<str:pk>/update', views.ArtistUpdate.as_view(), name='artist_update'),
     # locations
     path('locations/', views.LocationListView.as_view(), name='locations'),
-    path('sparselocations/', views.SparseLocationListView.as_view(), name='sparse_locations'),
+    path('cities_without_country/', views.CitiesWithoutCountryListView.as_view(), name='cities_without_country'),
     path('location/<int:pk>', views.LocationDetailView.as_view(), name='location_detail'),
     path('location/<int:pk>/update', views.LocationUpdateView.as_view(), name='location_update'),
     path('location/<int:pk>/delete', views.LocationDeleteView.as_view(), name='location_delete'),
@@ -42,12 +42,12 @@ urlpatterns = [
     path('identifier/create', views.IdentifierCreate.as_view(), name='identifier_create'),
 
     # organisations
-    path('sparseorganisation/', views.OrganisationListView.as_view(), name='sparse_organisations'),
-    path('sparseorganisation2/', views.OrganisationListView2.as_view(), name='sparse_organisations2'),
-    path('organisations_without_gps/', views.OrganisationListView3.as_view(), name='organisations_without_gps'),
-    path('organisations_without_genre/', views.OrganisationListView4.as_view(), name='organisations_without_genre'),
-    path('organisations_without_disambiguation/', views.OrganisationListView5.as_view(), name='organisations_without_disambiguation'),
-    path('organisations_without_sortname/', views.OrganisationListView6.as_view(), name='organisations_without_sortname'),
+    path('organisations_without_venues/', views.OrganisationsWithoutVenuesListView.as_view(), name='organisations_without_venues'),
+    path('organisations_without_locations/', views.OrganisationsWithoutLocationListView.as_view(), name='organisations_without_locations'),
+    path('organisations_without_gps/', views.OrganisationsWithoutGPSListView.as_view(), name='organisations_without_gps'),
+    path('organisations_without_genre/', views.OrganisationsWithoutGenreListView.as_view(), name='organisations_without_genre'),
+    path('organisations_without_disambiguation/', views.OrganisationsWithoutDisambiguationListView.as_view(), name='organisations_without_disambiguation'),
+    path('organisations_without_sortname/', views.OrganisationsWithoutSortNameListView.as_view(), name='organisations_without_sortname'),
     path('organisations_without_concerts/', views.OrganisationsWithoutConcertsListView.as_view(), name='organisations_without_concerts'),
     path('unverified_organisations/', views.UnverifiedOrganisationListView.as_view(), name='unverified_organisations'),
     path('recently_added_organisations/', views.RecentlyAddedOrganisationListView.as_view(), name='recently_added_organisations'),
@@ -59,7 +59,7 @@ urlpatterns = [
     path('organisation/<int:pk>/delete/<int:organisation_delete_with_venue_consequences>', views.OrganisationDelete.as_view(), name='organisation_delete_with_venue_consequences'),
     # rawvenues
     path('venues/', views.VenueListView.as_view(), name='venues'),
-    path('sparsevenues/', views.SparseVenueListView.as_view(), name='sparsevenues'),
+    path('venues_without_organisation/', views.VenuesWithoutOrganisationListView.as_view(), name='venues_without_organisation'),
     path('venues_without_concertannouncements/', views.VenuesWithoutAnnouncementsListView.as_view(), name='venues_without_concertannouncements'),
     path('unassignable_venues/', views.UnassignableVenueListView.as_view(), name='unassignable_venues'),
     path('venue/<int:pk>', views.VenueDetailView.as_view(), name='venue_detail'),
@@ -69,9 +69,9 @@ urlpatterns = [
     # gigfinderurls
     path('gigfinderurls/', views.GigfinderURLListView.as_view(), name='gigfinderurls'),
     # concertannouncement
-    path('concertannouncements/', views.ConcertAnnouncementListView.as_view(), name='concertannouncements'),
+    path('concertannouncements_without_concert/', views.ConcertAnnouncementsWithoutconcertListView.as_view(), name='concertannouncements_without_concert'),
     path('ignored_concertannouncements/', views.IgnoredConcertAnnouncementListView.as_view(), name='ignored_concertannouncements'),
-    path('allconcertannouncements/', views.AllConcertAnnouncementListView.as_view(), name='allconcertannouncements'),
+    path('concertannouncements/', views.ConcertAnnouncementListView.as_view(), name='concertannouncements'),
     path('concertannouncement/<int:pk>', views.ConcertAnnouncementDetailView.as_view(), name='concertannouncement_detail'),
     path('concertannouncement/create/', views.ConcertAnnouncementCreate.as_view(), name='concertannouncement_create'),
     path('concertannouncement/<int:pk>/update/', views.ConcertAnnouncementUpdate.as_view(), name='concertannouncement_update'),
