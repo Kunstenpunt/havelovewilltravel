@@ -122,10 +122,10 @@
         {% endif %}
     </div>
 
-    {% if organisation.identifiersqs %}
+    {% if organisation.identifiersqs.first.identifier.service.name == "wikidata.org" %}
     <hr>
     <div style="margin-left:20px;margin-top:20px">
-        <h4>Image via the wikidata identifier</h4> # TODO check if identifierqs is wikidata
+        <h4>Image via the wikidata identifier</h4>
         <a target="_blank" href="" class="my-link"><img src="" class="my-image" id="{{ organisation.identifiersqs.first.identifier.identifier }}"></a>
     </div>
     {% endif %}
