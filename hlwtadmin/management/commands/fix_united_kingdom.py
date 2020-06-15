@@ -19,7 +19,7 @@ class Command(BaseCommand):
                 print("updating existing location")
                 loc = Location.objects.filter(pk=pk).first()
                 loc.city = city
-                loc.subcountry = subcountry,
+                loc.subcountry = subcountry
                 loc.verified = True
                 loc.save(update_fields=['city', 'subcountry', 'verified'])
             else:
