@@ -660,7 +660,7 @@ class LocationDetailView(DetailView, MultipleObjectMixin):
     paginate_by = 30
 
     def get_context_data(self, **kwargs):
-        order = self.request.GET.get('orderby', '-num_concerts')
+        order = self.request.GET.get('orderby', 'name')
         object_list = Organisation.objects.filter(location=self.object).annotate(num_concerts=Count('relationconcertorganisation')).order_by(order)
         context = super().get_context_data(object_list=object_list, **kwargs)
         context["form"] = OrganisationForm()
@@ -691,17 +691,19 @@ class DefaultOrganisationListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
+        context['filter_country'] = self.request.GET.get('filter_country', '')
         context['countries'] = Country.objects.all()
         return context
 
     def apply_filters(self):
         filter_val = self.request.GET.get('filter', '')
         filter_country = self.request.GET.get('filter_country', None)
+        order = self.request.GET.get('orderby', '-num_concerts')
         if filter_country:
-            new_context = Organisation.objects.select_related('location__country').filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
+            new_context = Organisation.objects.select_related('location__country').filter(name__iregex=filter_val).filter(location__country__name=filter_country)
         else:
-            new_context = Organisation.objects.filter(name__unaccent__iregex=filter_val,)
-        return new_context
+            new_context = Organisation.objects.filter(name__iregex=filter_val,)
+        return new_context.annotate(num_concerts=Count('relationconcertorganisation')).order_by(order)
 
 
 class OrganisationsWithoutVenuesListView(DefaultOrganisationListView):

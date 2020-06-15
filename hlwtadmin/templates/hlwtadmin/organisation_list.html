@@ -9,13 +9,19 @@
             <select id="filter_country" name="filter_country">
                 <option value="">No selection</option>
                 {% for country in countries %}
-                    <option value="{{ country.name }}"{% if country.name == filter %} selected {% endif %}>{{ country.name }}</option>
+                    <option value="{{ country.name }}"{% if country.name == filter_country %} selected {% endif %}>{{ country.name }}</option>
                 {% endfor %}
             </select>
         </p>
         <p>
             <label for="filter">Search term:</label>
             <input type="text" id="filter" name="filter"/>
+        </p>
+        <p>Order organisations:
+            <select id="orderby" name="orderby">
+                <option value="name">Order by organisation name</option>
+                <option value="-num_concerts">Order by amount of concerts per organisation</option>
+            </select>
         </p>
         <p><input type="submit" name="submit" value="submit"/></p>
     </form>
@@ -31,7 +37,7 @@
     {% for organisation in organisation_list %}
       <tr>
         <td>
-          <a href="{{ organisation.get_absolute_url }}">{{ organisation.name }} <i>({{ organisation.disambiguation }})</i></a>
+          <a href="{{ organisation.get_absolute_url }}">{{ organisation.name }} <i>({{ organisation.disambiguation }})</i> ({{ organisation.num_concerts }})</a>
         </td>
         <td>{{ organisation.organisation_type.all|join:"," }}</td>
         <td>{{ organisation.genre.all|join:"," }}</td>
