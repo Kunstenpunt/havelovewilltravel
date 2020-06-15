@@ -2,7 +2,6 @@ import binascii
 
 from django.db import models
 from django.urls import reverse
-from simple_history.models import HistoricalRecords
 
 from django_super_deduper.merge import MergedModelInstance
 
@@ -337,7 +336,6 @@ class Concert(models.Model):
     cancelled = models.BooleanField(default=False, blank=True, null=True)
     verified = models.BooleanField(default=False, blank=True, null=True)
     ignore = models.BooleanField(default=False, blank=True, null=True)
-    history = HistoricalRecords()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     genre = models.ManyToManyField("Genre", blank=True)
@@ -480,7 +478,6 @@ class Organisation(models.Model):
     capacity = models.CharField(max_length=250, null=True, blank=True)
     annotation = models.CharField(max_length=500, null=True, blank=True)
     address = models.CharField(max_length=200, blank=True, null=True)
-    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -545,7 +542,6 @@ class RelationConcertArtist(models.Model):
     artist = models.ForeignKey("Artist", on_delete=models.PROTECT)
     artist_credited_as = models.CharField(max_length=200, blank=True, null=True)
     concert = models.ForeignKey("Concert", on_delete=models.PROTECT)
-    history = HistoricalRecords()
     relation_type = models.ManyToManyField("RelationConcertArtistType", blank=True)
 
     def __str__(self):
@@ -580,7 +576,6 @@ class RelationConcertOrganisation(models.Model):
     organisation_credited_as = models.CharField(max_length=200, blank=True, null=True)
     relation_type = models.ManyToManyField("RelationConcertOrganisationType", blank=True)
     verified = models.BooleanField(blank=True, default=False)
-    history = HistoricalRecords()
 
     def __str__(self):
         return self.concert.title + " " + (self.organisation_credited_as + " (" + self.organisation.name + ")" if self.organisation_credited_as else str(self.organisation))
@@ -624,7 +619,6 @@ class RelationOrganisationOrganisation(models.Model):
     end_date = models.DateField(blank=True, null=True)
     end_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
     relation_type = models.ManyToManyField("RelationOrganisationOrganisationType", blank=True)
-    history = HistoricalRecords()
 
     def __str__(self):
         startdate = self.start_date.strftime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
@@ -664,7 +658,6 @@ class RelationArtistArtist(models.Model):
     end_date = models.DateField(blank=True, null=True)
     end_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
     relation_type = models.ManyToManyField("RelationArtistArtistType", blank=True)
-    history = HistoricalRecords()
 
     def __str__(self):
         startdate = self.start_date.strptime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
