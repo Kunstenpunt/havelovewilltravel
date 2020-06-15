@@ -12,10 +12,21 @@
 
     <div style="margin-left:20px;margin-top:20px">
         <h4>Organisations</h4>
+
+        <form method="get" action="{% url 'location_detail' location.id %}">
+        <p>Order concerts:
+            <select id="orderby" name="orderby">
+                <option value="name">Order by organisation name</option>
+                <option value="-num_concerts">Order by amount of concerts per organisation</option>
+            </select>
+        </p>
+        <p><input type="submit" name="submit" value="submit"/></p>
+        </form>
+
         <ul>
             {% for organisation in object_list %}
               <li>
-                  <a href="{% url 'organisation_detail' organisation.id %}">{{ organisation.name }}</a>
+                  <a href="{% url 'organisation_detail' organisation.id %}">{{ organisation.name }} ({{ organisation.num_concerts }})</a>
               </li>
             {% endfor %}
         </ul>

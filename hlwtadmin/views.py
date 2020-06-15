@@ -660,7 +660,8 @@ class LocationDetailView(DetailView, MultipleObjectMixin):
     paginate_by = 30
 
     def get_context_data(self, **kwargs):
-        object_list = Organisation.objects.filter(location=self.object)
+        order = self.request.GET.get('orderby', '-num_concerts')
+        object_list = Organisation.objects.filter(location=self.object).annotate(num_concerts=Count('relationconcertorganisation')).order_by(order)
         context = super().get_context_data(object_list=object_list, **kwargs)
         context["form"] = OrganisationForm()
         return context
