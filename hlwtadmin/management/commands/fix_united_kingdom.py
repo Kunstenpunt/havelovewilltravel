@@ -31,4 +31,3 @@ class Command(BaseCommand):
                     verified=True
                 )
                 loc.save()
-            input()
