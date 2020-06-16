@@ -787,7 +787,7 @@ class ConcertannouncementToConcert:
                 return None
 
     def _is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(self):
-        return self.raw_venue.organisation not in [rel.organisation for rel in self.concert.organisationsqs()]
+        return self.concertannouncement.raw_venue.organisation not in [rel.organisation for rel in self.masterconcert.organisationsqs()]
 
     def _relate_concertannouncement_to_masterconcert(self):
         self.concertannouncement.concert = self.masterconcert
