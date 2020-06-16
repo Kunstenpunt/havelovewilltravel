@@ -78,15 +78,12 @@ class Command(BaseCommand):
             until_date__gte=self.date).exclude(ignore=True).exclude(cancelled=True).filter(
             relationconcertartist__artist=self.artist).filter(
             relationconcertorganisation__organisation__location=self.most_likely_clean_location())
-        print("found a period concert", period_concert)
         if period_concert:
             return period_concert.first()
         else:
-            print(self.most_likely_clean_location())
             specific_concert = Concert.objects.filter(until_date__isnull=True).filter(date=self.date).exclude(
                 ignore=True).exclude(cancelled=True).filter(relationconcertartist__artist=self.artist).filter(
                 relationconcertorganisation__organisation__location=self.most_likely_clean_location())
-            print("found a sepcific concert", specific_concert)
             if specific_concert:
                 return specific_concert.first()
             else:
