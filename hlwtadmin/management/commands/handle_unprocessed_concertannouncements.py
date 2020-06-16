@@ -1,8 +1,6 @@
-from hlwtadmin.models import Artist, GigFinderUrl, GigFinder, ConcertAnnouncement, Venue, Location, Organisation, Country, Concert, RelationConcertConcert, RelationConcertOrganisation, RelationConcertArtist, Location
+from hlwtadmin.models import Artist, GigFinderUrl, GigFinder, ConcertAnnouncement, Venue, Location, Organisation, Country, Concert, RelationConcertConcert, RelationConcertOrganisation, RelationConcertArtist, Location, ConcertannouncementToConcert
 
 from django.core.management.base import BaseCommand, CommandError
-
-from hlwtadmin.automation import ConcertannouncementToConcert
 
 
 class Command(BaseCommand):
