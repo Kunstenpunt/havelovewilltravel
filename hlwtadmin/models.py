@@ -787,10 +787,7 @@ class ConcertannouncementToConcert:
                 return None
 
     def _is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(self):
-        rel = RelationConcertOrganisation.objects.\
-            filter(concert=self.masterconcert).\
-            filter(organisation=self.concertannouncement.raw_venue.organisation).first()
-        return rel is not None
+        return self.raw_venue.organisation not in [rel.organisation for rel in self.concert.organisationsqs()]
 
     def _relate_concertannouncement_to_masterconcert(self):
         self.concertannouncement.concert = self.masterconcert
