@@ -31,7 +31,7 @@ class Command(BaseCommand):
                     print("\t\tfound a MC to relate to")
                     self._relate_concertannouncement_to_masterconcert(concertannouncement, masterconcert)
                     self._perhaps_specify_masterconcert_date(concertannouncement)
-                    if self._venue_is_not_related_to_organisation():
+                    if self._venue_is_not_related_to_organisation(concertannouncement):
                         print("\t\t\tvenue is not linked to an organisation, so making a new unverified organisation")
                         self._create_new_unverified_organisation_and_relate_to_venue()
                     if self._is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(concertannouncement, masterconcert):
