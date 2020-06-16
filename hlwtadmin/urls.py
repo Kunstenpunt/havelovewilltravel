@@ -30,6 +30,7 @@ urlpatterns = [
     path('artist/<str:pk>/update', views.ArtistUpdate.as_view(), name='artist_update'),
     # locations
     path('locations/', views.LocationListView.as_view(), name='locations'),
+    path('recently_added_locations/', views.RecentlyAddedLocationsListView.as_view(), name='recently_added_locations'),
     path('cities_without_country/', views.CitiesWithoutCountryListView.as_view(), name='cities_without_country'),
     path('location/<int:pk>', views.LocationDetailView.as_view(), name='location_detail'),
     path('location/<int:pk>/update', views.LocationUpdateView.as_view(), name='location_update'),

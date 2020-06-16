@@ -16,8 +16,6 @@
   <div>
     <h2>Overview</h2>
     <ul>
-      <li><a href="{% url 'recently_added_concerts' %}">Recently added and still unverified concerts</a></li>
-      <li><a href="{% url 'recently_added_organisations' %}">Recently added and still unverified organisations</a></li>
       <li><a href="{% url 'upcoming_concerts' %}">Upcoming concerts</a></li>
     </ul>
   </div>
@@ -25,11 +23,13 @@
   <div>
     <h2>Quality assurance</h2>
     <ul>
-      <li>Unverified organisations with similar names{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
-      <li>Unverified concerts with concurring concerts by same artist{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/underconstruction.jpg' %}" /></li>
-      <li><a href="{% url 'unverified_organisations' %}">Unverified organisations</a></li>
+      <li><a href="{% url 'recently_added_concerts' %}">Recently added and still unverified concerts</a></li>
+      <li><a href="{% url 'recently_added_organisations' %}">Recently added and still unverified organisations</a></li>
+      <li><a href="{% url 'unverified_organisations' %}">All unverified organisations</a></li>
       <li><a href="{% url 'concerts_with_multiple_organisations_in_different_countries' %}">Concerts with multiple organisations in different locations</a></li>
       <li><a href="{% url 'concerts_with_more_than_one_artist' %}">Concerts with more than one artist</a></li>
+      <li><a href="{% url 'concerts_without_artists' %}">Concerts wo/ artists</a></li>
+      <li><a href="{% url 'concerts_without_organisations' %}">Concerts wo/ organisations</a></li>
     </ul>
   </div>
 
@@ -60,8 +60,6 @@
     <h2>Relations</h2>
     <ul>
       <li><a href="{% url 'concertannouncements_without_concert' %}">Announcements wo/ concert</a></li>
-      <li><a href="{% url 'concerts_without_artists' %}">Concerts wo/ artists</a></li>
-      <li><a href="{% url 'concerts_without_organisations' %}">Concerts wo/ organisations</a></li>
       <li><a href="{% url 'concerts_without_announcements' %}">Concerts wo/ announcements</a></li>
       <li><a href="{% url 'venues_without_organisation' %}">Venues wo/ organisation</a></li>
       <li><a href="{% url 'venues_without_concertannouncements' %}">Venues wo/ concertannouncements</a></li>

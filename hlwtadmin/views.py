@@ -654,6 +654,18 @@ class CitiesWithoutCountryListView(ListView):
         return context
 
 
+class RecentlyAddedLocationsListView(ListView):
+    model = Location
+    paginate_by = 30
+
+    def get_queryset(self):
+        return Location.objects.exclude(verified=True).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class LocationDetailView(DetailView, MultipleObjectMixin):
     model = Location
     fields = '__all__'
