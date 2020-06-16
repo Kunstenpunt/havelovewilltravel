@@ -21,6 +21,7 @@ class Command(BaseCommand):
                 else:
                     print("\t\tmaking a new MC")
                     if self._venue_is_not_related_to_organisation(concertannouncement):
+                        print("\t\t\tvenue has no organisation, so creating one")
                         self._create_new_unverified_organisation_and_relate_to_venue(concertannouncement)
                     self._create_new_masterconcert_with_concertannouncement_organisation_artist(concertannouncement)
             else:
@@ -109,7 +110,7 @@ class Command(BaseCommand):
     @staticmethod
     def _relate_organisation_related_to_venue_also_to_the_masterconcert(self, masterconcert):
         if not self.raw_venue.non_assignable and self.raw_venue.organisation is not None:
-            print("----attaching assignable organisation fro mvenue to concert")
+            print("----attaching assignable organisation from venue to concert")
             rco = RelationConcertOrganisation.objects.create(
                 concert=masterconcert,
                 organisation=self.raw_venue.organisation,
