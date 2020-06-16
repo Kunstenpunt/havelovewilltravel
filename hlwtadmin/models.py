@@ -143,11 +143,11 @@ class ConcertAnnouncement(models.Model):
         return location
 
     def most_likely_clean_location(self):
-        if not ("None|None" in self.raw_venue.raw_location or "||www.facebook.com" in self.raw_venue.raw_location or "||bandsintown.com" in self.raw_venue.raw_location or self.raw_venue.non_assignable):
-            clean = self.clean_location_from_assignments()
-            if clean is None:
+        clean = self.clean_location_from_assignments()
+        if clean is None:
+            if not ("None|None" in self.raw_venue.raw_location or "||www.facebook.com" in self.raw_venue.raw_location or "||bandsintown.com" in self.raw_venue.raw_location or self.raw_venue.non_assignable):
                 clean = self.clean_location_from_string()
-            return clean
+        return clean
 
     def clean_loc_certainty(self):
         return self.clean_location_from_assignments() != self.clean_location_from_string()
