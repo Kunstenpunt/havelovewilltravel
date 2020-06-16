@@ -31,12 +31,12 @@ class Command(BaseCommand):
                     print("\t\tfound a MC to relate to")
                     self._relate_concertannouncement_to_masterconcert(concertannouncement, masterconcert)
                     self._perhaps_specify_masterconcert_date(concertannouncement)
+                    if self._venue_is_not_related_to_organisation():
+                        print("\t\t\tvenue is not linked to an organisation, so making a new unverified organisation")
+                        self._create_new_unverified_organisation_and_relate_to_venue()
                     if self._is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(concertannouncement, masterconcert):
                         print("\t\t\tattach the organisation of the venue to the concert")
                         self._relate_organisation_related_to_venue_also_to_the_masterconcert(concertannouncement, masterconcert)
-                    else:
-                        print("\t\t\tattach the organisation of the concert to the venue")
-                        self._relate_organisation_related_to_masterconcert_to_venue(concertannouncement, masterconcert)
                 else:
                     print("\t\tmaking new MC")
                     if self._venue_is_not_related_to_organisation(concertannouncement):
