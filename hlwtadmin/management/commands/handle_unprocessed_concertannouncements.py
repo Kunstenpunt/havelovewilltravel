@@ -56,15 +56,15 @@ class Command(BaseCommand):
 
     @staticmethod
     def _exists_non_cancelled_masterconcert_within_daterange_in_location_with_artist(self):
-        period_concert = Concert.objects.exclude(until_date__isnull=True).filter(date__lte=self.date).filter(
+        period_concert = Concert.objects.filter(until_date__isnull=False).filter(date__lte=self.date).filter(
                     until_date__gte=self.until_date).exclude(ignore=True).exclude(cancelled=True).filter(
                     relationconcertartist__artist=self.artist).filter(
                     relationconcertorganisation__organisation__location=self.most_likely_clean_location())
         if period_concert:
             return period_concert.first()
         else:
-            specific_concert = Concert.objects.filter(until_date__isnull=True).filter(date__lte=self.date).filter(
-                    date__gte=self.until_date).exclude(ignore=True).exclude(cancelled=True).filter(
+            specific_concert = Concert.objects.filter(until_date__isnull=True).filter(date__gte=self.date).filter(
+                    date__lte=self.until_date).exclude(ignore=True).exclude(cancelled=True).filter(
                     relationconcertartist__artist=self.artist).filter(
                     relationconcertorganisation__organisation__location=self.most_likely_clean_location())
             if specific_concert:
