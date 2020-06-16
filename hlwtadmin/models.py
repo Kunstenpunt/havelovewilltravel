@@ -16,6 +16,8 @@ from math import sqrt
 import os
 from collections import Counter
 
+from .automation import ConcertannouncementToConcert
+
 
 # Create your models here.
 class GigFinder(models.Model):
@@ -155,33 +157,9 @@ class ConcertAnnouncement(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            if self._concertannouncement_has_daterange():
-                print("CA with date range!")
-                self.masterconcert = self._exists_non_cancelled_masterconcert_within_daterange_in_location_with_artist()
-                if self.masterconcert:
-                    print("found a MC to relate to")
-                    self._relate_concertannouncement_to_masterconcert()
-                else:
-                    print("making a new MC")
-                    if self._venue_is_not_related_to_organisation():
-                        self._create_new_unverified_organisation_and_relate_to_venue()
-                    self._create_new_masterconcert_with_concertannouncement_organisation_artist()
-            else:
-                print("CA has specific date")
-                self.masterconcert = self._exists_non_cancelled_masterconcert_on_date_in_location_with_artist()
-                if self.masterconcert:
-                    print("found a MC to relate to")
-                    self._relate_concertannouncement_to_masterconcert()
-                    self._perhaps_specify_masterconcert_date()
-                    if self._is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert():
-                        self._relate_organisation_related_to_venue_also_to_the_masterconcert()
-                    else:
-                        self._relate_organisation_related_to_masterconcert_to_venue()
-                else:
-                    print("making a new MC")
-                    if self._venue_is_not_related_to_organisation():
-                        self._create_new_unverified_organisation_and_relate_to_venue()
-                    self._create_new_masterconcert_with_concertannouncement_organisation_artist()
+            ca2c = ConcertannouncementToConcert(self)
+            ca2c.automate()
+
         if self.id:
             self.seen_count += 1
             if self.concert and not self.concert.verified:
@@ -192,122 +170,14 @@ class ConcertAnnouncement(models.Model):
                 self.concert.until_date = self.until_date if self.concert.until_date is not None else None
                 self.concert.save()
                 if self.raw_venue.organisation and (self.raw_venue.organisation not in self.concert.organisationsqs()):
-                    rel = RelationConcertOrganisation.objects.create(
-                        concert=self.concert,
-                        organisation=self.raw_venue.organisation
-                    )
+                    rel = RelationConcertOrganisation.objects.\
+                        create(concert=self.concert,
+                               organisation=self.raw_venue.organisation)
                     rel.save()
         super(ConcertAnnouncement, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['-date']
-
-    def _concertannouncement_has_daterange(self):
-        return self.date < self.until_date if self.until_date else False
-
-    def venue_organisation_is_in_concert_related_organisation(self):
-        orgs = set(RelationConcertOrganisation.objects.filter(concert=self.concert).values_list("organisation", flat=True))
-        return self.raw_venue.organisation.pk in orgs
-
-    def _exists_non_cancelled_masterconcert_within_daterange_in_location_with_artist(self):
-        period_concert = Concert.objects.exclude(until_date__isnull=True).filter(date__lte=self.date).filter(
-                    until_date__gte=self.until_date).exclude(ignore=True).exclude(cancelled=True).filter(
-                    relationconcertartist__artist=self.artist).filter(
-                    relationconcertorganisation__organisation__location=self.most_likely_clean_location())
-        if period_concert:
-            return period_concert.first()
-        else:
-            specific_concert = Concert.objects.filter(until_date__isnull=True).filter(date__lte=self.date).filter(
-                    date__gte=self.until_date).exclude(ignore=True).exclude(cancelled=True).filter(
-                    relationconcertartist__artist=self.artist).filter(
-                    relationconcertorganisation__organisation__location=self.most_likely_clean_location())
-            if specific_concert:
-                return specific_concert.first()
-            else:
-                return None
-
-    def _exists_non_cancelled_masterconcert_on_date_in_location_with_artist(self):
-        period_concert = Concert.objects.exclude(until_date__isnull=True).filter(date__lte=self.date).filter(
-            until_date__gte=self.date).exclude(ignore=True).exclude(cancelled=True).filter(
-            relationconcertartist__artist=self.artist).filter(
-            relationconcertorganisation__organisation__location=self.most_likely_clean_location())
-        if period_concert:
-            return period_concert.first()
-        else:
-            specific_concert = Concert.objects.filter(until_date__isnull=True).filter(date=self.date).exclude(
-                ignore=True).exclude(cancelled=True).filter(relationconcertartist__artist=self.artist).filter(
-                relationconcertorganisation__organisation__location=self.most_likely_clean_location())
-            if specific_concert:
-                return specific_concert.first()
-            else:
-                return None
-
-    def _is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(self):
-        rel = RelationConcertOrganisation.objects.filter(concert=self.masterconcert).filter(organisation=self.raw_venue.organisation).first()
-        return rel is not None
-
-    def _relate_concertannouncement_to_masterconcert(self):
-        self.concert = self.masterconcert
-        self.concert.save()
-
-    def _perhaps_specify_masterconcert_date(self):
-        if self.concert.until_date:
-            self.concert.date = self.date
-            self.concert.until_date = None
-            self.concert.save()
-
-    def _relate_organisation_related_to_venue_also_to_the_masterconcert(self):
-        if not self.raw_venue.non_assignable and self.raw_venue.organisation is not None:
-            rco = RelationConcertOrganisation.objects.create(
-                concert=self.masterconcert,
-                organisation=self.raw_venue.organisation,
-                verified=False)
-            rco.save()
-
-    def _relate_organisation_related_to_masterconcert_to_venue(self):
-        if not self.raw_venue.non_assignable and self.raw_venue.organisation is None:
-            org = RelationConcertOrganisation.objects.filter(concert=self.masterconcert).first()
-            if org:
-                if org.location == self.clean_location_from_string():
-                    self.raw_venue.organisation = org
-                    self.raw_venue.save()
-
-    def _venue_is_not_related_to_organisation(self):
-        return self.raw_venue.organisation is None and not self.raw_venue.non_assignable
-
-    def _create_new_unverified_organisation_and_relate_to_venue(self):
-        try:
-            name_prop, stad, land, bron, *rest = self.raw_venue.raw_venue.split("|")
-            name = name_prop if len(name_prop.strip()) > 0 else self.raw_venue.raw_venue
-            loc = None
-            org = None
-            if land.lower() != "none" or stad.lower() != "none" or land != "" or stad != "":
-                if name not in ("None", "nan"):
-                    country = Country.objects.filter(name=land).first()
-                    if not country:
-                        country = Country.objects.filter(iso_code=land.lower()).first()
-                    loc = Location.objects.filter(city__istartswith=stad).filter(country=country).first()
-                    org = Organisation.objects.create(name=name, sort_name=name,
-                                                      annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
-                                                      location=loc, verified=False)
-                    org.save()
-            if self.raw_venue.organisation is None and not self.raw_venue.non_assignable and org is not None:
-                self.raw_venue.organisation = org
-                self.raw_venue.save()
-        except ValueError:
-            pass
-
-    def _create_new_masterconcert_with_concertannouncement_organisation_artist(self):
-        mc = Concert.objects.create(title=self.title, date=self.date, until_date=(self.until_date if self.until_date else None), latitude=self.latitude, longitude=self.longitude)
-        mc.save()
-        for genre in self.artist.genre.all():
-            mc.genre.add(genre)
-        mc.save()
-        relco = RelationConcertOrganisation(concert=mc, organisation=self.raw_venue.organisation, verified=False)
-        relco.save()
-        relca = RelationConcertArtist(concert=mc, artist=self.artist)
-        relca.save()
-        self.concert = mc
 
 
 class Venue(models.Model):
