@@ -13,30 +13,33 @@ class Command(BaseCommand):
             input()
 
             if self._concertannouncement_has_daterange(concertannouncement):
-                print("CA with date range")
+                print("\tCA with date range")
                 masterconcert = self._exists_non_cancelled_masterconcert_within_daterange_in_location_with_artist(concertannouncement)
                 if masterconcert:
-                    print("found a MC to relate to")
+                    print("\t\tfound a MC to relate to")
                     self._relate_concertannouncement_to_masterconcert(concertannouncement, masterconcert)
                 else:
-                    print("making a new MC")
+                    print("\t\tmaking a new MC")
                     if self._venue_is_not_related_to_organisation(concertannouncement):
                         self._create_new_unverified_organisation_and_relate_to_venue(concertannouncement)
                     self._create_new_masterconcert_with_concertannouncement_organisation_artist(concertannouncement)
             else:
-                print("CA has specific date")
+                print("\tCA has specific date")
                 masterconcert = self._exists_non_cancelled_masterconcert_on_date_in_location_with_artist(concertannouncement)
                 if masterconcert:
-                    print("found a MC to relate to")
+                    print("\t\tfound a MC to relate to")
                     self._relate_concertannouncement_to_masterconcert(concertannouncement, masterconcert)
                     self._perhaps_specify_masterconcert_date(concertannouncement)
                     if self._is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(concertannouncement, masterconcert):
+                        print("\t\t\tattach the organisation of the venue to the concert")
                         self._relate_organisation_related_to_venue_also_to_the_masterconcert(concertannouncement, masterconcert)
                     else:
+                        print("\t\t\tattach the organisation of the concert to the venue")
                         self._relate_organisation_related_to_masterconcert_to_venue(concertannouncement, masterconcert)
                 else:
-                    print("making new MC")
+                    print("\t\tmaking new MC")
                     if self._venue_is_not_related_to_organisation(concertannouncement):
+                        print("\t\t\tcreate a new organisation for the venue and concert")
                         self._create_new_unverified_organisation_and_relate_to_venue(concertannouncement)
                     self._create_new_masterconcert_with_concertannouncement_organisation_artist(concertannouncement)
             input()
@@ -98,6 +101,7 @@ class Command(BaseCommand):
     @staticmethod
     def _perhaps_specify_masterconcert_date(self):
         if self.concert.until_date:
+            print("----specifying masterconcert date")
             self.concert.date = self.date
             self.concert.until_date = None
             self.concert.save()
@@ -105,6 +109,7 @@ class Command(BaseCommand):
     @staticmethod
     def _relate_organisation_related_to_venue_also_to_the_masterconcert(self, masterconcert):
         if not self.raw_venue.non_assignable and self.raw_venue.organisation is not None:
+            print("----attaching assignable organisation fro mvenue to concert")
             rco = RelationConcertOrganisation.objects.create(
                 concert=masterconcert,
                 organisation=self.raw_venue.organisation,
@@ -117,6 +122,7 @@ class Command(BaseCommand):
             org = RelationConcertOrganisation.objects.filter(concert=masterconcert).first()
             if org:
                 if org.location == self.clean_location_from_string():
+                    print("----attach organisation of concert to assignable venue without organisation")
                     self.raw_venue.organisation = org.organisation
                     self.raw_venue.save()
 
@@ -138,7 +144,7 @@ class Command(BaseCommand):
                 if name not in ("None", "nan"):
                     country = Country.objects.filter(name=land).first()
                     if not country:
-                        country = Country.objects.filter(iso_code=land.lower()).first()
+                        country = Country.objects.filter(iso_code__iexact=land.lower()).first()
                     loc = Location.objects.filter(city__istartswith=stad).filter(country=country).first()
                     org = Organisation.objects.create(name=name, sort_name=name,
                                                       annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
@@ -147,7 +153,8 @@ class Command(BaseCommand):
                 if self.raw_venue.organisation is None and not self.raw_venue.non_assignable and org is not None:
                     self.raw_venue.organisation = org
                     self.raw_venue.save()
-        except ValueError:
+        except ValueError as e:
+            print("----something went wrong", e)
             pass
 
     @staticmethod
