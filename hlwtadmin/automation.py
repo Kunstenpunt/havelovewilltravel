@@ -120,8 +120,8 @@ class ConcertannouncementToConcert:
         if not self.concertannouncement.raw_venue.non_assignable and self.concertannouncement.raw_venue.organisation is not None:
             print("----attaching assignable organisation from venue to concert")
             rco = RelationConcertOrganisation.objects.\
-                create(concert=self.concert,
-                       organisation=self.raw_venue.organisation,
+                create(concert=self.masterconcert,
+                       organisation=self.concertannouncement.raw_venue.organisation,
                        verified=False)
             rco.save()
 
