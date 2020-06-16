@@ -163,8 +163,9 @@ class Command(BaseCommand):
         mc.save()
         for genre in self.artist.genre.all():
             mc.genre.add(genre)
-        relco = RelationConcertOrganisation(concert=mc, organisation=self.raw_venue.organisation, verified=False)
-        relco.save()
+        if self.raw_venue.organisation:
+            relco = RelationConcertOrganisation(concert=mc, organisation=self.raw_venue.organisation, verified=False)
+            relco.save()
         relca = RelationConcertArtist(concert=mc, artist=self.artist)
         relca.save()
         self.concert = mc
