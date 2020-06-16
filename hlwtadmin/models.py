@@ -167,8 +167,8 @@ class ConcertAnnouncement(models.Model):
                 self.concert.date = self.date
                 self.concert.until_date = self.until_date if self.concert.until_date is not None else None
                 self.concert.save()
-                print(self.raw_venue.organisation, self.concert.organisationsqs())
-                if self.raw_venue.organisation and (self.raw_venue.organisation not in self.concert.organisationsqs()):
+                print(self.raw_venue.organisation, [rel.organisation for rel in self.concert.organisationsqs()])
+                if self.raw_venue.organisation and (self.raw_venue.organisation not in [rel.organisation for rel in self.concert.organisationsqs()]):
                     rel = RelationConcertOrganisation.objects.\
                         create(concert=self.concert,
                                organisation=self.raw_venue.organisation)
