@@ -114,10 +114,13 @@ urlpatterns = [
     # autocompletes
     path('artist-autocomplete/', views.ArtistAutocomplete.as_view(model=models.Artist), name='artist_autocomplete'),
     path('concert-autocomplete/', views.ConcertAutocomplete.as_view(model=models.Concert, create_field='title'), name='concert_autocomplete'),
+    path('concert-autocomplete-no-create/', views.ConcertAutocomplete.as_view(model=models.Concert), name='concert_autocomplete_no_create'),
     path('organisation-autocomplete/', views.OrganisationAutocomplete.as_view(model=models.Organisation, create_field='name'), name='organisation_autocomplete'),
+    path('organisation-autocomplete-no-create/', views.OrganisationAutocomplete.as_view(model=models.Organisation), name='organisation_autocomplete_no_create'),
     path('location-autocomplete/', views.LocationAutocomplete.as_view(model=models.Location, create_field='city'), name='location_autocomplete'),
-    path('country-autocomplete/', views.CountryAutocomplete.as_view(model=models.Country, create_field='name'), name='country_autocomplete'),
-    path('venue-autocomplete/', views.VenueAutocomplete.as_view(model=models.Venue, create_field='raw_venue'), name='venue_autocomplete'),
+    path('location-autocomplete-no-create/', views.LocationAutocomplete.as_view(model=models.Location), name='location_autocomplete_no_create'),
+    path('country-autocomplete/', views.CountryAutocomplete.as_view(model=models.Country), name='country_autocomplete'),
+    path('venue-autocomplete/', views.VenueAutocomplete.as_view(model=models.Venue), name='venue_autocomplete'),
     path('subcountry-autocomplete-list/', views.SubcountryAutocompleteFromList.as_view(), name='subcountry_autocomplete_list'),
     path('identifier-autocomplete/', views.IdentifierAutocomplete.as_view(model=models.ExternalIdentifier, create_field='identifier'), name='identifier_autocomplete'),
     # merge

@@ -189,12 +189,12 @@ class ConcertsMergeForm(forms.ModelForm):
                 attrs={'data-html': True},
             ),
             'primary_object': autocomplete.ModelSelect2(
-                url='concert_autocomplete',
+                url='concert_autocomplete_no_create',
                 attrs={'data-html': True},
                 forward=['artist']
             ),
             'alias_objects': autocomplete.ModelSelect2Multiple(
-                url='concert_autocomplete',
+                url='concert_autocomplete_no_create',
                 attrs={'data-html': True},
                 forward=['primary_object', 'artist']
             ),
@@ -227,7 +227,7 @@ class OrganisationsMergeForm(forms.ModelForm):
         choice_list=Location.objects.all().values_list('id', flat=True),
         required=False,
         widget=autocomplete.ListSelect2(
-            url='location_autocomplete'
+            url='location_autocomplete_no_create'
         )
     )
 
@@ -236,15 +236,15 @@ class OrganisationsMergeForm(forms.ModelForm):
         fields = ['primary_object', 'alias_objects']
         widgets = {
             'location': autocomplete.ModelSelect2(
-                url='location_autocomplete'
+                url='location_autocomplete_no_create'
             ),
             'primary_object': autocomplete.ModelSelect2(
-                url='organisation_autocomplete',
+                url='organisation_autocomplete_no_create',
                 attrs={'data-html': True},
                 forward=['location']
             ),
             'alias_objects': autocomplete.ModelSelect2Multiple(
-                url='organisation_autocomplete',
+                url='organisation_autocomplete_no_create',
                 attrs={'data-html': True},
                 forward=['primary_object', 'location']
             ),
@@ -291,11 +291,11 @@ class LocationsMergeForm(forms.ModelForm):
                 url='country_autocomplete'
             ),
             'primary_object': autocomplete.ModelSelect2(
-                url='location_autocomplete',
+                url='location_autocomplete_no_create',
                 forward=['country']
             ),
             'alias_objects': autocomplete.ModelSelect2Multiple(
-                url='location_autocomplete',
+                url='location_autocomplete_no_create',
                 forward=['primary_object', 'country']
             ),
         }
