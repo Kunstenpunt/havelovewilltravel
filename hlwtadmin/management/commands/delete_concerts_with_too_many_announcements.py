@@ -11,7 +11,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for concert in Concert.objects.filter(ignore=True).annotate(num_ca=Count('concertannouncement')).filter(num_ca=1):
             print(concert.id, concert, concert.date)
-            input("go for delete?")
             RelationConcertOrganisation.objects.filter(concert=concert).delete()
             RelationConcertArtist.objects.filter(concert=concert).delete()
             RelationConcertConcert.objects.filter(concert_a=concert).delete()
