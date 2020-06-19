@@ -191,6 +191,16 @@ class Venue(models.Model):
     def clean_location(self):
         return self.organisation.location if self.organisation else None
 
+    def location_estimated_from_raw_loc_string(self):
+        country = Country.objects.filter(name=self.raw_location.split("|")[-2]).first()
+        location = Location.objects.filter(country=country).filter(city=self.raw_location.split("|")[-3]).first()
+        return location
+
+    def location_estimated_from_venues_with_similar_raw_loc(self):
+        loclist = [venue.organisation.location for venue in Venue.objects.select_related('organisation__location').filter(raw_location=self.raw_location).exclude(organisation=None)]
+        if len(loclist) > 0:
+            return Counter(loclist).most_common(1)[0][0]
+
     def get_absolute_url(self):
         return reverse('venue_detail', args=[str(self.id)])
 
@@ -215,6 +225,11 @@ class Concert(models.Model):
 
     def __str__(self):
         return self.title
+
+    def is_ontologically_sound(self):
+        concert_organisations = set([rel.organisation.pk for rel in self.organisationsqs()])
+        concertannouncement_organisations = set([ca.raw_venue.organisation.pk if ca.raw_venue.organisation else -1 for ca in self.concertannouncements()])
+        return concert_organisations == concertannouncement_organisations
 
     def artists(self):
         return ", ".join([rel.artist.name for rel in self.artistsqs() if rel.artist])
@@ -825,6 +840,10 @@ class ConcertannouncementToConcert:
             return False
 
     def _create_new_unverified_organisation_and_relate_to_venue(self):
+        # what is the most likely location of the venue
+        # is there an organisation in that location that is similar to the raw_venue
+        # if there is, relate that organisation to venue
+        # if not, create new organisation
         try:
             name_prop, stad, land, bron = self.concertannouncement.raw_venue.raw_venue.split("|")
             name = name_prop if len(name_prop.strip()) > 0 else self.concertannouncement.raw_venue.raw_venue
