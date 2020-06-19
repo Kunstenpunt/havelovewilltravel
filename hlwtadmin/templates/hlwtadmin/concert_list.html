@@ -35,7 +35,7 @@
         <td valign="top">
           {% if concert.is_new %}{% load static %}<img style="border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/new.gif' %}" />{% endif %}
           {% if concert.is_upcoming %}{% load static %}<img style="width: 46px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/coming.gif' %}" />{% endif %}
-          <a href="{{ concert.get_absolute_url }}">{{ concert.date }}</a>
+          <a href="{{ concert.get_absolute_url }}">{{ concert.date }}{% if concert.until_date %} - {{ concert.until_date }}{% endif %}</a>
           {% if concert.verified %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
           {% if not concert.is_confirmed and not concert.verified %}(Unconfirmed){% endif %}
         </td>
