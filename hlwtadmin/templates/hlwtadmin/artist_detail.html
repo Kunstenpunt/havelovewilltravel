@@ -120,8 +120,8 @@
     </div>
     {% endif %}
 
+    {% if user.is_authenticated %}
     <hr>
-
     <div style="margin-left:20px;margin-top:20px">
         <h4>Technical details</h4>
         <table border="1">
@@ -143,7 +143,6 @@
     </div>
 
     <hr>
-
     <div style="margin-left:20px;margin-top:20px">
         <h4>Actions</h4>
         <ul>
@@ -151,6 +150,7 @@
             {% if perms.hlwtadmin.can_update_artist %}<li><a href="{% url 'artist_update' artist.mbid %}">Update artist</a></li>{% endif %}
         </ul>
     </div>
+    {% endif %}
 
 {% endblock %}
 

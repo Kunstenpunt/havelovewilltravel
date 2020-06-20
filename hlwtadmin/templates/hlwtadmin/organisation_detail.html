@@ -146,6 +146,7 @@
         </table>
     </div>
 
+{% if user.is_authenticated %}
     {% if organisation.venue_set.all %}
     <hr>
     <div style="margin-left:20px;margin-top:20px">
@@ -159,6 +160,7 @@
         </ul>
     </div>
     {% endif %}
+{% endif %}
 
     {% if organisation.organisationa.all or organisation.organisationb.all %}
     <hr>
@@ -213,8 +215,8 @@
     </div>
     {% endif %}
 
+    {% if user.is_authenticated %}
     <hr>
-
     <div style="margin-left:20px;margin-top:20px">
         <h4>Actions</h4>
         <ul>
@@ -232,6 +234,7 @@
             {% if perms.hlwtadmin.can_delete_concert %}<li><a href="{% url 'organisation_delete_with_venue_consequences' organisation.id 2 %}">Unlink this organisation from all its venues, set all these venues to unassignable, then delete the organisation</a>{% endif %}
         </ul>
     </div>
+    {% endif %}
 
 {% endblock %}
 

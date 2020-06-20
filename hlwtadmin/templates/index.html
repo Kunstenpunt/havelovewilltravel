@@ -20,6 +20,7 @@
     </ul>
   </div>
 
+{% if user.is_authenticated %}
   <div>
     <h2>Quality assurance</h2>
     <ul>
@@ -69,4 +70,5 @@
       <li><a href="{% url 'cities_without_country' %}">Cities without country</a></li>
     </ul>
   </div>
+{% endif %}
 {% endblock %}

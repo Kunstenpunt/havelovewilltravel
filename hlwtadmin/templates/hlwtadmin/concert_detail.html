@@ -184,8 +184,8 @@
     </div>
     {% endif %}
 
+    {% if user.is_authenticated %}
     <hr>
-
     <div style="margin-left:20px;margin-top:20px">
         <h4>Actions</h4>
         <ul>
@@ -203,4 +203,5 @@
             {% if perms.hlwtadmin.can_delete_concert %}<li><a href="{% url 'concert_delete_with_ca_on_ignore' concert.id 2 %}">Delete this concert, and the relations to artists and organisations, and delete the related announcements.</a></li>{% endif %}
         </ul>
     </div>
+    {% endif %}
 {% endblock %}

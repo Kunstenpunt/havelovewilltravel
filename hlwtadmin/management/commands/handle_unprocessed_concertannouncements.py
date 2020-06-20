@@ -8,6 +8,6 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True):
+        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True).filter(pk__in=(288230, 288306)):
             ca2c = ConcertannouncementToConcert(concertannouncement)
             ca2c.automate()

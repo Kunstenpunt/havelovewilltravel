@@ -13,7 +13,9 @@
         <p>Created at: {{ concertannouncement.created_at }}</p>
         <p>Updated at: {{ concertannouncement.updated_at }}</p>
         <p>Ignore: {{ concertannouncement.ignore }}</p>
+        {% if user.is_authenticated %}
         <p>Venue: {% if concertannouncement.raw_venue %} <a href="{% url 'venue_detail' concertannouncement.raw_venue.id %}">{{ concertannouncement.raw_venue }} </a> {% endif %}</p>
+        {% endif %}
         <p>GPS: {{ concertannouncement.latitude }}, {{ concertannouncement.longitude }}</p>
         <p>Count seen: {{ concertannouncement.seen_count }}</p>
     </div>
@@ -24,12 +26,13 @@
         {% endif %}
     </div>
 
+    {% if user.is_authenticated %}
     <hr>
-
     <div style="margin-left:20px;margin-top:20px">
         <ul>
             {% if perms.hlwtadmin.can_update_concertannouncement %}<li><a href="{% url 'concertannouncement_update' concertannouncement.id %}">Update this concert announcement</a></li>{% endif %}
         </ul>
     </div>
+    {% endif %}
 
 {% endblock %}

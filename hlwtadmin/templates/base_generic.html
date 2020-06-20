@@ -46,6 +46,7 @@
                         <li><a href="{% url 'organisations' %}">Browse organisations</a></li>
                         <li><a href="{% url 'artists' %}">Browse artists</a></li>
                         <li><a href="{% url 'locations' %}">Browse locations</a></li>
+                        {% if user.is_authenticated %}
                         <li><a href="{% url 'venues' %}">Browse venues</a></li>
                         <li><a href="{% url 'concertannouncements' %}">Browse concertannouncements</a></li>
                         <li><a href="{% url 'gigfinderurls' %}">Browse gigfinderurls</a></li>
@@ -53,6 +54,7 @@
                         <li><a href="{% url 'organisationsmerge_create' %}">Merge organisations</a></li>
                         <li><a href="{% url 'concertsmerge_create' %}">Merge concerts</a></li>
                         <li><a href="{% url 'locationsmerge_create' %}">Merge locations</a></li>
+                        {% endif %}
                         <hr>
                         {% if user.is_authenticated %}
                             <li>User: {{ user.get_username }}</li>
