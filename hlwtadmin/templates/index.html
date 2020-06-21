@@ -1,9 +1,9 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <div>
-    <h2>Concerts abroad today</h2>
-    <p><a href="{% url 'upcoming_concerts' %}">Or click here to see all upcoming concerts</a></p>
+<div class="row">
+  <div class="col-md-8">
+    <h2>Concerts abroad today <small><a href="{% url 'upcoming_concerts' %}">Or click here to see all upcoming concerts</a></small></h2>
     <ul>
     {% for concert in concerts_abroad_today %}
         <li>
@@ -13,10 +13,11 @@
     {% endfor %}
     </ul>
   </div>
-
-<div>
-  <h2>Some statistics</h2>
-    <ul>
+</div>
+<div class="row">
+<div class="col-md-4">
+  <h3>Some statistics</h3>
+    <ul class="list-unstyled">
       <li><strong>Artists:</strong> {{ num_artists }}</li>
       <li><strong>Organisations:</strong> {{ num_organisations }}</li>
       <li><strong>Concerts:</strong> {{ num_concerts }}</li>
@@ -27,9 +28,9 @@
   </div>
 
 {% if user.is_authenticated %}
-  <div>
-    <h2>Quality assurance</h2>
-    <ul>
+  <div class="col-md-4">
+    <h3>Quality assurance</h3>
+    <ul class="list-unstyled">
       <li><a href="{% url 'recently_added_concerts' %}">Recently added and still unverified concerts</a></li>
       <li><a href="{% url 'recently_added_organisations' %}">Recently added and still unverified organisations</a></li>
       <li><a href="{% url 'unverified_organisations' %}">All unverified organisations</a></li>
@@ -40,9 +41,9 @@
     </ul>
   </div>
 
-  <div>
-    <h2>Consistency</h2>
-    <ul>
+  <div class="col-md-4">
+    <h3>Consistency</h3>
+    <ul class="list-unstyled">
       <li><a href="{% url 'organisations_without_gps' %}">Organisations without latitude and longitude</a></li>
       <li><a href="{% url 'organisations_without_genre' %}">Organisations without genre</a></li>
       <li><a href="{% url 'organisations_without_disambiguation' %}">Organisations without disambiguation</a></li>
@@ -52,9 +53,9 @@
     </ul>
   </div>
 
-  <div>
-    <h2>Include and exclude lists</h2>
-    <ul>
+  <div class="col-md-4">
+    <h3>Include and exclude lists</h3>
+    <ul class="list-unstyled">
       <li><a href="{% url 'unassignable_venues' %}">Unassignable venues</a></li>
       <li><a href="{% url 'excludeartists' %}">Artists on exclude list</a> ({{ num_excluded_artists }})</li>
       <li><a href="{% url 'includeartists' %}">Artists on include list</a> ({{ num_included_artists }})</li>
@@ -63,9 +64,9 @@
     </ul>
   </div>
 
-  <div>
-    <h2>Relations</h2>
-    <ul>
+  <div class="col-md-4">
+    <h3>Relations</h3>
+    <ul class="list-unstyled">
       <li><a href="{% url 'concertannouncements_without_concert' %}">Announcements wo/ concert</a></li>
       <li><a href="{% url 'concerts_without_announcements' %}">Concerts wo/ announcements</a></li>
       <li><a href="{% url 'venues_without_organisation' %}">Venues wo/ organisation</a></li>
@@ -77,4 +78,5 @@
     </ul>
   </div>
 {% endif %}
+  </div>
 {% endblock %}
