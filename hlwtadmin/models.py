@@ -710,7 +710,6 @@ class ConcertannouncementToConcert:
 
     def automate(self):
         print("working on", self.concertannouncement, self.concertannouncement.pk)
-        input()
 
         if self._concertannouncement_has_daterange():
             print("\tCA with date range")
@@ -743,7 +742,6 @@ class ConcertannouncementToConcert:
                     print("\t\t\tcreate a new organisation for the venue and concert")
                     self._create_new_unverified_organisation_and_relate_to_venue()
                 self._create_new_masterconcert_with_concertannouncement_organisation_artist()
-        input()
 
     def _concertannouncement_has_daterange(self):
         return self.concertannouncement.date < self.concertannouncement.until_date if self.concertannouncement.until_date else False
@@ -806,7 +804,6 @@ class ConcertannouncementToConcert:
 
     def _relate_concertannouncement_to_masterconcert(self):
         self.concertannouncement.concert = self.masterconcert
-        self.concertannouncement.save()
 
     def _perhaps_specify_masterconcert_date(self):
         if self.concertannouncement.concert.until_date:
@@ -888,4 +885,3 @@ class ConcertannouncementToConcert:
         relca = RelationConcertArtist(concert=mc, artist=self.concertannouncement.artist)
         relca.save()
         self.concertannouncement.concert = mc
-        self.concertannouncement.save()

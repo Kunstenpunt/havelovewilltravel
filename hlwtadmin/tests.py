@@ -1,11 +1,47 @@
 from django.test import TestCase
 from .models import ConcertAnnouncement, Concert, Artist, Organisation, Location, Country, RelationConcertArtist, \
-    RelationConcertOrganisation, Venue, GigFinder, GigFinderUrl, OrganisationsMerge, RelationOrganisationOrganisation, Genre
+    RelationConcertOrganisation, Venue, GigFinder, GigFinderUrl, OrganisationsMerge, RelationOrganisationOrganisation, \
+    Genre, ConcertannouncementToConcert
 
-from .management.commands.synchronize_with_musicbrainz import Command as SyncMB
+
+class ConcertannouncementToConcertTest(TestCase):
+    def setUp(self):
+        pass
+
+    def test_concertannouncement_has_daterange(self):
+        self.assertTrue(True)
+
+    def test_venue_organisation_is_in_concert_related_organisation(self):
+        self.assertTrue(True)
+
+    def test_exists_non_cancelled_masterconcert_within_daterange_in_location_with_artist(self):
+        self.assertTrue(True)
+
+    def test_exists_non_cancelled_masterconcert_on_date_in_location_with_artist(self):
+        self.assertTrue(True)
+
+    def test_is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert(self):
+        self.assertTrue(True)
+
+    def test_perhaps_specify_masterconcert_date(self):
+        self.assertTrue(True)
+
+    def test_relate_organisation_related_to_venue_also_to_the_masterconcert(self):
+        self.assertTrue(True)
+
+    def test_relate_organisation_related_to_masterconcert_to_venue(self):
+        self.assertTrue(True)
+
+    def test_venue_is_not_related_to_organisation(self):
+        self.assertTrue(True)
+
+    def test_create_new_unverified_organisation_and_relate_to_venue(self):
+        self.assertTrue(True)
+
+    def test_create_new_masterconcert_with_concertannouncement_organisation_artist(self):
+        self.assertTrue(True)
 
 
-# Create your tests here.
 class OrganisationsMergeTest(TestCase):
     def setUp(self):
         self.concert = Concert(
@@ -103,6 +139,36 @@ class ConcertTest(TestCase):
         self.assertEqual(1, len(self.concert_a.find_concurring_concerts()))
         self.assertIn(self.concert_a, self.concert_b.find_concurring_concerts())
 
+    def test_is_ontologically_sound(self):
+        self.assertTrue(True)
+
+    def test_artists(self):
+        self.assertTrue(True)
+
+    def test_artistsqs(self):
+        self.assertTrue(True)
+
+    def test_organisations(self):
+        self.assertTrue(True)
+
+    def test_organisationsqs(self):
+        self.assertTrue(True)
+
+    def test_concertannouncements(self):
+        self.assertTrue(True)
+
+    def test_is_upcoming(self):
+        self.assertTrue(True)
+
+    def test_is_new(self):
+        self.assertTrue(True)
+
+    def test_is_confirmed(self):
+        self.assertTrue(True)
+
+    def test_delete(self):
+        self.assertTrue(True)
+
 
 class ConcertAnnouncementTest(TestCase):
     def setUp(self):
@@ -161,10 +227,10 @@ class ConcertAnnouncementTest(TestCase):
         self.venue_without_organisation.save()
         self.concert = Concert.objects.create(title="testconcert",
                                               date="1985-11-23")
-        self.concert.save("test")
+        self.concert.save()
         self.cancelled_concert = Concert.objects.create(title="gecancelled testconcert",
                                                         date="1985-11-23")
-        self.cancelled_concert.save("test")
+        self.cancelled_concert.save()
         self.rel_concert_artist = RelationConcertArtist(artist=self.artist,
                                                         concert=self.concert)
         self.rel_concert_artist.save()
@@ -187,7 +253,7 @@ class ConcertAnnouncementTest(TestCase):
                                  gigfinder_concert_id="123",
                                  raw_venue=self.venue,
                                  ignore=False)
-        ca.save("test")
+        ca.save()
         self.assertEqual(self.concert, ca.concert)
 
     def test_concertannouncement_without_organisation_and_existing_concert(self):
@@ -198,10 +264,9 @@ class ConcertAnnouncementTest(TestCase):
                                  gigfinder_concert_id="123",
                                  raw_venue=self.venue_without_organisation,
                                  ignore=False)
-        ca.save("test")
+        ca.save()
         self.assertEqual(self.concert, ca.concert)
-        self.assertEqual(self.rel_concert_organisation.organisation, ca.raw_venue.organisation)
-        self.assertEqual(ca.raw_venue.organisation.location, self.location)
+        self.assertEqual(Organisation.objects.all().order_by('-pk')[0], ca.raw_venue.organisation)
 
     def test_concertannouncement_with_different_organisation_and_existing_concert(self):
         ca = ConcertAnnouncement(title="test concert announcement",
@@ -211,11 +276,11 @@ class ConcertAnnouncementTest(TestCase):
                                  gigfinder_concert_id="123",
                                  raw_venue=self.venue2,
                                  ignore=False)
-        ca.save("test")
+        ca.save()
         # concert should have 2 related organisations
         self.assertEqual(2, RelationConcertOrganisation.objects.filter(concert=self.concert).count())
 
-    def test_concertannouncement_without_existing_concert(self):
+    def test_concertannouncement_with_organisation_without_existing_concert(self):
         ca = ConcertAnnouncement(title="test concert announcement",
                                  artist=self.artist,
                                  date="1995-11-24",
@@ -223,7 +288,7 @@ class ConcertAnnouncementTest(TestCase):
                                  gigfinder_concert_id="123",
                                  raw_venue=self.venue2,
                                  ignore=False)
-        ca.save("test")
+        ca.save()
         # concert date should be date of announcement
         self.assertEqual("1995-11-24", ca.concert.date)
         # concert organisation should be organisation of raw venue of announcement
@@ -233,7 +298,7 @@ class ConcertAnnouncementTest(TestCase):
         # concert genre should be genre of artist
         self.assertIn(self.genre, RelationConcertArtist.objects.filter(concert=ca.concert).first().concert.genre.all())
 
-    def test_concertannouncement_with_raw_venue_without_organisation_and_without_existing_concert(self):
+    def test_concertannouncement_without_organisation_and_without_existing_concert(self):
         ca = ConcertAnnouncement(title="test concert announcement without nothing",
                                  artist=self.artist,
                                  date="1995-11-24",
@@ -241,92 +306,10 @@ class ConcertAnnouncementTest(TestCase):
                                  gigfinder_concert_id="123",
                                  raw_venue=self.venue_without_organisation,
                                  ignore=False)
-        ca.save("test")
+        ca.save()
         # there should now be a new organisation, so 3
         self.assertEqual(3, Organisation.objects.all().count())
         # there should be a new masterconcert, so 3
         self.assertEqual(3, Concert.objects.all().count())
         # ca should be related to a new concert with title == ca.title
         self.assertEqual(ca.concert.title, ca.title)
-
-
-from io import StringIO
-from django.core.management import call_command
-
-
-class MyBackgroundTaskTestCase(TestCase):
-    def setUp(self):
-        self.artist = Artist.objects.create(name="Rebirth",
-                                            disambiguation="een test artiest",
-                                            mbid="f10f583b-c16b-4c36-9bec-916f3af7fa95")
-        self.artist.save()
-
-        self.gf = GigFinder.objects.create(name="facebook.com",
-                                           base_url="https://www.facebook.com/",
-                                           api_key="1234")
-        self.gf.save()
-
-        self.gfurl = GigFinderUrl(artist=self.artist,
-                                  gigfinder=self.gf,
-                                  url="https://www.facebook.com/rebirthcollective")
-        self.gfurl.save()
-
-        self.country = Country.objects.create(
-            name="bestaand land"
-        )
-        self.country.save()
-
-        self.loc = Location.objects.create(
-            city="bestaande stad",
-            subcountry="bestaand subland",
-            country=self.country
-        )
-        self.loc.save()
-
-        self.venue_with_existing_loc = Venue.objects.create(
-            raw_venue="announcement|bestaande stad|bestaand land|facebook"
-        )
-        self.venue_with_existing_loc.save()
-
-        self.venue_without_existing_loc = Venue.objects.create(
-            raw_venue="announcement|onbestaande stad|onbestaand land|facebook"
-        )
-        self.venue_without_existing_loc.save()
-
-        self.ca_with_venue_with_existing_loc = ConcertAnnouncement.objects.create(
-            title="announcement",
-            artist=self.artist,
-            date="2000-01-01",
-            gigfinder=self.gf,
-            raw_venue=self.venue_with_existing_loc,
-            ignore=False
-        )
-        #self.ca_with_venue_with_existing_loc.save()
-
-        self.ca_with_venue_without_existing_loc = ConcertAnnouncement.objects.create(
-            title="announcement",
-            artist=self.artist,
-            date="2001-01-01",
-            gigfinder=self.gf,
-            raw_venue=self.venue_without_existing_loc,
-            ignore=False
-        )
-        #self.ca_with_venue_without_existing_loc.save()
-
-    def test_synchronize_with_musicbrainz(self):
-        out = StringIO()
-        call_command("synchronize_with_musicbrainz", stdout=out)
-        call_command("synchronize_with_musicbrainz", stdout=out)
-        self.assertEqual(Artist.objects.count(), 9)
-        self.assertEqual(GigFinderUrl.objects.count(), 7)
-        self.assertTrue(Artist.objects.filter(name="Rebirth Collective").first().include)
-
-    def test_resolve_venues(self):
-        out = StringIO()
-        call_command("resolve_venues", stdout=out)
-
-        print("venue without", self.venue_without_existing_loc)
-        self.assertEqual(self.venue_without_existing_loc.organisation.name, Organisation.objects.first().name)
-
-        print("venue with existing loc", self.venue_with_existing_loc)
-        self.assertEqual(self.venue_with_existing_loc.organisation.location, self.loc)
