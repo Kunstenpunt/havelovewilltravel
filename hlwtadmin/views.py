@@ -898,9 +898,12 @@ class VenueListView(ListView):
 
 class VenueDetailView(DetailView):
     model = Venue
+    paginate_by = 30
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        page = self.request.GET.get('page', 1)
+        object_list = Paginator(ConcertAnnouncement.objects.filter(raw_venue=self.object), 30).page(page)
+        context = super().get_context_data(object_list=object_list, **kwargs)
         return context
 
 

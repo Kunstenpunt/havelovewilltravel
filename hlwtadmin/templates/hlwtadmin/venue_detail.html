@@ -16,13 +16,26 @@
     <div style="margin-left:20px;margin-top:20px">
     <h2>Related concert announcements</h2>
         <ul>
-            {% for announcement in venue.concertannouncement_set.all %}
+            {% for announcement in object_list %}
                 <li>
                     <a href="{% url 'concertannouncement_detail' announcement.id %}">{{ announcement.title }}, {{ announcement.date }}, {{ announcement.artist }}</a>
                     {% if perms.hlwtadmin.can_update_concertannouncement %}<a href="{% url 'concertannouncement_update' announcement.id %}">[update concertannouncement]</a>{% endif %}
                 </li>
             {% endfor %}
         </ul>
+            <div class="pagination">
+                <span class="page-links">
+                    {% if object_list.has_previous %}
+                        <a href="{{ request.path }}?page={{ object_list.previous_page_number }}">previous</a>
+                    {% endif %}
+                    <span class="page-current">
+                        Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.
+                    </span>
+                    {% if object_list.has_next %}
+                        <a href="{{ request.path }}?page={{ object_list.next_page_number }}">next</a>
+                    {% endif %}
+                </span>
+            </div>
     </div>
 
     <hr>
