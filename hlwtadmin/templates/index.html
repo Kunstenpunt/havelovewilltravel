@@ -1,8 +1,21 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Have Love Will Travel Admin</h1>
   <div>
+    <h2>Concerts abroad today</h2>
+    <p><a href="{% url 'upcoming_concerts' %}">Or click here to see all upcoming concerts</a></p>
+    <ul>
+    {% for concert in concerts_abroad_today %}
+        <li>
+          {% for rel in concert.artistsqs %}<a href="{% url 'artist_detail' rel.artist.pk %}">{{ rel.artist.name }}</a>{% endfor %} at
+          {% for rel in concert.organisationsqs %}<a href="{% url 'organisation_detail' rel.organisation.pk %}">{{ rel.organisation.name }}</a> in <a href="{% url 'location_detail' rel.organisation.location.pk %}">{{ rel.organisation.location }}</a>{% endfor %}
+        </li>
+    {% endfor %}
+    </ul>
+  </div>
+
+<div>
+  <h2>Some statistics</h2>
     <ul>
       <li><strong>Artists:</strong> {{ num_artists }}</li>
       <li><strong>Organisations:</strong> {{ num_organisations }}</li>
@@ -11,19 +24,6 @@
       <li><strong>Announcements:</strong> {{ num_announcements }}</li>
       <li><strong>Locations:</strong> {{ num_locations }}</li>
     </ul>
-  </div>
-
-  <div>
-    <h2>Concerts abroad today</h2>
-    {% for concert in concerts_abroad_today %}
-      <ul>
-        <li>
-          {% for rel in concert.artistsqs %}<a href="{% url 'artist_detail' rel.artist.pk %}">{{ rel.artist.name }}</a>{% endfor %} at
-          {% for rel in concert.organisationsqs %}<a href="{% url 'organisation_detail' rel.organisation.pk %}">{{ rel.organisation.name }}</a> in <a href="{% url 'location_detail' rel.organisation.location.pk %}">{{ rel.organisation.location }}</a>{% endfor %}
-        </li>
-      </ul>
-    {% endfor %}
-    <a href="{% url 'upcoming_concerts' %}">See all upcoming concerts</a>
   </div>
 
 {% if user.is_authenticated %}
