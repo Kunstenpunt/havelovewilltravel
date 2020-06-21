@@ -167,6 +167,7 @@ def index(request):
         'num_locations': Location.objects.count(),
         'num_excluded_artists': Artist.objects.filter(exclude=True).count(),
         'num_included_artists': Artist.objects.filter(include=True).count(),
+        'concerts_abroad_today': Concert.objects.filter(date=datetime.now().date()).exclude(relationconcertorganisation__organisation__location__country__name='Belgium')
     }
 
     # Render the HTML template index.html with the data in the context variable

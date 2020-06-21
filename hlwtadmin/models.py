@@ -238,7 +238,7 @@ class Concert(models.Model):
         return RelationConcertArtist.objects.select_related('artist').filter(concert__id=self.id)
 
     def organisations(self):
-        return ", ".join([rel.organisation.name for rel in self.organisationsqs() if rel.organisation])
+        return ", ".join([rel.organisation.name + " in "+ str(rel.organisation.location) for rel in self.organisationsqs() if rel.organisation])
 
     def organisationsqs(self):
         return RelationConcertOrganisation.objects.select_related('organisation__location__country').filter(concert__id=self.id)
