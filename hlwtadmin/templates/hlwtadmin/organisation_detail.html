@@ -105,21 +105,20 @@
       </tr>
     {% endfor %}
   </table>
-        {% if is_paginated %}
             <div class="pagination">
                 <span class="page-links">
-                    {% if page_obj.has_previous %}
-                        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% load my_tags %}
+                    {% if object_list.has_previous %}
+                        <a href="?{% param_replace page=object_list.previous_page_number %}">previous</a>
                     {% endif %}
                     <span class="page-current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                        Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.
                     </span>
-                    {% if page_obj.has_next %}
-                        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+                    {% if object_list.has_next %}
+                        <a href="?{% param_replace page=object_list.next_page_number %}">next</a>
                     {% endif %}
                 </span>
             </div>
-        {% endif %}
     </div>
 
     {% if organisation.identifiersqs.first.identifier.service.name == "wikidata.org" %}
@@ -147,19 +146,31 @@
     </div>
 
 {% if user.is_authenticated %}
-    {% if organisation.venue_set.all %}
     <hr>
     <div style="margin-left:20px;margin-top:20px">
         <h4>Related venues</h4>
         <ul>
-            {% for relation in organisation.venue_set.all %}
+            {% for relation in venue_list %}
                 <li>
                     <a href="{% url 'venue_update' relation.id %}">{{ relation.raw_venue }}</a>
                 </li>
             {% endfor %}
         </ul>
+        <div class="pagination">
+                <span class="page-links">
+                    {% load my_tags %}
+                    {% if venue_list.has_previous %}
+                        <a href="?{% param_replace venue_page=venue_list.previous_page_number %}">previous</a>
+                    {% endif %}
+                    <span class="page-current">
+                        Page {{ venue_list.number }} of {{ venue_list.paginator.num_pages }}.
+                    </span>
+                    {% if venue_list.has_next %}
+                        <a href="?{% param_replace venue_page=venue_list.next_page_number %}">next</a>
+                    {% endif %}
+                </span>
+            </div>
     </div>
-    {% endif %}
 {% endif %}
 
     {% if organisation.organisationa.all or organisation.organisationb.all %}

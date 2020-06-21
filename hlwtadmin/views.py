@@ -8,6 +8,8 @@ from django.db.models import Q, Exists, Count, F, Max, DateField
 from django.db.models.functions import Length
 from django.utils.html import format_html
 
+from django.core.paginator import Paginator
+
 from datetime import datetime, timedelta
 
 from django.views.generic.list import MultipleObjectMixin
@@ -793,11 +795,13 @@ class OrganisationsWithoutConcertsListView(DefaultOrganisationListView):
 class OrganisationDetailView(DetailView, MultipleObjectMixin):
     model = Organisation
     fields = '__all__'
-    paginate_by = 30
 
     def get_context_data(self, **kwargs):
-        object_list = Concert.objects.filter(relationconcertorganisation__organisation=self.object)
-        context = super().get_context_data(object_list=object_list, **kwargs)
+        concert_page = self.request.GET.get('page', 1)
+        venue_page = self.request.GET.get('venue_page', 1)
+        object_list = Paginator(Concert.objects.filter(relationconcertorganisation__organisation=self.object), 30).page(concert_page)
+        venue_list = Paginator(Venue.objects.filter(organisation=self.object), 10).page(venue_page)
+        context = super().get_context_data(object_list=object_list, venue_list=venue_list, **kwargs)
         context["form"] = ConcertForm()
         return context
 
