@@ -508,14 +508,14 @@ class ArtistListView(ListView):
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
         new_context = Artist.objects.filter(
-            name__iregex=filter_val
+            name__unaccent__iregex=filter_val
         )
         return new_context
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
-        context['num_artists'] = Artist.objects.filter(name__iregex=context['filter']).count()
+        context['num_artists'] = Artist.objects.filter(name__unaccent__iregex=context['filter']).count()
         return context
 
 
