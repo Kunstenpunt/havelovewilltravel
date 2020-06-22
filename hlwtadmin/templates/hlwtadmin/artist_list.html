@@ -20,37 +20,20 @@
 
 {% if artist_list %}
 <div class="container my-4">
-  <table class="table table-striped table-sm">
-    <thead class="thead-dark">
-      <tr>
-        <th>Name</th>
-        <th>Genre</th>
-        <th>#Concerts</th>
-        <th>Gigfinders</th>
-      </tr>
-    </thead>
+    <ul class="list-group-flush card-columns">
     {% for artist in artist_list %}
-      <tr>
-        <th scope="row">
-            <a href="{{ artist.get_absolute_url }}">{{ artist.name }}</a> (<i>{{ artist.disambiguation }}</i>)
-            <a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">
-                {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/musicbrainz.png' %}" alt="{{ artist.name }}" />
-            </a>
-        </th>
-        <td>{{ artist.genre.all|join:"," }}</td>
-        <td>
-          {{ artist.concert_count }}
-        </td>
-        <td>
-        {% for gf in artist.gigfinderurl_set.all %}
-          <a target="_blank" href="{{ gf.url }}">
-              {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ gf.gigfinder }}.png" alt="{{ gf.gigfinder }}" />
-          </a>
-        {% endfor %}
-        </td>
-      </tr>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>
+            <a href="{{ artist.get_absolute_url }}">{{ artist.name }}</a>
+            <a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/musicbrainz.png' %}" alt="{{ artist.name }}" /></a>
+            {% for gf in artist.gigfinderurl_set.all %}<a target="_blank" href="{{ gf.url }}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ gf.gigfinder }}.png" alt="{{ gf.gigfinder }}" /></a>{% endfor %}
+            <span class="badge badge-primary badge-pill">{{ artist.concert_count }}</span>
+            <br/>
+            <small class="text-muted"><em>{{ artist.disambiguation }}</em> {{ artist.genre.all|join:"," }}</small>
+            </span>
+        </li>
     {% endfor %}
-  </table>
+  </ul>
   {% load my_tags %}
 
     {% if is_paginated %}

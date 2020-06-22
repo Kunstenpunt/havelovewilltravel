@@ -51,11 +51,13 @@
         </thead>
         {% for organisation in organisation_list %}
         <tr>
-            <th scope="row">
-              <a href="{{ organisation.get_absolute_url }}">{{ organisation.name }} <i>({{ organisation.disambiguation }})</i></a>
+            <td>
+              <a href="{{ organisation.get_absolute_url }}">{{ organisation.name }}</a>
                 <span class="badge badge-primary badge-pill">{{ organisation.num_concerts }}</span>
                 {% if organisation.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
-            </th>
+                <br/>
+                <small class="text-muted"><em>{{ organisation.disambiguation }}</em></small>
+            </td>
             <td>{{ organisation.organisation_type.all|join:"," }}</td>
             <td>{{ organisation.genre.all|join:"," }}</td>
             <td>{{ organisation.location }}

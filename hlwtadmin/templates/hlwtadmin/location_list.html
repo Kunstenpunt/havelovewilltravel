@@ -41,15 +41,17 @@
 
 {% if location_list %}
 <div class="container my-4">
-  <ul class="list-group list-group-flush">
+  <ul class="list-group-flush card-columns">
     {% for location in location_list %}
       <li class="list-group-item d-flex justify-content-between align-items-center">
-        <a href="{{ location.get_absolute_url }}">
-            {% if location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
-            {{ location }}
-            {% load static %}<img title="{{ location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" />
-        </a>
-        <span class="badge badge-primary badge-pill">{{ location.organisation_set.count }}</span>
+          <span>
+                <a href="{{ location.get_absolute_url }}">{{ location.city }}</a>
+                {% if location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
+                <span class="badge badge-primary badge-pill">{{ location.organisation_set.count }}</span>
+                <br/>
+                <span class="text-muted"><em>{{ location.country.name }}</em></span>
+                {% load static %}<img title="{{ location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" />
+              </span>
       </li>
     {% endfor %}
   </ul>
