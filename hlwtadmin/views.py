@@ -801,7 +801,7 @@ class OrganisationDetailView(DetailView, MultipleObjectMixin):
         concert_page = self.request.GET.get('page', 1)
         venue_page = self.request.GET.get('venue_page', 1)
         object_list = Paginator(Concert.objects.filter(relationconcertorganisation__organisation=self.object), 30).page(concert_page)
-        venue_list = Paginator(Venue.objects.filter(organisation=self.object), 10).page(venue_page)
+        venue_list = Paginator(Venue.objects.filter(organisation=self.object).order_by('raw_venue'), 50).page(venue_page)
         context = super().get_context_data(object_list=object_list, venue_list=venue_list, **kwargs)
         context["form"] = ConcertForm()
         return context

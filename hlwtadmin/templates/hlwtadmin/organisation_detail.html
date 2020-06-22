@@ -111,7 +111,8 @@
 
 <div class="container my-4">
 <h4 class="display-4">More information</h4>
-<div class="card-columns">
+<div class="row">
+    <div class="col-md-4 my-4">
     <div class="card">
         <div class="card-body">
             <h4>Technical details</h4>
@@ -127,8 +128,10 @@
             </table>
         </div>
     </div>
+    </div>
 
     {% if organisation.identifiersqs %}
+    <div class="col-md-4 my-4">
     <div class="card">
         <div class="card-body">
             <h4>External identifier</h4>
@@ -143,38 +146,11 @@
             </ul>
         </div>
     </div>
-    {% endif %}
-
-    {% if user.is_authenticated %}
-    <div class="card">
-        <div class="card-body">
-            <h4>Related venues</h4>
-            <ul class="list-unstyled">
-                {% for relation in venue_list %}
-                    <li>
-                        <a href="{% url 'venue_update' relation.id %}">{{ relation.raw_venue }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-            <div class="pagination">
-                <span class="page-links">
-                    {% load my_tags %}
-                    {% if venue_list.has_previous %}
-                        <a href="?{% param_replace venue_page=venue_list.previous_page_number %}">previous</a>
-                    {% endif %}
-                    <span class="page-current">
-                        Page {{ venue_list.number }} of {{ venue_list.paginator.num_pages }}.
-                    </span>
-                    {% if venue_list.has_next %}
-                        <a href="?{% param_replace venue_page=venue_list.next_page_number %}">next</a>
-                    {% endif %}
-                </span>
-            </div>
-        </div>
     </div>
     {% endif %}
 
     {% if organisation.organisationa.all or organisation.organisationb.all %}
+    <div class="col-md-4 my-4">
     <div class="card">
         <div class="card-body">
             <h4>Related organisations</h4>
@@ -208,6 +184,38 @@
                     </li>
                 {% endfor %}
             </ul>
+        </div>
+    </div>
+    </div>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+    <div class="col-md-12 my-4">
+        <div class="card">
+            <div class="card-body">
+                <h4>Related venues</h4>
+                <ul class="list-unstyled">
+                    {% for relation in venue_list %}
+                        <li>
+                            <a href="{% url 'venue_update' relation.id %}">{{ relation.raw_venue }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="pagination">
+                    <span class="page-links">
+                        {% load my_tags %}
+                        {% if venue_list.has_previous %}
+                            <a href="?{% param_replace venue_page=venue_list.previous_page_number %}">previous</a>
+                        {% endif %}
+                        <span class="page-current">
+                            Page {{ venue_list.number }} of {{ venue_list.paginator.num_pages }}.
+                        </span>
+                        {% if venue_list.has_next %}
+                            <a href="?{% param_replace venue_page=venue_list.next_page_number %}">next</a>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
     {% endif %}
