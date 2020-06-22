@@ -371,10 +371,10 @@ class Organisation(models.Model):
         return reverse('organisation_detail', args=[str(self.id)])
 
     def startdate(self):
-        return self.start_date.strftime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
+        return self.start_date.strftime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else None
 
     def enddate(self):
-        return self.end_date.strftime("%Y/%m/%d"[0:self.end_date_precision]) if self.end_date else "?"
+        return self.end_date.strftime("%Y/%m/%d"[0:self.end_date_precision]) if self.end_date else None
 
     def identifiersqs(self):
         return RelationOrganisationIdentifier.objects.select_related('identifier').filter(organisation=self)

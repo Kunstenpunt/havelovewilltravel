@@ -1,12 +1,24 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+<section class="jumbotron text-center">
+    <div class="container">
+      <h1 class="jumbotron-heading">Have Love Will Travel: Admin</h1>
+      <p class="lead">An interface for managing and browsing automatically aggregated concerts from gigfinder platforms.</p>
+      {% if not user.is_authenticated %}
+      <hr class="my-4">
+      <p>Development at Kunstenpunt, since 2017. Check GitHub for code, issue tracking and documentation.</p>
+      {% endif %}
+    </div>
+</section>
+{% if not user.is_authenticated %}
 <div class="row">
-  <div class="col-md-8">
+  <div class="col-md-12">
     <h2>Concerts abroad today <small><a href="{% url 'upcoming_concerts' %}">Or click here to see all upcoming concerts</a></small></h2>
-    <ul>
+    <ul class="list-group list-group-flush">
     {% for concert in concerts_abroad_today %}
-        <li>
+        <li class="list-group-item">
+          <a href="{% url 'concert_detail' concert.pk %}">{{ concert.date }}</a> >
           {% for rel in concert.artistsqs %}<a href="{% url 'artist_detail' rel.artist.pk %}">{{ rel.artist.name }}</a>{% endfor %} at
           {% for rel in concert.organisationsqs %}<a href="{% url 'organisation_detail' rel.organisation.pk %}">{{ rel.organisation.name }}</a> in <a href="{% url 'location_detail' rel.organisation.location.pk %}">{{ rel.organisation.location }}</a>{% endfor %}
         </li>
@@ -14,68 +26,80 @@
     </ul>
   </div>
 </div>
-<div class="row">
-<div class="col-md-4">
-  <h3>Some statistics</h3>
-    <ul class="list-unstyled">
-      <li><strong>Artists:</strong> {{ num_artists }}</li>
-      <li><strong>Organisations:</strong> {{ num_organisations }}</li>
-      <li><strong>Concerts:</strong> {{ num_concerts }}</li>
-      <li><strong>Venues:</strong> {{ num_venues }}</li>
-      <li><strong>Announcements:</strong> {{ num_announcements }}</li>
-      <li><strong>Locations:</strong> {{ num_locations }}</li>
+<hr>
+{% endif %}
+<div class="card-columns">
+<div class="card">
+  <div class="card-body">
+  <h3 class="card-title">Some statistics</h3>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><strong>Artists:</strong> {{ num_artists }}</li>
+      <li class="list-group-item"><strong>Organisations:</strong> {{ num_organisations }}</li>
+      <li class="list-group-item"><strong>Concerts:</strong> {{ num_concerts }}</li>
+      <li class="list-group-item"><strong>Venues:</strong> {{ num_venues }}</li>
+      <li class="list-group-item"><strong>Announcements:</strong> {{ num_announcements }}</li>
+      <li class="list-group-item"><strong>Locations:</strong> {{ num_locations }}</li>
     </ul>
   </div>
+</div>
 
 {% if user.is_authenticated %}
-  <div class="col-md-4">
-    <h3>Quality assurance</h3>
-    <ul class="list-unstyled">
-      <li><a href="{% url 'recently_added_concerts' %}">Recently added and still unverified concerts</a></li>
-      <li><a href="{% url 'recently_added_organisations' %}">Recently added and still unverified organisations</a></li>
-      <li><a href="{% url 'unverified_organisations' %}">All unverified organisations</a></li>
-      <li><a href="{% url 'concerts_with_multiple_organisations_in_different_countries' %}">Concerts with multiple organisations in different locations</a></li>
-      <li><a href="{% url 'concerts_with_more_than_one_artist' %}">Concerts with more than one artist</a></li>
-      <li><a href="{% url 'concerts_without_artists' %}">Concerts wo/ artists</a></li>
-      <li><a href="{% url 'concerts_without_organisations' %}">Concerts wo/ organisations</a></li>
+  <div class="card">
+    <div class="card-body">
+    <h3 class="card-title">Quality assurance</h3>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><a href="{% url 'recently_added_concerts' %}">Recently added and still unverified concerts</a></li>
+      <li class="list-group-item"><a href="{% url 'recently_added_organisations' %}">Recently added and still unverified organisations</a></li>
+      <li class="list-group-item"><a href="{% url 'unverified_organisations' %}">All unverified organisations</a></li>
+      <li class="list-group-item"><a href="{% url 'concerts_with_multiple_organisations_in_different_countries' %}">Concerts with multiple organisations in different locations</a></li>
+      <li class="list-group-item"><a href="{% url 'concerts_with_more_than_one_artist' %}">Concerts with more than one artist</a></li>
+      <li class="list-group-item"><a href="{% url 'concerts_without_artists' %}">Concerts wo/ artists</a></li>
+      <li class="list-group-item"><a href="{% url 'concerts_without_organisations' %}">Concerts wo/ organisations</a></li>
     </ul>
   </div>
-
-  <div class="col-md-4">
-    <h3>Consistency</h3>
-    <ul class="list-unstyled">
-      <li><a href="{% url 'organisations_without_gps' %}">Organisations without latitude and longitude</a></li>
-      <li><a href="{% url 'organisations_without_genre' %}">Organisations without genre</a></li>
-      <li><a href="{% url 'organisations_without_disambiguation' %}">Organisations without disambiguation</a></li>
-      <li><a href="{% url 'organisations_without_sortname' %}">Organisations without sort name</a></li>
-      <li><a href="{% url 'concerts_without_genre' %}">Concerts without genre</a></li>
-      <li><a href="{% url 'artists_without_genre' %}">Artists without genre</a></li>
-    </ul>
   </div>
 
-  <div class="col-md-4">
-    <h3>Include and exclude lists</h3>
-    <ul class="list-unstyled">
-      <li><a href="{% url 'unassignable_venues' %}">Unassignable venues</a></li>
-      <li><a href="{% url 'excludeartists' %}">Artists on exclude list</a> ({{ num_excluded_artists }})</li>
-      <li><a href="{% url 'includeartists' %}">Artists on include list</a> ({{ num_included_artists }})</li>
-      <li><a href="{% url 'ignored_concertannouncements' %}">Ignored concertannouncements</a></li>
-      <li><a href="{% url 'ignored_concerts' %}">Ignored concerts</a></li>
+  <div class="card">
+    <div class="card-body">
+    <h3 class="card-title">Consistency</h3>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><a href="{% url 'organisations_without_gps' %}">Organisations without latitude and longitude</a></li>
+      <li class="list-group-item"><a href="{% url 'organisations_without_genre' %}">Organisations without genre</a></li>
+      <li class="list-group-item"><a href="{% url 'organisations_without_disambiguation' %}">Organisations without disambiguation</a></li>
+      <li class="list-group-item"><a href="{% url 'organisations_without_sortname' %}">Organisations without sort name</a></li>
+      <li class="list-group-item"><a href="{% url 'concerts_without_genre' %}">Concerts without genre</a></li>
+      <li class="list-group-item"><a href="{% url 'artists_without_genre' %}">Artists without genre</a></li>
     </ul>
   </div>
+  </div>
 
-  <div class="col-md-4">
-    <h3>Relations</h3>
-    <ul class="list-unstyled">
-      <li><a href="{% url 'concertannouncements_without_concert' %}">Announcements wo/ concert</a></li>
-      <li><a href="{% url 'concerts_without_announcements' %}">Concerts wo/ announcements</a></li>
-      <li><a href="{% url 'venues_without_organisation' %}">Venues wo/ organisation</a></li>
-      <li><a href="{% url 'venues_without_concertannouncements' %}">Venues wo/ concertannouncements</a></li>
-      <li><a href="{% url 'organisations_without_venues' %}">Organisations wo/ venues</a></li>
-      <li><a href="{% url 'organisations_without_locations' %}">Organisations without locations</a></li>
-      <li><a href="{% url 'organisations_without_concerts' %}">Organisations without concerts</a></li>
-      <li><a href="{% url 'cities_without_country' %}">Cities without country</a></li>
+  <div class="card">
+    <div class="card-body">
+    <h3 class="card-title">Include and exclude lists</h3>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><a href="{% url 'unassignable_venues' %}">Unassignable venues</a></li>
+      <li class="list-group-item"><a href="{% url 'excludeartists' %}">Artists on exclude list</a> ({{ num_excluded_artists }})</li>
+      <li class="list-group-item"><a href="{% url 'includeartists' %}">Artists on include list</a> ({{ num_included_artists }})</li>
+      <li class="list-group-item"><a href="{% url 'ignored_concertannouncements' %}">Ignored concertannouncements</a></li>
+      <li class="list-group-item"><a href="{% url 'ignored_concerts' %}">Ignored concerts</a></li>
     </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+    <h3 class="card-title">Relations</h3>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><a href="{% url 'concertannouncements_without_concert' %}">Announcements wo/ concert</a></li>
+      <li class="list-group-item"><a href="{% url 'concerts_without_announcements' %}">Concerts wo/ announcements</a></li>
+      <li class="list-group-item"><a href="{% url 'venues_without_organisation' %}">Venues wo/ organisation</a></li>
+      <li class="list-group-item"><a href="{% url 'venues_without_concertannouncements' %}">Venues wo/ concertannouncements</a></li>
+      <li class="list-group-item"><a href="{% url 'organisations_without_venues' %}">Organisations wo/ venues</a></li>
+      <li class="list-group-item"><a href="{% url 'organisations_without_locations' %}">Organisations without locations</a></li>
+      <li class="list-group-item"><a href="{% url 'organisations_without_concerts' %}">Organisations without concerts</a></li>
+      <li class="list-group-item"><a href="{% url 'cities_without_country' %}">Cities without country</a></li>
+    </ul>
+    </div>
   </div>
 {% endif %}
   </div>

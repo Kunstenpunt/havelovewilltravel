@@ -1,90 +1,112 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>{% block title %}Location: {{ location }}{% endblock %} {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" />
-    {% if location.verified %}{% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}</h1>
+<div class="jumbotron my-4">
+    <h1 class="display-4">{% block title %}{{ location.city }}{% endblock %}
+        <small class="text-muted">{% load static %}
+            {% if location.verified %}{% load static %}
+            <img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />
+            {% endif %}
+        </small>
+    </h1>
+    <p class="lead">in <a href="{% url 'locations' %}?filter={{ location.country.name }}&orderby=city" >{{ location.country.name }} <img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" /></a></p>
+    <p>Zipcode: {{ location.zipcode }}, GPS: {{ location.latitude }}, {{ location.longitude }}</p>
+    <p></p>
 
-    <div style="margin-left:20px;margin-top:20px">
-        <p>Zipcode: {{ location.zipcode }}</p>
-        <p>GPS: {{ location.latitude }}, {{ location.longitude }}</p>
-        <p>Country: <a href="{% url 'locations' %}?filter={{ location.country.name }}&orderby=city" >{{ location.country.name }}</a></p>
-    </div>
+    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Click here to sort this list.</a>
 
-    <div style="margin-left:20px;margin-top:20px">
-        <h4>Organisations</h4>
-
+    <div class="collapse" id="collapseExample">
         <form method="get" action="{% url 'location_detail' location.id %}">
-        <p>Order organisations:
-            <select id="orderby" name="orderby">
-                <option value="name">Order by organisation name</option>
-                <option value="-num_concerts">Order by amount of concerts per organisation</option>
-            </select>
-        </p>
-        <p><input type="submit" name="submit" value="submit"/></p>
+            <div class="form-group">
+                <label for="orderby">Order organisations</label>
+                <select class="form-control" id="orderby" name="orderby">
+                    <option value="name">Order by organisation name</option>
+                    <option value="-num_concerts">Order by amount of concerts per organisation</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input class="btn btn-primary" type="submit" name="submit" value="submit"/>
+            </div>
         </form>
-
-        <ul>
-            {% for organisation in object_list %}
-              <li>
-                  <a href="{% url 'organisation_detail' organisation.id %}">{{ organisation.name }} ({{ organisation.num_concerts }})</a>
-              </li>
-            {% endfor %}
-        </ul>
-        {% load my_tags %}
-
-        {% if is_paginated %}
-          {% if page_obj.has_previous %}
-            <a href="?{% param_replace page=1 %}">First</a>
-            {% if page_obj.previous_page_number != 1 %}
-              <a href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
-            {% endif %}
-          {% endif %}
-
-          Page {{ page_obj.number }} of {{ paginator.num_pages }}
-
-          {% if page_obj.has_next %}
-            {% if page_obj.next_page_number != paginator.num_pages %}
-              <a href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
-            {% endif %}
-            <a href="?{% param_replace page=paginator.num_pages %}">Last</a>
-          {% endif %}
-
-          <p>Objects {{ page_obj.start_index }}—{{ page_obj.end_index }}</p>
-        {% endif %}
     </div>
+</div>
+<div class="container my-6">
+    <ul class="list-group list-group-flush">
+        {% for organisation in object_list %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+              <a href="{% url 'organisation_detail' organisation.id %}">{{ organisation.name }}</a>
+              <span class="badge badge-primary badge-pill">{{ organisation.num_concerts }}</span>
+          </li>
+        {% endfor %}
+    </ul>
+</div>
+{% load my_tags %}
 
-    <hr>
+{% if is_paginated %}
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+  {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?{% param_replace page=1 %}">First</a></li>
+    {% if page_obj.previous_page_number != 1 %}
+        <li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a></li>
+    {% endif %}
+  {% endif %}
 
-    {% if location.locationa.all or location.locationb.all %}
-    <div style="margin-left:20px;margin-top:20px">
+        <li class="page-item"><a class="page-link" href="#">Page {{ page_obj.number }} of {{ paginator.num_pages }}</a></li>
 
-        <h4>Related location</h4>
-        <ul>
-            {% for relation in location.locationa.all %}
-              <li>
-                  {{ location }} {{ relation.relation_type.all|join:" and " }} <a href="{{ relation.location_b.id }}">{{ relation.location_b }}</a>
-                  {% if perms.hlwtadmin.can_update_relationlocationlocation %}<a href="{% url 'relationlocationlocation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
-                  {% if perms.hlwtadmin.can_delete_relationlocationlocation %}<a href="{% url 'relationlocationlocation_delete' relation.id location.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
-              </li>
-            {% endfor %}
-            {% for relation in location.locationb.all %}
-              <li>
-                  Inverted relation: <a href="{{ relation.location_a.id }}">{{ relation.location_a }}</a> {{ relation.relation_type.all|join:", " }} {{ location }}
-                  {% if perms.hlwtadmin.can_update_relationlocationlocation %}<a href="{% url 'relationlocationlocation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
-                  {% if perms.hlwtadmin.can_delete_relationlocationlocation %}<a href="{% url 'relationlocationlocation_delete' relation.id location.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
-              </li>
-            {% endfor %}
-        </ul>
-    </div>
-    <hr>
+  {% if page_obj.has_next %}
+    {% if page_obj.next_page_number != paginator.num_pages %}
+        <li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.next_page_number %}">Next</a></li>
+    {% endif %}
+        <li class="page-item"><a class="page-link" href="?{% param_replace page=paginator.num_pages %}">Last</a></li>
     {% endif %}
 
-    <div style="margin-left:20px;margin-top:20px">
-        <ul>
-            {% if perms.hlwtadmin.can_update_location %}<li><a href="{% url 'location_update' location.id %}">Update this location</a></li>{% endif %}
-            {% if perms.hlwtadmin.can_create_relationlocationlocation %}<li><a href="{% url 'relationlocationlocation_create' location.id %}">Relate location to another location</a></li>{% endif %}
-            {% if perms.hlwtadmin.can_delete_location %}<li><a href="{% url 'location_delete' location.id %}">Delete this location</a></li>{% endif %}
-        </ul>
-    </div>
+    </ul>
+</nav>
+{% endif %}
 
+<div class="container my-4">
+    <h4 class="display-4">More information</h4>
+    <div class="card-columns">
+        {% if location.locationa.all or location.locationb.all %}
+        <div class="card">
+            <div class="card-body">
+            <h4 class="card-title">Related location</h4>
+                <ul>
+                    {% for relation in location.locationa.all %}
+                      <li>
+                          {{ location }} {{ relation.relation_type.all|join:" and " }} <a href="{{ relation.location_b.id }}">{{ relation.location_b }}</a>
+                          {% if perms.hlwtadmin.can_update_relationlocationlocation %}<a href="{% url 'relationlocationlocation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
+                          {% if perms.hlwtadmin.can_delete_relationlocationlocation %}<a href="{% url 'relationlocationlocation_delete' relation.id location.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
+                      </li>
+                    {% endfor %}
+                    {% for relation in location.locationb.all %}
+                      <li>
+                          Inverted relation: <a href="{{ relation.location_a.id }}">{{ relation.location_a }}</a> {{ relation.relation_type.all|join:", " }} {{ location }}
+                          {% if perms.hlwtadmin.can_update_relationlocationlocation %}<a href="{% url 'relationlocationlocation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
+                          {% if perms.hlwtadmin.can_delete_relationlocationlocation %}<a href="{% url 'relationlocationlocation_delete' relation.id location.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
+                      </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container my-4">
+    <h4 class="display-4">Administration</h4>
+    {% if user.is_authenticated %}
+    <div class="card">
+        <div class="card-body">
+        <h4 class="card-title">Actions</h4>
+        <ul class="list-group list-group-flush">
+            {% if perms.hlwtadmin.can_update_location %}<li class="list-group-item"><a href="{% url 'location_update' location.id %}">Update this location</a></li>{% endif %}
+            {% if perms.hlwtadmin.can_create_relationlocationlocation %}<li class="list-group-item"><a href="{% url 'relationlocationlocation_create' location.id %}">Relate location to another location</a></li>{% endif %}
+            {% if perms.hlwtadmin.can_delete_location %}<li class="list-group-item"><a href="{% url 'location_delete' location.id %}">Delete this location</a></li>{% endif %}
+        </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}
