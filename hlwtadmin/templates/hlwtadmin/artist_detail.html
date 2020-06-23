@@ -4,19 +4,14 @@
 <div class="jumbotron my-4">
     <div class="row">
         <div class="col-md-8">
-        <h1>
-            {% block title %}{{ artist.name }}{% endblock %}
-                <small class="text-muted">{{ artist.disambiguation }}</small>
+            <h1>{% block title %}{{ artist.name }}{% endblock %}
+                {% if artist.disambiguation %}<br/><small class="text-muted">{{ artist.disambiguation }}</small>{% endif%}
+                <a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/musicbrainz.png' %}" alt="{{ artist.name }}" /></a>
             </h1>
-            <a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">Check out on Musicbrainz
-                {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/musicbrainz.png' %}" alt="{{ artist.name }}" />
-            </a>
-                <p>Genre: {{ artist.genre.all|join:"," }}</p>
-
+            <p>Genre: {{ artist.genre.all|join:"," }}</p>
+            <p id="myInfo"></p>
         </div>
-        <div class="col-md-4">
-            <a class="img-thumbnail my-link" target="_blank" href=""><img width="100%" src="" class="my-image" id="{{ artist.mbid }}"></a>
-        </div>
+        <a class="img-thumbnail my-link col-md-4" target="_blank" href=""><img width="100%" src="" class="my-image" id="{{ artist.mbid }}"></a>
     </div>
 </div>
 
@@ -85,7 +80,7 @@
     <div class="card-columns">
         {% if artist.artista.all or artist.artistb.all %}
         <div class="card">
-            <h4>Related artists</h4>
+            <h5 class="card-header">Related artists</h5>
             <ul class="list-group list-group-flush">
                 {% for relation in artist.artista.all %}
                   <li class="list-group-item">
@@ -107,22 +102,24 @@
 
         {% if user.is_authenticated %}
         <div class="card">
-            <h4>Technical details</h4>
+            <h5 class="card-header">Technical details</h5>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">Is on include list: {{ artist.include }}</li>
                 <li class="list-group-item">Is on exclude list: {{ artist.exclude }}</li>
             </ul>
+        </div>
+
+        {% for gigfinderurl in artist.gigfinderurl_set.all %}
+        <div class="card">
+            <h5 class="card-header">{{ gigfinderurl.gigfinder }}</h5>
             <ul class="list-group list-group-flush">
-                {% for gigfinderurl in artist.gigfinderurl_set.all %}
-                <li class="list-group-item">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><a href="{{ gigfinderurl.url}}">{{ gigfinderurl.gigfinder }}</a></li>
-                        <li class="list-group-item">(MB) {{ gigfinderurl.last_confirmed_by_musicbrainz }}<br>(gig) {{ gigfinderurl.last_synchronized }}</li>
-                    </ul>
-                </li>
-            {% endfor %}
+                <li class="list-group-item"><a href="{{ gigfinderurl.url}}">{{ gigfinderurl.url }}</a></li>
+                <li class="list-group-item">Last synchronized with Musicbrainz: {{ gigfinderurl.last_confirmed_by_musicbrainz }}</li>
+                <li class="list-group-item">Last synchronized with Gigfinder: {{ gigfinderurl.last_synchronized }}</li>
             </ul>
         </div>
+        {% endfor %}
+
         {% endif %}
     </div>
 </div>
@@ -131,12 +128,14 @@
     {% if user.is_authenticated %}
     <h4 class="display-4">Administration</h4>
     <div class="card">
-        <h4>Actions</h4>
-        <ul class="list-group list-group-flush">
-            {% if perms.hlwtadmin.can_create_relationartistartist %}<li class="list-group-item"><a href="{% url 'relationartistartist_create' artist.mbid %}">Relate artist to another artist</a></li>{% endif %}
-            {% if perms.hlwtadmin.can_update_artist %}<li class="list-group-item"><a href="{% url 'artist_update' artist.mbid %}">Update artist</a></li>{% endif %}
-        </ul>
-    </div>
+        <h5 class="card-header">Actions</h5>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% if perms.hlwtadmin.can_create_relationartistartist %}<li class="list-group-item"><a href="{% url 'relationartistartist_create' artist.mbid %}">Relate artist to another artist</a></li>{% endif %}
+                    {% if perms.hlwtadmin.can_update_artist %}<li class="list-group-item"><a href="{% url 'artist_update' artist.mbid %}">Update artist</a></li>{% endif %}
+                </ul>
+            </div>
+        </div>
     {% endif %}
     </div>
 </div>
@@ -167,4 +166,24 @@
         }
     );
  </script>
+
+<script>
+  var span = document.getElementById("myInfo");
+
+  async function get() {
+    const response = await fetch(`http://musicbrainz.org/ws/2/artist/2455aabf-c637-4b2c-94bb-13aeb89f3a2c?inc=url-rels&fmt=json`);
+    const myJson = await response.json();
+    myJson["relations"].forEach(function(reference) {
+        var createA = document.createElement('a');
+        var createAText = document.createTextNode(reference["type"]);
+        createA.setAttribute('href', reference["url"]["resource"]);
+        createA.setAttribute('class', "btn btn-primary btn-sm mx-1 my-1");
+        createA.appendChild(createAText);
+        span.appendChild(createA);
+
+    });
+  }
+  var mb = get()
+
+</script>
 {% endblock javascript %}
