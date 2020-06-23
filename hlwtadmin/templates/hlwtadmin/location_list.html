@@ -2,16 +2,18 @@
 
 {% block content %}
     <div class="jumbotron my-4">
-        <h1 class="display-4">Location List</h1>
+        <h1 class="jumbotron-heading">Location List</h1>
         <p class="lead">This page provides an overview of locations in Have Love, Will Travel.</p>
         <hr class="my-4">
         <p>It shows whether or not the location is verified, and it indicates the amount of organisations in the location.</p>
-        <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Click here to filter and sort this list.</a>
-        <div class="collapse" id="collapseExample">
             <form method="get" action="{% url 'locations' %}">
+                <div class="form-group">
+                    <label for="filtersearch">Search a city</label>
+                    <input class="form-control" type="text" placeholder="Enter the name of a city" id="filtersearch" name="filtersearch"/>
+                </p>
                 <div class="form-row">
                     <div class="col">
-                        <label for="filter">Filter</label>
+                        <label for="filter">Filter on country</label>
                         <select class="form-control" id="filter" name="filter">
                             <option value="">No selection</option>
                             {% for country in countries %}
@@ -29,14 +31,9 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="filtersearch">Search term</label>
-                    <input class="form-control" type="text" placeholder="Enter the name of a city" id="filtersearch" name="filtersearch"/>
-                </p>
                 <p><input class="btn btn-primary" type="submit" name="submit" value="submit"/></p>
                 </div>
             </form>
-        </div>
     </div>
 
 {% if location_list %}
