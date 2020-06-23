@@ -11,7 +11,7 @@
             <p>Genre: {{ artist.genre.all|join:"," }}</p>
             <p id="myInfo"></p>
         </div>
-        <a class="img-thumbnail my-link col-md-4" target="_blank" href=""><img width="100%" src="" class="my-image" id="{{ artist.mbid }}"></a>
+        <a class="my-link col-md-4" target="_blank" href=""><img width="100%" src="" class="my-image" id="{{ artist.mbid }}"></a>
     </div>
 </div>
 
@@ -177,6 +177,7 @@
         var createA = document.createElement('a');
         var createAText = document.createTextNode(reference["type"]);
         createA.setAttribute('href', reference["url"]["resource"]);
+        createA.setAttribute('target', '_blank');
         createA.setAttribute('class', "btn btn-primary btn-sm mx-1 my-1");
         createA.appendChild(createAText);
         span.appendChild(createA);
