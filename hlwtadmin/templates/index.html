@@ -3,12 +3,13 @@
 {% block content %}
 <section class="jumbotron my-4">
     <div class="container">
-      <h1 class="jumbotron-heading">Have Love Will Travel: Admin</h1>
-      <p class="lead">An interface for managing and browsing automatically aggregated concerts from gigfinder platforms.</p>
-      {% if not user.is_authenticated %}
+      <h1 class="jumbotron-heading">Have Love Will Travel</h1>
+      <p class="lead">A data management environment to manage and browse aggregated concerts from gigfinder platforms.</p>
       <hr class="my-4">
-      <p>Development at Kunstenpunt, since 2017. Check GitHub for code, issue tracking and documentation.</p>
+      {% if not user.is_authenticated %}
+      <p>Development at Kunstenpunt, since 2017.</p>
       {% endif %}
+      <p>Check <a href="https://github.com/Kunstenpunt/havelovewilltravel">GitHub</a> for <a href="https://github.com/Kunstenpunt/havelovewilltravel">code</a>, <a href="https://github.com/Kunstenpunt/havelovewilltravel/issues">issue tracking</a> and <a href="https://github.com/Kunstenpunt/havelovewilltravel/wiki">documentation</a>.</p>
     </div>
 </section>
 {% if not user.is_authenticated %}
