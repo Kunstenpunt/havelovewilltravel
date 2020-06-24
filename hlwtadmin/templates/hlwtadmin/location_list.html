@@ -46,6 +46,8 @@
                 {% if location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
                 <span class="badge badge-primary badge-pill">{{ location.organisation_set.count }}</span>
                 <br/>
+                <span class="text-muted"><em>{{ location.subcountry }}</em></span>
+                <br/>
                 <span class="text-muted"><em>{{ location.country.name }}</em></span>
                 {% load static %}<img title="{{ location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" />
               </span>

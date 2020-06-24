@@ -9,7 +9,7 @@
             {% endif %}
         </small>
     </h1>
-    <p class="lead">in <a href="{% url 'locations' %}?filter={{ location.country.name }}&orderby=city" >{{ location.country.name }} <img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" /></a></p>
+    <p class="lead">in {{ location.subcountry }}, <a href="{% url 'locations' %}?filter={{ location.country.name }}&orderby=city" >{{ location.country.name }} <img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" /></a></p>
     <p>Zipcode: {{ location.zipcode }}, GPS: {{ location.latitude }}, {{ location.longitude }}</p>
     <p></p>
 
@@ -70,19 +70,19 @@
     <div class="card-columns">
         {% if location.locationa.all or location.locationb.all %}
         <div class="card">
+            <h4 class="card-header">Related location</h4>
             <div class="card-body">
-            <h4 class="card-title">Related location</h4>
-                <ul>
+                <ul class="list-group list-group-flush">
                     {% for relation in location.locationa.all %}
-                      <li>
-                          {{ location }} {{ relation.relation_type.all|join:" and " }} <a href="{{ relation.location_b.id }}">{{ relation.location_b }}</a>
+                      <li class="list-group-item">
+                          {{ location.city }} {{ relation.relation_type.all|join:" and " }} <a href="{{ relation.location_b.id }}">{{ relation.location_b.city }} in {{ relation.location_b.subcountry }}, {{ relation.location_b.country.name }}</a>
                           {% if perms.hlwtadmin.can_update_relationlocationlocation %}<a href="{% url 'relationlocationlocation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
                           {% if perms.hlwtadmin.can_delete_relationlocationlocation %}<a href="{% url 'relationlocationlocation_delete' relation.id location.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
                       </li>
                     {% endfor %}
                     {% for relation in location.locationb.all %}
-                      <li>
-                          Inverted relation: <a href="{{ relation.location_a.id }}">{{ relation.location_a }}</a> {{ relation.relation_type.all|join:", " }} {{ location }}
+                      <li class="list-group-item">
+                          <a href="{{ relation.location_a.id }}">{{ relation.location_a.city }} in {{ relation.location_a.subcountry }}, {{ relation.location_a.country.name }}</a> {{ relation.relation_type.all|join:", " }} {{ location.city }}
                           {% if perms.hlwtadmin.can_update_relationlocationlocation %}<a href="{% url 'relationlocationlocation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
                           {% if perms.hlwtadmin.can_delete_relationlocationlocation %}<a href="{% url 'relationlocationlocation_delete' relation.id location.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
                       </li>
