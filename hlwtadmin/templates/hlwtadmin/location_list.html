@@ -10,28 +10,31 @@
                 <div class="form-group">
                     <label for="filtersearch">Search a city</label>
                     <input class="form-control" type="text" placeholder="Enter the name of a city" id="filtersearch" name="filtersearch"/>
-                </p>
-                <div class="form-row">
-                    <div class="col">
-                        <label for="filter">Filter on country</label>
-                        <select class="form-control" id="filter" name="filter">
-                            <option value="">No selection</option>
-                            {% for country in countries %}
-                                <option value="{{ country.name }}"{% if country.name == filter %} selected {% endif %}>{{ country.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col">
-                        <label for="orderby">Order by</label>
-                        <select class="form-control" id="orderby" name="orderby">
-                            <option value="city">Order by city name</option>
-                            <option value="verified">Order by verified status</option>
-                            <option value="-num_organisations">Order by amount of organisations per location</option>
-                            <option value="subcountry">Order by subcountry</option>
-                        </select>
+                </div>
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="filter">Filter on country</label>
+                            <select class="form-control" id="filter" name="filter">
+                                <option value="">No selection</option>
+                                {% for country in countries %}
+                                    <option value="{{ country.name }}"{% if country.name == filter %} selected {% endif %}>{{ country.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="orderby">Order by</label>
+                            <select class="form-control" id="orderby" name="orderby">
+                                <option value="city">Order by city name</option>
+                                <option value="verified">Order by verified status</option>
+                                <option value="-num_organisations">Order by amount of organisations per location</option>
+                                <option value="subcountry">Order by subcountry</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <p><input class="btn btn-primary" type="submit" name="submit" value="submit"/></p>
+                <div class="form-group">
+                    <input class="btn btn-primary" type="submit" name="submit" value="Submit"/>
                 </div>
             </form>
     </div>
