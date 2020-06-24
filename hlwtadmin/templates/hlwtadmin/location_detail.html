@@ -11,11 +11,6 @@
     </h1>
     <p class="lead">in {{ location.subcountry }}, <a href="{% url 'locations' %}?filter={{ location.country.name }}&orderby=city" >{{ location.country.name }} <img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" /></a></p>
     <p>Zipcode: {{ location.zipcode }}, GPS: {{ location.latitude }}, {{ location.longitude }}</p>
-    <p></p>
-
-    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Click here to sort this list.</a>
-
-    <div class="collapse" id="collapseExample">
         <form method="get" action="{% url 'location_detail' location.id %}">
             <div class="form-group">
                 <label for="orderby">Order organisations</label>
@@ -25,10 +20,9 @@
                 </select>
             </div>
             <div class="form-group">
-                <input class="btn btn-primary" type="submit" name="submit" value="submit"/>
+                <input class="btn btn-primary" type="submit" name="submit" value="Submit"/>
             </div>
         </form>
-    </div>
 </div>
 <div class="container my-6">
     <ul class="list-group list-group-flush">
