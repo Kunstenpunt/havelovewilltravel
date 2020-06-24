@@ -244,7 +244,7 @@
         <h5 class="card-header">Actions</h5>
         <div class="card-body">
             <ul class="list-group list-group-flush">
-                {% if perms.hlwtadmin.can_update_concert %}<li class="list-group-item"><a href="{% url 'concert_update' concert.id %}">Update this concert</a></li>{% endif %}
+                {% if perms.hlwtadmin.can_update_concert %}<li class="list-group-item"><a href="#" class="concert-update">Update this concert</a></li>{% endif %}
                 {% if perms.hlwtadmin.can_create_relationconcertorganisation %}<li class="list-group-item"><a href="{% url 'relationconcertorganisation_create' concert.id %}">Relate this concert to an organisation</a></li>{% endif %}
                 {% if perms.hlwtadmin.can_create_relationconcertartist %}<li class="list-group-item"><a href="{% url 'relationconcertartist_create' concert.id %}">Relate this concert to an artist</a></li>{% endif %}
                 {% if perms.hlwtadmin.can_create_relationartistartist %}<li class="list-group-item"><a href="{% url 'relationconcertconcert_create' concert.id %}">Relate concert to another concert</a></li>{% endif %}
@@ -264,4 +264,26 @@
 </div>
 {% endif %}
 </div>
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+$(document).ready(function() {
+
+    $(".concert-update").modalForm({
+        formURL: "{% url 'concert_update' concert.id %}"
+    });
+
+});
+</script>
 {% endblock %}

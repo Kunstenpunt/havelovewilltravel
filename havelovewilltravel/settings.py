@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'corsheaders',
     'debug_toolbar',
+    'bootstrap_modal_forms',
 ]
 
 MIDDLEWARE = [

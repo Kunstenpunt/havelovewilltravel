@@ -19,6 +19,9 @@ from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location
     RelationArtistArtist, OrganisationsMerge, ConcertsMerge, LocationsMerge, GigFinderUrl, RelationOrganisationIdentifier, \
     ExternalIdentifier, RelationLocationLocation, RelationLocationLocationType
 
+from bootstrap_modal_forms.forms import BSModalForm
+from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView
+
 
 class SubcountryAutocompleteFromList(autocomplete.Select2ListView):
     def get_list(self):
@@ -437,10 +440,10 @@ class ConcertsWithMoreThanOneArtist(DefaultConcertListView):
         return self.apply_filters().annotate(num_artists=Count('relationconcertartist')).filter(num_artists__gt=1)
 
 
-class ConcertForm(forms.ModelForm):
+class ConcertForm(BSModalForm):
     class Meta:
         model = Concert
-        fields = ['date', 'genre', 'cancelled', 'ignore', 'verified', 'latitude', 'longitude', 'annotation']
+        fields = ['title', 'date', 'genre', 'cancelled', 'ignore', 'verified', 'latitude', 'longitude', 'annotation']
 
 
 class ConcertDetailView(DetailView):
@@ -460,9 +463,10 @@ class ConcertCreate(CreateView):
         return context
 
 
-class ConcertUpdate(UpdateView):
+class ConcertUpdate(BSModalUpdateView):
     model = Concert
-    fields = '__all__'
+    form_class = ConcertForm
+    template_name = 'hlwtadmin/concert_form.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
