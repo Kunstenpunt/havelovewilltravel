@@ -6,7 +6,7 @@
     <div class="col-md-8">
         <h1>
             {% block title %}{{ organisation.name }}{% endblock %}
-            {% if organisation.disambiguation %}<small class="text-muted">{{ organisation.disambiguation }}</small>{% endif %}
+            {% if organisation.disambiguation %}<br/><small class="text-muted">{{ organisation.disambiguation }}</small>{% endif %}
         </h1>
         {% if organisation.website %}<a target="_blank" href="{{ organisation.website }}">{{ organisation.website }}</a>{% endif %}
 
