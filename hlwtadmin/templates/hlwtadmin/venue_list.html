@@ -1,31 +1,57 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Venue List</h1>
-  {% if venue_list %}
-  <ul>
+<div class="jumbotron my-4">
+    <h1 class="jumbotron-heading">Venue List</h1>
+    <p class="lead">This page provides an overview of raw venues in Have Love, Will Travel.</p>
+    <hr class="my-4">
+    <p>It shows the date of the raw_venue and the related organisation.</p>
+      <form method="get" action="{% url request.resolver_match.url_name %}">
+        <div class="from-group">
+            <label for="filter">Search term</label>
+            <input class="form-control" type="text" id="filter" name="filter"/>
+        </div>
+        <div class="form-group">
+            <input class="btn btn-default btn-primary" type="submit" name="submit" value="Submit"/>
+        </div>
+      </form>
+</div>
+{% if venue_list %}
+<div class="container my-4">
+    <ul class="list-group-flush card-columns">
     {% for venue in venue_list %}
-      <li>
-        <a href="{{ venue.get_absolute_url }}">{{ venue.raw_venue }}</a> ({{ venue.organisation }})
+      <li class="list-group-item">
+        <a href="{{ venue.get_absolute_url }}">{{ venue.raw_venue }}</a>
+          {% if venue.non_assignable %}<span class="badge badge-warning">Non-assignable</span>{% endif %}
+          {% if venue.organisation %}
+          <br/><span class="text-muted"><em>Related to <a href="{% url 'organisation_detail' venue.organisation.pk %}">{{ venue.organisation }}</a></em></span>
+          {% endif %}
       </li>
     {% endfor %}
   </ul>
-  {% if is_paginated %}
-      <div class="pagination">
-          <span class="page-links">
-              {% if page_obj.has_previous %}
-                  <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-              {% endif %}
-              <span class="page-current">
-                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-              </span>
-              {% if page_obj.has_next %}
-                  <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
-              {% endif %}
-          </span>
-      </div>
-  {% endif %}
-  {% else %}
+    {% load my_tags %}
+    {% if is_paginated %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?{% param_replace page=1 %}">First</a></li>
+            {% if page_obj.previous_page_number != 1 %}
+            <li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a></li>
+            {% endif %}
+            {% endif %}
+
+            <li class="page-item"><a class="page-link" href="#">Page {{ page_obj.number }} of {{ paginator.num_pages }}</a></li>
+
+            {% if page_obj.has_next %}
+            {% if page_obj.next_page_number != paginator.num_pages %}
+            <li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.next_page_number %}">Next</a></li>
+            {% endif %}
+            <li class="page-item"><a class="page-link" href="?{% param_replace page=paginator.num_pages %}">Last</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+{% else %}
     <p>There are no venues in the library.</p>
-  {% endif %}
+{% endif %}
 {% endblock %}

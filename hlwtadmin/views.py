@@ -852,49 +852,48 @@ class VenueForm(forms.ModelForm):
         }
 
 
-class VenuesWithoutOrganisationListView(ListView):
+class DefaultVenueListView(ListView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = self.request.GET.get('filter', '')
+        return context
+
+    def apply_filters(self):
+        filter_val = self.request.GET.get('filter', '')
+        new_context = Venue.objects.filter(raw_venue__iregex=filter_val)
+        return new_context
+
+
+class VenuesWithoutOrganisationListView(DefaultVenueListView):
     model = Venue
     paginate_by = 30
 
     def get_queryset(self):
-        return Venue.objects.filter(organisation__isnull=True).filter(non_assignable=False)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        return self.apply_filters().filter(organisation__isnull=True).filter(non_assignable=False)
 
 
-class VenuesWithoutAnnouncementsListView(ListView):
+class VenuesWithoutAnnouncementsListView(DefaultVenueListView):
     model = Venue
     paginate_by = 30
 
     def get_queryset(self):
-        return Venue.objects.filter(concertannouncement__isnull=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        return self.apply_filters().filter(concertannouncement__isnull=True)
 
 
-class UnassignableVenueListView(ListView):
+class UnassignableVenueListView(DefaultVenueListView):
     model = Venue
     paginate_by = 30
 
     def get_queryset(self):
-        return Venue.objects.filter(non_assignable=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        return self.apply_filters().filter(non_assignable=True)
 
 
-class VenueListView(ListView):
+class VenueListView(DefaultVenueListView):
     model = Venue
-    paginate_by = 30
+    paginate_by = 50
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+    def get_queryset(self):
+        return self.apply_filters()
 
 
 class VenueDetailView(DetailView):
