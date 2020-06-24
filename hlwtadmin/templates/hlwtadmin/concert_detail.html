@@ -95,8 +95,8 @@
 <div class="card-columns">
     {% if concert.concerta.all or concert.concertb.all %}
     <div class="card">
+        <h5 class="card-header">Related concerts</h5>
         <div class="card-body">
-            <h5 class="card-title">Related concerts</h5>
             <ul class="list-group list-group-flush">
                 {% for relation in concert.concerta.all %}
                   <li class="list-group-item">
@@ -120,8 +120,8 @@
 
     {% if concert.concertannouncements %}
     <div class="card">
+        <h5 class="card-header">Based on</h5>
         <div class="card-body">
-        <h5 class="card-title">Based on</h5>
         <table class="table">
             <tr>
                 <th></th>
@@ -148,8 +148,8 @@
     {% endif %}
 
     <div class="card">
+        <h5 class="card-header">Details</h5>
         <div class="card-body">
-            <h5 class="card-title">Details</h5>
             <table class="table">
                 <tr>
                     <td>Title</td>
@@ -172,8 +172,8 @@
     </div>
 
     <div class="card">
+        <h5 class="card-header">Technical details</h5>
         <div class="card-body">
-            <h5 class="card-title">Technical details</h5>
             <table class="table">
                 <tr>
                     <td>Cancelled</td>
@@ -201,8 +201,8 @@
 
     {% if concert.find_concurring_concerts.all %}
     <div class="card">
+        <h5 class="card-header">Concerts on same day in same organisation</h5>
         <div class="card-body">
-            <h5 class="card-title">Concerts on same day in same organisation</h5>
             <ul class="list-group list-group-flush">
                 {% for c in concert.find_concurring_concerts.all %}
                     <li class="list-group-item">
@@ -226,8 +226,8 @@
 <div class="card-columns">
 
     <div class="card">
+        <h5 class="card-header">Actions</h5>
         <div class="card-body">
-            <h5 class="card-title">Actions</h5>
             <ul class="list-group list-group-flush">
                 {% if perms.hlwtadmin.can_update_concert %}<li class="list-group-item"><a href="{% url 'concert_update' concert.id %}">Update this concert</a></li>{% endif %}
                 {% if perms.hlwtadmin.can_create_relationconcertorganisation %}<li class="list-group-item"><a href="{% url 'relationconcertorganisation_create' concert.id %}">Relate this concert to an organisation</a></li>{% endif %}
@@ -238,8 +238,8 @@
     </div>
 
     <div class="card">
+        <h5 class="card-header">Special actions</h5>
         <div class="card-body">
-            <h5 class="card-title">Special actions</h5>
             <ul class="list-group list-group-flush">
                 {% if perms.hlwtadmin.can_delete_concert %}<li class="list-group-item"><a href="{% url 'concert_delete_with_ca_on_ignore' concert.id 1 %}">Delete this concert, and the relations to artists and organisations, and set all related announcements on ignore.</a>{% endif %}
                 {% if perms.hlwtadmin.can_delete_concert %}<li class="list-group-item"><a href="{% url 'concert_delete_with_ca_on_ignore' concert.id 2 %}">Delete this concert, and the relations to artists and organisations, and delete the related announcements.</a></li>{% endif %}

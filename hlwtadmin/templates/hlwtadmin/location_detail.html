@@ -70,7 +70,7 @@
     <div class="card-columns">
         {% if location.locationa.all or location.locationb.all %}
         <div class="card">
-            <h4 class="card-header">Related location</h4>
+            <h5 class="card-header">Related location</h5>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
                     {% for relation in location.locationa.all %}
@@ -98,13 +98,13 @@
     <h4 class="display-4">Administration</h4>
     {% if user.is_authenticated %}
     <div class="card">
+        <h5 class="card-header">Actions</h5>
         <div class="card-body">
-        <h4 class="card-title">Actions</h4>
-        <ul class="list-group list-group-flush">
-            {% if perms.hlwtadmin.can_update_location %}<li class="list-group-item"><a href="{% url 'location_update' location.id %}">Update this location</a></li>{% endif %}
-            {% if perms.hlwtadmin.can_create_relationlocationlocation %}<li class="list-group-item"><a href="{% url 'relationlocationlocation_create' location.id %}">Relate location to another location</a></li>{% endif %}
-            {% if perms.hlwtadmin.can_delete_location %}<li class="list-group-item"><a href="{% url 'location_delete' location.id %}">Delete this location</a></li>{% endif %}
-        </ul>
+            <ul class="list-group list-group-flush">
+                {% if perms.hlwtadmin.can_update_location %}<li class="list-group-item"><a href="{% url 'location_update' location.id %}">Update this location</a></li>{% endif %}
+                {% if perms.hlwtadmin.can_create_relationlocationlocation %}<li class="list-group-item"><a href="{% url 'relationlocationlocation_create' location.id %}">Relate location to another location</a></li>{% endif %}
+                {% if perms.hlwtadmin.can_delete_location %}<li class="list-group-item"><a href="{% url 'location_delete' location.id %}">Delete this location</a></li>{% endif %}
+            </ul>
         </div>
     </div>
     {% endif %}

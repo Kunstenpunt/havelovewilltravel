@@ -114,8 +114,8 @@
 <div class="row">
     <div class="col-md-4 my-4">
     <div class="card">
+        <h5 class="card-header">Technical details</h5>
         <div class="card-body">
-            <h4>Technical details</h4>
             <table class="table">
                 <tr>
                     <td>Verified</td>
@@ -133,8 +133,8 @@
     {% if organisation.identifiersqs %}
     <div class="col-md-4 my-4">
     <div class="card">
+        <h5 class="card-header">External identifier</h5>
         <div class="card-body">
-            <h4>External identifier</h4>
             <ul class="list-unstyled">
                 {% for relation in organisation.identifiersqs %}
                     <li>
@@ -152,8 +152,8 @@
     {% if organisation.organisationa.all or organisation.organisationb.all %}
     <div class="col-md-4 my-4">
     <div class="card">
+        <h5 class="card-header">Related organisations</h5>
         <div class="card-body">
-            <h4>Related organisations</h4>
             <ul class="list-unstyled">
                 {% for relation in organisation.organisationa.all %}
                     <li>
@@ -192,8 +192,8 @@
     {% if user.is_authenticated %}
     <div class="col-md-12 my-4">
         <div class="card">
+            <h5 class="card-header">Related venues</h5>
             <div class="card-body">
-                <h4>Related venues</h4>
                 <ul class="list-unstyled">
                     {% for relation in venue_list %}
                         <li>
@@ -226,8 +226,8 @@
     <h4 class="display-4">Administration</h4>
     <div class="card-columns">
     <div class="card">
+        <h5 class="card-header">Actions</h5>
         <div class="card-body">
-            <h4>Actions</h4>
             <ul class="list-unstyled">
                 {% if perms.hlwtadmin.can_update_organisation %}<li><a href="{% url 'organisation_update' organisation.id %}">Update this organisation</a></li>{% endif %}
                 {% if perms.hlwtadmin.can_create_relationorganisationorganisation %}<li><a href="{% url 'relationorganisationorganisation_create' organisation.id %}">Relate organisation to another organisation</a></li>{% endif %}
@@ -237,8 +237,8 @@
     </div>
 
     <div class="card">
+        <h5 class="card-header">Special actions</h5>
         <div class="card-body">
-            <h4>Special actions</h4>
             <ul class="list-unstyled">
                 {% if perms.hlwtadmin.can_delete_organisation %}<li><a href="{% url 'organisation_delete' organisation.id %}">Delete this organisation</a></li>{% endif %}
                 {% if perms.hlwtadmin.can_delete_concert %}<li><a href="{% url 'organisation_delete_with_venue_consequences' organisation.id 1 %}">Unlink this organisation from all its venues, then delete the organisation</a>{% endif %}

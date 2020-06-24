@@ -30,8 +30,8 @@
 {% endif %}
 <div class="card-columns">
 <div class="card">
+  <h5 class="card-header">Some statistics</h5>
   <div class="card-body">
-  <h3 class="card-title">Some statistics</h3>
     <ul class="list-group list-group-flush">
       <li class="list-group-item"><strong>Artists:</strong> {{ num_artists }}</li>
       <li class="list-group-item"><strong>Organisations:</strong> {{ num_organisations }}</li>
@@ -45,8 +45,8 @@
 
 {% if user.is_authenticated %}
   <div class="card">
+    <h5 class="card-header">Quality assurance</h5>
     <div class="card-body">
-    <h3 class="card-title">Quality assurance</h3>
     <ul class="list-group list-group-flush">
       <li class="list-group-item"><a href="{% url 'recently_added_concerts' %}">Recently added and still unverified concerts</a></li>
       <li class="list-group-item"><a href="{% url 'recently_added_organisations' %}">Recently added and still unverified organisations</a></li>
@@ -60,8 +60,8 @@
   </div>
 
   <div class="card">
+    <h5 class="card-header">Consistency</h5>
     <div class="card-body">
-    <h3 class="card-title">Consistency</h3>
     <ul class="list-group list-group-flush">
       <li class="list-group-item"><a href="{% url 'organisations_without_gps' %}">Organisations without latitude and longitude</a></li>
       <li class="list-group-item"><a href="{% url 'organisations_without_genre' %}">Organisations without genre</a></li>
@@ -74,8 +74,8 @@
   </div>
 
   <div class="card">
+    <h5 class="card-header">Include and exclude lists</h5>
     <div class="card-body">
-    <h3 class="card-title">Include and exclude lists</h3>
     <ul class="list-group list-group-flush">
       <li class="list-group-item"><a href="{% url 'unassignable_venues' %}">Unassignable venues</a></li>
       <li class="list-group-item"><a href="{% url 'excludeartists' %}">Artists on exclude list</a> ({{ num_excluded_artists }})</li>
@@ -87,19 +87,19 @@
   </div>
 
   <div class="card">
-    <div class="card-body">
-    <h3 class="card-title">Relations</h3>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item"><a href="{% url 'concertannouncements_without_concert' %}">Announcements wo/ concert</a></li>
-      <li class="list-group-item"><a href="{% url 'concerts_without_announcements' %}">Concerts wo/ announcements</a></li>
-      <li class="list-group-item"><a href="{% url 'venues_without_organisation' %}">Venues wo/ organisation</a></li>
-      <li class="list-group-item"><a href="{% url 'venues_without_concertannouncements' %}">Venues wo/ concertannouncements</a></li>
-      <li class="list-group-item"><a href="{% url 'organisations_without_venues' %}">Organisations wo/ venues</a></li>
-      <li class="list-group-item"><a href="{% url 'organisations_without_locations' %}">Organisations without locations</a></li>
-      <li class="list-group-item"><a href="{% url 'organisations_without_concerts' %}">Organisations without concerts</a></li>
-      <li class="list-group-item"><a href="{% url 'cities_without_country' %}">Cities without country</a></li>
-    </ul>
-    </div>
+    <h5 class="card-header">Relations</h5>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><a href="{% url 'concertannouncements_without_concert' %}">Announcements wo/ concert</a></li>
+                <li class="list-group-item"><a href="{% url 'concerts_without_announcements' %}">Concerts wo/ announcements</a></li>
+                <li class="list-group-item"><a href="{% url 'venues_without_organisation' %}">Venues wo/ organisation</a></li>
+                <li class="list-group-item"><a href="{% url 'venues_without_concertannouncements' %}">Venues wo/ concertannouncements</a></li>
+                <li class="list-group-item"><a href="{% url 'organisations_without_venues' %}">Organisations wo/ venues</a></li>
+                <li class="list-group-item"><a href="{% url 'organisations_without_locations' %}">Organisations without locations</a></li>
+                <li class="list-group-item"><a href="{% url 'organisations_without_concerts' %}">Organisations without concerts</a></li>
+                <li class="list-group-item"><a href="{% url 'cities_without_country' %}">Cities without country</a></li>
+            </ul>
+        </div>
   </div>
 {% endif %}
   </div>
