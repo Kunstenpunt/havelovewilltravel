@@ -905,14 +905,15 @@ class VenueListView(DefaultVenueListView):
         return self.apply_filters()
 
 
-class VenueDetailView(DetailView):
+class VenueDetailView(DetailView, MultipleObjectMixin):
     model = Venue
-    paginate_by = 30
+    fields = '__all__'
 
     def get_context_data(self, **kwargs):
         page = self.request.GET.get('page', 1)
-        object_list = Paginator(ConcertAnnouncement.objects.filter(raw_venue=self.object), 30).page(page)
+        object_list = Paginator(ConcertAnnouncement.objects.filter(raw_venue=self.object), 50).page(page)
         context = super().get_context_data(object_list=object_list, **kwargs)
+        context["form"] = ConcertAnnouncementForm()
         return context
 
 
