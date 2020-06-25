@@ -719,9 +719,9 @@ class DefaultOrganisationListView(ListView):
         filter_country = self.request.GET.get('filter_country', None)
         order = self.request.GET.get('orderby', 'name')
         if filter_country:
-            new_context = Organisation.objects.select_related('location__country').filter(name__iregex=filter_val).filter(location__country__name=filter_country)
+            new_context = Organisation.objects.select_related('location__country').filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
         else:
-            new_context = Organisation.objects.filter(name__iregex=filter_val,)
+            new_context = Organisation.objects.filter(name__unaccent__iregex=filter_val,)
         return new_context.annotate(num_concerts=Count('relationconcertorganisation')).order_by(order)
 
 
@@ -864,7 +864,7 @@ class DefaultVenueListView(ListView):
 
     def apply_filters(self):
         filter_val = self.request.GET.get('filter', '')
-        new_context = Venue.objects.filter(raw_venue__iregex=filter_val)
+        new_context = Venue.objects.filter(raw_venue__unaccent__iregex=filter_val)
         return new_context
 
 
