@@ -75,6 +75,12 @@ class GigFinderUrl(models.Model):
     def __str__(self):
         return self.url + " (" + str(self.artist) + ", " + str(self.gigfinder) + ")"
 
+    def recently_confirmed(self):
+        return abs(self.last_confirmed_by_musicbrainz.date() - datetime.now().date()) < timedelta(days=8)
+
+    def recently_synchronized(self):
+        return abs(self.last_synchronized.date() - datetime.now().date()) < timedelta(days=8)
+
     class Meta:
         ordering = ['-last_confirmed_by_musicbrainz', '-last_synchronized']
 
