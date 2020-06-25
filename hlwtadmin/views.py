@@ -956,37 +956,43 @@ class ConcertAnnouncementForm(forms.ModelForm):
         }
 
 
-class ConcertAnnouncementListView(ListView):
-    model = ConcertAnnouncement
-    paginate_by = 30
-
+class DefaultConcertAnnouncementListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['artists'] = Artist.objects.all().distinct()
         return context
 
-
-class ConcertAnnouncementsWithoutconcertListView(ListView):
-    model = ConcertAnnouncement
-    paginate_by = 30
-
-    def get_queryset(self):
-        return ConcertAnnouncement.objects.filter(concert__isnull=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+    def apply_filters(self):
+        filter_val = self.request.GET.get('filter', None)
+        if filter_val:
+            new_context = ConcertAnnouncement.objects.filter(artist__name=filter_val)
+        else:
+            new_context = ConcertAnnouncement.objects.all()
+        return new_context
 
 
-class IgnoredConcertAnnouncementListView(ListView):
+class ConcertAnnouncementListView(DefaultConcertAnnouncementListView):
     model = ConcertAnnouncement
     paginate_by = 30
 
     def get_queryset(self):
-        return ConcertAnnouncement.objects.filter(ignore=True)
+        return self.apply_filters()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+
+class ConcertAnnouncementsWithoutconcertListView(DefaultConcertAnnouncementListView):
+    model = ConcertAnnouncement
+    paginate_by = 30
+
+    def get_queryset(self):
+        return self.apply_filters().filter(concert__isnull=True)
+
+
+class IgnoredConcertAnnouncementListView(DefaultConcertAnnouncementListView):
+    model = ConcertAnnouncement
+    paginate_by = 30
+
+    def get_queryset(self):
+        return self.apply_filters().filter(ignore=True)
 
 
 class ConcertAnnouncementDetailView(DetailView):
