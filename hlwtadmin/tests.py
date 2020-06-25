@@ -170,6 +170,17 @@ class ConcertTest(TestCase):
         self.assertTrue(True)
 
 
+class GigfinderUrlTest(TestCase):
+    def setUp(self):
+        pass
+
+    def test_gigfinderurl_recently_confirmed(self):
+        self.assertTrue(True)
+
+    def test_gigfinderurl_recently_synchronized(self):
+        self.assertTrue(True)
+
+
 class ConcertAnnouncementTest(TestCase):
     def setUp(self):
         self.gigfinder = GigFinder.objects.create(name="songkick",

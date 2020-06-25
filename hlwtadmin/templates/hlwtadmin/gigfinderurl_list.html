@@ -20,7 +20,7 @@
                     <span title="{{ gigfinderurl.last_confirmed_by_musicbrainz }}" class="badge badge-danger">Not confirmed</span>
                 {% endif %}
                 <br/>
-                {% if gigfinderurl.recently_confirmed %}
+                {% if gigfinderurl.recently_synchronized %}
                     <span title="{{ gigfinderurl.last_synchronized }}" class="badge badge-success">Synchronized</span>
                 {% else %}
                     <span title="{{ gigfinderurl.last_synchronized }}" class="badge badge-danger">Not synchronized</span>
