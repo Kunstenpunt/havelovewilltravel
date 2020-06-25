@@ -441,6 +441,11 @@ class ConcertsWithMoreThanOneArtist(DefaultConcertListView):
 
 
 class ConcertForm(BSModalForm):
+    def __init__(self, *args, **kwargs):
+        super(BSModalForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control form-control-sm'
+
     class Meta:
         model = Concert
         fields = ['title', 'date', 'genre', 'cancelled', 'ignore', 'verified', 'latitude', 'longitude', 'annotation']
