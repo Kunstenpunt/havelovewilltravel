@@ -15,13 +15,13 @@
                 <a href="{{ gigfinderurl.artist.get_absolut_url }}">{{ gigfinderurl.artist }}</a>
                 <a target="_blank" href="{{ gigfinderurl.url }}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ gigfinderurl.gigfinder }}.png" alt="{{ gigfinderurl.gigfinder }}" /></a><br/>
                 {% if gigfinderurl.recently_confirmed %}
-                    <span class="badge badge-danger">Confirmed</span>
+                    <span title="{{ gigfinderurl.last_confirmed_by_musicbrainz }}" class="badge badge-success">Confirmed</span>
                 {% else %}
                     <span title="{{ gigfinderurl.last_confirmed_by_musicbrainz }}" class="badge badge-danger">Not confirmed</span>
                 {% endif %}
                 <br/>
                 {% if gigfinderurl.recently_confirmed %}
-                    <span class="badge badge-danger">Synchronized</span>
+                    <span title="{{ gigfinderurl.last_synchronized }}" class="badge badge-success">Synchronized</span>
                 {% else %}
                     <span title="{{ gigfinderurl.last_synchronized }}" class="badge badge-danger">Not synchronized</span>
                 {% endif %}
