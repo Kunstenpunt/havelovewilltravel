@@ -266,6 +266,13 @@ class Concert(models.Model):
         if this_org and this_org.organisation:
             return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation=this_org.organisation).exclude(id=self.id)
 
+    def find_concerts_in_same_city_on_same_day(self):
+        this_relation = RelationConcertOrganisation.objects.filter(concert__id=self.id).first()
+        if this_relation and this_relation.organisation:
+            if this_relation.organisation.location:
+                this_location = this_relation.organisation.location
+                return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation__location=this_location).exclude(id=self.id)
+
     def is_confirmed(self):
         for ca in ConcertAnnouncement.objects.filter(concert__id=self.id):
             if ca.recently_seen() or ca.frequently_seen():
