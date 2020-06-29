@@ -1,38 +1,64 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>{% block title %}Concert announcement: {{ concertannouncement.title }}{% endblock %}</h1>
-
-    <div style="margin-left:20px;margin-top:20px">
-        <p>Related artist: {% if concertannouncement.artist %} <a href="{% url 'artist_detail' concertannouncement.artist.mbid %}">{{ concertannouncement.artist }}</a> {% endif %}</p>
-        <p>Date: {{ concertannouncement.date }}, Time: {{ concertannouncement.time }}</p>
-        <p>Until date: {{ concertannouncement.until_date }}</p>
-        <p>Is festival: {{ concertannouncement.is_festival }}</p>
-        <p>Gigfinder: <a target="_blank" href="{{ concertannouncement.gigfinder.base_url }}{% if concertannouncement.gigfinder.name == 'podiumfestivalinfo' %} {{ concertannouncement.artist.name }} {{ concertannouncement.date }} 'site:podiuminfo.nl'  {% else %}{{ concertannouncement.gigfinder_concert_id }}{% endif %}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ concertannouncement.gigfinder }}.png" alt="{{ concertannouncement.gigfinder }}" /></a></p>
-        <p>Last seen on: {{ concertannouncement.last_seen_on }}</p>
-        <p>Created at: {{ concertannouncement.created_at }}</p>
-        <p>Updated at: {{ concertannouncement.updated_at }}</p>
-        <p>Ignore: {{ concertannouncement.ignore }}</p>
-        {% if user.is_authenticated %}
-        <p>Venue: {% if concertannouncement.raw_venue %} <a href="{% url 'venue_detail' concertannouncement.raw_venue.id %}">{{ concertannouncement.raw_venue }} </a> {% endif %}</p>
-        {% endif %}
-        <p>GPS: {{ concertannouncement.latitude }}, {{ concertannouncement.longitude }}</p>
-        <p>Count seen: {{ concertannouncement.seen_count }}</p>
-    </div>
-    <div style="margin-left:20px;margin-top:20px">
-        <h4>Related concert</h4>
-        {% if concertannouncement.concert %}
-            <a href="{% url 'concert_detail' concertannouncement.concert.id %}">{{ concertannouncement.concert }}</a>
-        {% endif %}
+<div class="jumbotron my-4">
+    <h1 class="display-3">{% block title %}{{ concertannouncement.title }}{% endblock %}</h1>
+    {% if concertannouncement.concert %}
+    <h4 class="display-4"><a href="{% url 'concert_detail' concertannouncement.concert.id %}">See related concert</a></h4>
+    {% endif %}
+</div>
+    <div class="container my-4">
+        <div class="card-columns">
+            <div class="card">
+                <h5 class="card-header">Concert information</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Related artist: {% if concertannouncement.artist %} <a href="{% url 'artist_detail' concertannouncement.artist.mbid %}">{{ concertannouncement.artist }}</a> {% endif %}</li>
+                    <li class="list-group-item">Date: {{ concertannouncement.date }}, Time: {{ concertannouncement.time }}</li>
+                    <li class="list-group-item">Until date: {{ concertannouncement.until_date }}</li>
+                    <li class="list-group-item">Is festival: {{ concertannouncement.is_festival }}</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h5 class="card-header">Gigfinder information</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Gigfinder: <a target="_blank" href="{{ concertannouncement.gigfinder.base_url }}
+                    {% if concertannouncement.gigfinder.name == 'podiumfestivalinfo' %}
+                        {{ concertannouncement.artist.name }} {{ concertannouncement.date }} 'site:podiuminfo.nl'
+                    {% else %}
+                        {{ concertannouncement.gigfinder_concert_id }}
+                    {% endif %}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ concertannouncement.gigfinder }}.png" alt="{{ concertannouncement.gigfinder }}" /></a></li>
+                    <li class="list-group-item">Last seen on: {{ concertannouncement.last_seen_on }}</li>
+                    <li class="list-group-item">Created at: {{ concertannouncement.created_at }}</li>
+                    <li class="list-group-item">Updated at: {{ concertannouncement.updated_at }}</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h5 class="card-header">Additional information</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Ignore: {{ concertannouncement.ignore }}</li>
+                    {% if user.is_authenticated %}
+                    <li class="list-group-item">Venue: {% if concertannouncement.raw_venue %} <a href="{% url 'venue_detail' concertannouncement.raw_venue.id %}">{{ concertannouncement.raw_venue }} </a> {% endif %}</>
+                    {% endif %}
+                    <li class="list-group-item">GPS: {{ concertannouncement.latitude }}, {{ concertannouncement.longitude }}</li>
+                    <li class="list-group-item">Count seen: {{ concertannouncement.seen_count }}</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     {% if user.is_authenticated %}
-    <hr>
-    <div style="margin-left:20px;margin-top:20px">
-        <ul>
-            {% if perms.hlwtadmin.can_update_concertannouncement %}<li><a href="{% url 'concertannouncement_update' concertannouncement.id %}">Update this concert announcement</a></li>{% endif %}
-        </ul>
+    <div class="container my-4">
+        <h4 class="display-4">Administration</h4>
+        <div class="card-columns">
+            <div class="card">
+                <h5 class="card-header">Actions</h5>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                    {% if perms.hlwtadmin.can_update_concertannouncement %}<li><a href="{% url 'concertannouncement_update' concertannouncement.id %}">Update this concert announcement</a></li>{% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
     {% endif %}
-
 {% endblock %}
