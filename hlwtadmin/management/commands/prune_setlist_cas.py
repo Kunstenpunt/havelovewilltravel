@@ -35,7 +35,6 @@ class Command(BaseCommand):
 
             if r.status_code != 200:
                 print("\tno announcement found, uncoupling from concert and deleting announcement", ca.pk)
-                input()
                 ca.concert = None
                 ca.save(update_fields=['concert'])
                 ca.delete()
