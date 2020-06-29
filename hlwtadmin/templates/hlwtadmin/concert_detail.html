@@ -4,6 +4,13 @@
 
 {% block content %}
 <div class="jumbotron my-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item" aria-current="page"><a href="/hlwtadmin/concerts/">Concerts</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ concert.date }} | {{ concert.artists }} | {{ concert.organisations }}</li>
+      </ol>
+    </nav>
     <div class="card-deck">
         <div class="card">
             <ul class="list-group list-group-flush">

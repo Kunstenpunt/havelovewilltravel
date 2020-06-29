@@ -11,7 +11,7 @@
                 <h5 class="card-title">Potential locations</h5>
                 <ul class="list-group list-group-flush">
                     {% if venue.location_estimated_from_raw_loc_string %}<li class="list-group-item">Guessed from raw string: <a href="{{venue.location_estimated_from_raw_loc_string.get_absolute_url }}">{{ venue.location_estimated_from_raw_loc_string }}</a>{% else %}<li class="list-group-item">No location found on the basis of the raw string{% endif %}</li>
-                    {% if venue.location_estimated_from_venues_with_similar_raw_loc %}<li class="list-group-item">Guessed from other organisations with same raw_venue: <a href="{{ venue.location_estimated_from_venues_with_similar_raw_loc.get_absolute_url }}">{{ venue.location_estimated_from_venues_with_similar_raw_loc }}</a>{% else %}<li class="list-group-item">No location found on the basis of other organisations in this raw_location{% endif %}</li>
+                    {% if venue.location_estimated_from_venues_with_similar_raw_loc %}<li class="list-group-item">Guessed from other organisations with same raw_location: <a href="{{ venue.location_estimated_from_venues_with_similar_raw_loc.get_absolute_url }}">{{ venue.location_estimated_from_venues_with_similar_raw_loc }}</a>{% else %}<li class="list-group-item">No location found on the basis of other organisations in this raw_location{% endif %}</li>
                 </ul>
             </div>
         </div>
@@ -30,21 +30,21 @@
     <table class="table table-striped table-sm">
         <thead class="thead-light">
             <tr>
-                <th scope="col">Concert</th>
+                <th scope="col">Concertannouncement</th>
                 <th scope="col">Artist</th>
-                <th scope="col">Concert Announcement</th>
+                <th scope="col">Concert</th>
             </tr>
         </thead>
         {% for announcement in object_list %}
         <tr>
             <td>
-                {% if announcement.concert %}<a href="{% url 'concert_detail' announcement.concert.id %}">{{ announcement.date }}</a>{% endif %}
+                <a href="{% url 'concertannouncement_detail' announcement.id %}">{{ announcement.title }}</a> {% if announcement.ignore %}<span class="badge badge-info">Ignored</span>{% endif %}
             </td>
             <td>
                 <a href="{% url 'artist_detail' announcement.artist.mbid %}">{{ announcement.artist }}</a>
             </td>
             <td>
-                <a href="{% url 'concertannouncement_detail' announcement.id %}">{{ announcement.title }}</a>
+                {% if announcement.concert %}<a href="{% url 'concert_detail' announcement.concert.id %}">{{ announcement.date }}</a>{% else %}No related concert{% endif %}
             </td>
         </tr>
         {% endfor %}

@@ -2,6 +2,13 @@
 
 {% block content %}
 <div class="jumbotron my-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item" aria-current="page"><a href="/hlwtadmin/locations/">Locations</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ location }}</li>
+      </ol>
+    </nav>
     <h1 class="display-4">{% block title %}{{ location.city }}{% endblock %}
         <small class="text-muted">{% load static %}
             {% if location.verified %}{% load static %}

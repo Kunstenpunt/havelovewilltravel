@@ -2,9 +2,16 @@
 
 {% block content %}
 <div class="jumbotron my-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item" aria-current="page"><a href="/hlwtadmin/artists/">Artists</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ artist.name }}</li>
+      </ol>
+    </nav>
     <div class="row">
         <div class="col-md-8">
-            <h1>{% block title %}{{ artist.name }}{% endblock %}
+            <h1 class="display-4">{% block title %}{{ artist.name }}{% endblock %}
                 {% if artist.disambiguation %}<br/><small class="text-muted">{{ artist.disambiguation }}</small>{% endif%}
                 <a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/musicbrainz.png' %}" alt="{{ artist.name }}" /></a>
             </h1>

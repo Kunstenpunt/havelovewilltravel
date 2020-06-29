@@ -1,9 +1,15 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <div class="jumbotron my-4">
-        <h1 class="jumbotron-heading">Location List</h1>
-        <p class="lead">This page provides an overview of locations in Have Love, Will Travel.</p>
+<div class="jumbotron my-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Locations</li>
+      </ol>
+    </nav>
+    <h1 class="jumbotron-heading">Location List</h1>
+    <p class="lead">This page provides an overview of locations in Have Love, Will Travel.</p>
         <hr class="my-4">
         <p>It shows whether or not the location is verified, and it indicates the amount of organisations in the location.</p>
             <form method="get" action="{% url 'locations' %}">
