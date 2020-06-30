@@ -23,7 +23,7 @@
           <tr>
               <th>Name of venue</th>
               <th>Status</th>
-              <th>Organisation</th>
+              <th>Related to organisation</th>
           </tr>
         </thead>
     {% for venue in venue_list %}
@@ -35,7 +35,7 @@
                 {% if venue.non_assignable %}<span class="badge badge-warning">Non-assignable</span>{% endif %}
           </td>
           <td>
-              {% if venue.organisation %}<span class="text-muted"><em>Related to <a href="{% url 'organisation_detail' venue.organisation.pk %}">{{ venue.organisation }}</a> in <a href="{ url 'location_detail' venue.organisation.location.pk }">{{ venue.organisation.location }}</a></em></span>{% endif %}
+              {% if venue.organisation %}<span class="text-muted"><em><a href="{% url 'organisation_detail' venue.organisation.pk %}">{{ venue.organisation }}</a> in <a href="{ url 'location_detail' venue.organisation.location.pk }">{{ venue.organisation.location }}</a></em></span>{% endif %}
           </td>
       </tr>
     {% endfor %}

@@ -89,7 +89,7 @@
             </td>
             <td valign="top">
               {% for relation in concert.artistsqs %}
-                <a href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a><br>
+                <a title="{{ relation.artist.disambiguation }}" href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a><br>
               {% endfor %}
             </td>
 
