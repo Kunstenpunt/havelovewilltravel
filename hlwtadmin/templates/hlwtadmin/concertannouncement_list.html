@@ -40,7 +40,7 @@
             </tr>
         </thead>
         {% for concertannouncement in concertannouncement_list %}
-        <tr>
+        <tr {% if concertannouncement.ignore %}class="table-danger" style="text-decoration: line-through"{% endif %}>
             <td>
                 <a href="{{ concertannouncement.artist.get_absolute_url }}">{{ concertannouncement.artist.name }}</a>
             </td>
@@ -51,7 +51,7 @@
                 <a href="{{ concertannouncement.raw_venue.get_absolute_url }}">{{ concertannouncement.raw_venue }}</a>
             </td>
             <td>
-                {{ concertannouncement.gigfinder.name }}
+                <a target="_blank" href="{{ concertannouncement.gigfinder.base_url }}{% if concertannouncement.gigfinder.name == 'podiumfestivalinfo' %}{{ concertannouncement.artist.name }} {{ concertannouncement.date }} 'site:podiuminfo.nl'{% else %}{{ concertannouncement.gigfinder_concert_id }}{% endif %}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ concertannouncement.gigfinder }}.png" alt="{{ concertannouncement.gigfinder }}" /></a>
             </td>
             <td>
                 <a href="{{ concertannouncement.concert.get_absolute_url }}">Related concert</a>

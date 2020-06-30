@@ -20,6 +20,18 @@
         </div>
         <a class="my-link col-md-4" target="_blank" href=""><img width="100%" src="" class="my-image" id="{{ artist.mbid }}"></a>
     </div>
+    <form method="get" action="{% url request.resolver_match.url_name artist.mbid %}">
+        <div class="from-group">
+            <label for="filter">Show concerts in</label>
+            <select class="form-control" id="filter" name="filter">
+                <option value="">all countries</option>
+                <option value="abroad">countries outside Belgium</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input class="btn btn-default btn-primary" type="submit" name="submit" value="Submit"/>
+        </div>
+      </form>
 </div>
 
 <div class="container my-4">
@@ -142,6 +154,7 @@
                 <ul class="list-group list-group-flush">
                     {% if perms.hlwtadmin.can_create_relationartistartist %}<li class="list-group-item"><a href="{% url 'relationartistartist_create' artist.mbid %}">Relate artist to another artist</a></li>{% endif %}
                     {% if perms.hlwtadmin.can_update_artist %}<li class="list-group-item"><a href="{% url 'artist_update' artist.mbid %}">Update artist</a></li>{% endif %}
+                    <li class="list-group-item"><a href="{% url 'concertannouncements' %}?filter={{ artist.name}} ">See concertannouncements by this artist</a></li>
                 </ul>
             </div>
         </div>
