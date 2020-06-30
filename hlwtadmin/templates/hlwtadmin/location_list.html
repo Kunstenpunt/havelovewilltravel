@@ -14,11 +14,11 @@
         <p>It shows whether or not the location is verified, and it indicates the amount of organisations in the location.</p>
             <form method="get" action="{% url 'locations' %}">
                 <div class="form-group">
-                    <label for="filtersearch">Search a city</label>
-                    <input class="form-control" type="text" placeholder="Enter the name of a city" id="filtersearch" name="filtersearch"/>
-                </div>
-                <div class="form-group">
                     <div class="form-row">
+                        <div class="col">
+                            <label for="filtersearch">Search a city</label>
+                            <input class="form-control" type="text" placeholder="Enter the name of a city" id="filtersearch" name="filtersearch"/>
+                        </div>
                         <div class="col">
                             <label for="filter">Filter on country</label>
                             <select class="form-control" id="filter" name="filter">
@@ -47,20 +47,33 @@
 
 {% if location_list %}
 <div class="container my-4">
-  <ul class="list-group-flush card-columns">
+    <table class="table table-striped table-sm">
+        <thead class="thead-light">
+          <tr>
+              <th>City</th>
+              <th>Status</th>
+              <th>Organisations</th>
+              <th>Country</th>
+          </tr>
+        </thead>
     {% for location in location_list %}
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-          <span>
+      <tr>
+          <td>
                 <a href="{{ location.get_absolute_url }}">{{ location.city }}</a> {% if location.zipcode %}<span class="text-muted"><em>({{ location.zipcode }})</em></span>{% endif %}
+          </td>
+          <td>
                 {% if location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
-                <span class="badge badge-primary badge-pill">{{ location.organisation_set.count }}</span><br/>
+          </td>
+          <td>
+              <span class="badge badge-primary badge-pill">{{ location.organisation_set.count }}</span></td>
+          <td>
                 {% if location.subcountry %}<span class="text-muted"><em>{{ location.subcountry }},</em></span>{% endif %}
                 <span class="text-muted"><em>{{ location.country.name }}</em></span>
                 {% load static %}<img title="{{ location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" />
-              </span>
-      </li>
+              </td>
+      </tr>
     {% endfor %}
-  </ul>
+  </table>
 
     {% load my_tags %}
 

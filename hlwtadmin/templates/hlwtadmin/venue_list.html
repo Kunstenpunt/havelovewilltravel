@@ -18,17 +18,28 @@
 </div>
 {% if venue_list %}
 <div class="container my-4">
-    <ul class="list-group-flush card-columns">
+    <table class="table table-striped table-sm">
+        <thead class="thead-light">
+          <tr>
+              <th>Name of venue</th>
+              <th>Status</th>
+              <th>Organisation</th>
+          </tr>
+        </thead>
     {% for venue in venue_list %}
-      <li class="list-group-item">
-        <a href="{{ venue.get_absolute_url }}">{{ venue.raw_venue }}</a>
-          {% if venue.non_assignable %}<span class="badge badge-warning">Non-assignable</span>{% endif %}
-          {% if venue.organisation %}
-          <br/><span class="text-muted"><em>Related to <a href="{% url 'organisation_detail' venue.organisation.pk %}">{{ venue.organisation }}</a></em></span>
-          {% endif %}
-      </li>
+      <tr>
+          <td>
+              <a href="{{ venue.get_absolute_url }}">{{ venue.raw_venue }}</a>
+          </td>
+          <td>
+                {% if venue.non_assignable %}<span class="badge badge-warning">Non-assignable</span>{% endif %}
+          </td>
+          <td>
+              {% if venue.organisation %}<span class="text-muted"><em>Related to <a href="{% url 'organisation_detail' venue.organisation.pk %}">{{ venue.organisation }}</a> in <a href="{ url 'location_detail' venue.organisation.location.pk }">{{ venue.organisation.location }}</a></em></span>{% endif %}
+          </td>
+      </tr>
     {% endfor %}
-  </ul>
+    </table>
     {% load my_tags %}
     {% if is_paginated %}
     <nav aria-label="Page navigation">
@@ -54,4 +65,5 @@
 {% else %}
     <p>There are no venues in the library.</p>
 {% endif %}
+</div>
 {% endblock %}
