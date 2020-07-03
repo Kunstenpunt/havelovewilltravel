@@ -36,8 +36,11 @@
             </tr>
         </thead>
         {% for announcement in object_list %}
-        <tr>
+        <tr {% if announcement.ignore %}class="table-danger" style="text-decoration: line-through"{% endif %}>
             <td>
+                <a target="_blank" href="{{ announcement.gigfinder.base_url }}{% if announcement.gigfinder.name == 'podiumfestivalinfo' %} {{ announcement.artist.name }} {{ announcement.date }} 'site:podiuminfo.nl'  {% else %}{{ announcement.gigfinder_concert_id }}{% endif %}">
+                {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ announcement.gigfinder }}.png" alt="{{ announcement.gigfinder }}" />
+                </a>
                 <a href="{% url 'concertannouncement_detail' announcement.id %}">{{ announcement.title }}</a> {% if announcement.ignore %}<span class="badge badge-info">Ignored</span>{% endif %}
             </td>
             <td>
