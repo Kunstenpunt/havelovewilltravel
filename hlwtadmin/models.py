@@ -16,6 +16,8 @@ from math import sqrt
 import os
 from collections import Counter
 
+from regex import sub
+
 
 # Create your models here.
 class GigFinder(models.Model):
@@ -485,6 +487,8 @@ class RelationConcertOrganisation(models.Model):
         if self.concert.date:
             return RelationConcertOrganisation.objects.filter(organisation=self.organisation).filter(concert__date__lt=self.concert.date).order_by('-concert__date').first()
 
+    #TODO def concert of same artist on same day
+
     def next_concert_at_organisation(self):
         if self.concert.date:
             return RelationConcertOrganisation.objects.filter(organisation=self.organisation).filter(concert__date__gt=self.concert.date).order_by('concert__date').first()
@@ -729,6 +733,12 @@ class ConcertannouncementToConcert:
             if self.masterconcert:
                 print("\t\tfound a MC to relate to")
                 self._relate_concertannouncement_to_masterconcert()
+                if self._venue_is_not_related_to_organisation():
+                    print("\t\t\tvenue has no organisation, so creating one")
+                    self._create_new_unverified_organisation_and_relate_to_venue()
+                if self._is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert():
+                    print("\t\t\tattach the organisation of the venue to the concert")
+                    self._relate_organisation_related_to_venue_also_to_the_masterconcert()
             else:
                 print("\t\tmaking a new MC")
                 if self._venue_is_not_related_to_organisation():
@@ -820,7 +830,7 @@ class ConcertannouncementToConcert:
     def _perhaps_specify_masterconcert_date(self):
         if self.concertannouncement.concert.until_date:
             print("----specifying masterconcert date")
-            self.concertannouncement.concert.date = self.date
+            self.concertannouncement.concert.date = self.concertannouncement.date
             self.concertannouncement.concert.until_date = None
             self.concertannouncement.concert.save()
 
@@ -843,10 +853,7 @@ class ConcertannouncementToConcert:
                     self.concertannouncement.raw_venue.save()
 
     def _venue_is_not_related_to_organisation(self):
-        if not self.concertannouncement.raw_venue.non_assignable:
-            return self.concertannouncement.raw_venue.organisation is None
-        else:
-            return False
+        return (not self.concertannouncement.raw_venue.non_assignable) and (self.concertannouncement.raw_venue.organisation is None)
 
     def _create_new_unverified_organisation_and_relate_to_venue(self):
         # what is the most likely location of the venue
@@ -854,19 +861,23 @@ class ConcertannouncementToConcert:
         # if there is, relate that organisation to venue
         # if not, create new organisation
         try:
-            name_prop, stad, land, bron = self.concertannouncement.raw_venue.raw_venue.split("|")
+            stad, land, bron = self.concertannouncement.raw_venue.raw_venue.split("|")[-3:]
+            name_prop = "|".join(self.concertannouncement.raw_venue.raw_venue.split("|")[:-3])
             name = name_prop if len(name_prop.strip()) > 0 else self.concertannouncement.raw_venue.raw_venue
+
+            try:
+                year = int(name[-4:])
+                if name[-5] == " " and (1950 < year < 2055):
+                    name = sub("\d\d\d\d$", "", name)
+                    name.strip()
+            except ValueError:
+                pass
+
             loc = None
             org = None
             if land.lower() != "none" or stad.lower() != "none" or land != "" or stad != "":
                 if name not in ("None", "nan"):
-                    country = Country.objects.filter(name=land).first()
-                    if not country:
-                        country = Country.objects.filter(iso_code__iexact=land.lower()).first()
-                    loc = Location.objects.\
-                        filter(city__istartswith=stad).\
-                        filter(country=country).\
-                        first()
+                    loc = self.concertannouncement.most_likely_clean_location()
                     org = Organisation.objects.\
                         create(name=name,
                                sort_name=name,

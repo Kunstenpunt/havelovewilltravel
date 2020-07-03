@@ -2,16 +2,15 @@ from hlwtadmin.models import Artist, GigFinderUrl, GigFinder, ConcertAnnouncemen
 
 from django.core.management.base import BaseCommand, CommandError
 
+from datetime import datetime
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
         pass
 
     def handle(self, *args, **options):
-        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True):
+        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True).filter(date__lt=datetime(2019, 9, 5))[:30]:
             print("concertannouncement http://hlwtadmin.herokuapp.com/hlwtadmin/concertannouncement/" + str(concertannouncement.pk))
-            input()
             ca2c = ConcertannouncementToConcert(concertannouncement)
             ca2c.automate()
             concertannouncement.save()
-            input()
