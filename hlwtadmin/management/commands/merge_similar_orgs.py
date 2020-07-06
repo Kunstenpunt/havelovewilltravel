@@ -32,7 +32,7 @@ class Command(BaseCommand):
                         org.save()
                 print("looking for similar orgs to", org, org.pk, org.disambiguation, "in", loc)
                 mergeorgs = []
-                for simorg in Organisation.objects.filter(location=loc).filter(name__iexact=org.name).exclude(pk=org.pk):
+                for simorg in Organisation.objects.filter(location=loc).filter(name__unaccent__iexact=org.name).exclude(pk=org.pk):
                     print("\tThe given organisation is very similar to", simorg, simorg.id)
                     mergeorgs.append(simorg)
 
