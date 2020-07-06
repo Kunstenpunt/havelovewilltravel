@@ -193,7 +193,7 @@ class FacebookScraper(PlatformLeecher):
             if events:
                 for concert in events:
                     if isinstance(concert, dict) and "event_id" in concert:
-                        concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
+                        concertannouncement = ConcertAnnouncement.objects.filter(artist__mbid=mbid).filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
 
                         venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
                         venue = Venue.objects.filter(raw_venue=venue_name).first()
@@ -270,7 +270,7 @@ class BandsInTownLeecher(PlatformLeecher):
             for concert in events:
                 if isinstance(concert, dict):
                     concert = self.map_platform_to_schema(concert, band, mbid, {})
-                    concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
+                    concertannouncement = ConcertAnnouncement.objects.filter(artist__mbid=mbid).filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
 
                     venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
                     venue = Venue.objects.filter(raw_venue=venue_name).first()
@@ -373,7 +373,7 @@ class SetlistFmLeecher(PlatformLeecher):
             for concert in events:
                 if isinstance(concert, dict):
                     print("setlist", concert)
-                    concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
+                    concertannouncement = ConcertAnnouncement.objects.filter(artist__mbid=mbid).filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
 
                     venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
                     venue = Venue.objects.filter(raw_venue=venue_name).first()
@@ -481,7 +481,7 @@ class SongkickLeecher(PlatformLeecher):
         if events:
             for concert in events:
                 if isinstance(concert, dict):
-                    concertannouncement = ConcertAnnouncement.objects.filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
+                    concertannouncement = ConcertAnnouncement.objects.filter(artist__mbid=mbid).filter(gigfinder_concert_id=concert["event_id"]).filter(gigfinder=self.gf).first()
 
                     venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform])
                     venue = Venue.objects.filter(raw_venue=venue_name).first()
