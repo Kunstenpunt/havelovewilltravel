@@ -8,8 +8,28 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
+
+        mapper = {
+            "Ã¼": "ü",
+            "Ã¨": "è",
+            "ÃŸ": "ß",
+            "Ã´": "ô",
+            "Ã©": "é",
+            "Ã¶": "ö",
+            "Ã‰": "É",
+            "Ãº": "ú",
+            "Ã¢": "â",
+            "ĂŠ": "é"
+        }
+
         for loc in Location.objects.all():
             for org in Organisation.objects.filter(location=loc).order_by('disambiguation'):
+                for map in mapper:
+                    new_name = str(org.name).replace(map, mapper[map])
+                    if new_name != org.name:
+                        print("about to change", org.name, "to", new_name)
+                        org.name = new_name
+                        org.save()
                 print("looking for similar orgs to", org, org.pk, org.disambiguation, "in", loc)
                 mergeorgs = []
                 for simorg in Organisation.objects.filter(location=loc).filter(name__iexact=org.name).exclude(pk=org.pk):
