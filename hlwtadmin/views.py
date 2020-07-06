@@ -954,7 +954,8 @@ class ConcertAnnouncementForm(forms.ModelForm):
         fields = ['concert', 'ignore']
         widgets = {
             'artist': autocomplete.ModelSelect2(
-                url='artist_autocomplete'
+                url='artist_autocomplete',
+                attrs={'data-html': True}
             ),
             'concert': autocomplete.ModelSelect2(
                 url='concert_autocomplete',
@@ -966,16 +967,28 @@ class ConcertAnnouncementForm(forms.ModelForm):
         }
 
 
+class ArtistAutocompleteForm(forms.ModelForm):
+    class Meta:
+        model = ConcertAnnouncement
+        fields = ['artist']
+        widgets = {
+            'artist': autocomplete.ModelSelect2(
+                url='artist_autocomplete',
+                attrs={'data-html': True}
+            ),
+        }
+
+
 class DefaultConcertAnnouncementListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['artists'] = Artist.objects.all().distinct()
+        context['form'] = ArtistAutocompleteForm
         return context
 
     def apply_filters(self):
-        filter_val = self.request.GET.get('filter', None)
+        filter_val = self.request.GET.get('artist', None)
         if filter_val:
-            new_context = ConcertAnnouncement.objects.filter(artist__name=filter_val)
+            new_context = ConcertAnnouncement.objects.filter(artist__mbid=filter_val)
         else:
             new_context = ConcertAnnouncement.objects.all()
         return new_context
