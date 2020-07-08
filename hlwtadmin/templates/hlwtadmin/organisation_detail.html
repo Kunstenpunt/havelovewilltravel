@@ -101,6 +101,7 @@
                     {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
                 </a>
                 <a href="{% url 'concertannouncement_detail' ca.pk %}" title="{{ ca }}">{{ ca|truncatechars:30 }}</a>
+                {% if not ca.recently_seen %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" alt="not recently seen" />{% endif %}
                 </br>
               {% endfor %}
             </td>

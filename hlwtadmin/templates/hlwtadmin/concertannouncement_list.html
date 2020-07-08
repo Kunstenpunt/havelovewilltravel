@@ -42,6 +42,7 @@
             </td>
             <td>
                 <a href="{{ concertannouncement.get_absolute_url }}">{{ concertannouncement.date }} {% if concertannouncement.until_date %}- {{ concertannouncement.until_date }}{% endif %}</a>
+                {% if not concertannouncement.recently_seen %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" alt="not recently seen" />{% endif %}
             </td>
             <td>
                 <a href="{{ concertannouncement.raw_venue.get_absolute_url }}">{{ concertannouncement.raw_venue }}</a>

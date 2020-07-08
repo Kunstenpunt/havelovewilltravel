@@ -25,6 +25,7 @@
                     <li class="list-group-item">Last seen on: {{ concertannouncement.last_seen_on }}</li>
                     <li class="list-group-item">Created at: {{ concertannouncement.created_at }}</li>
                     <li class="list-group-item">Updated at: {{ concertannouncement.updated_at }}</li>
+                    <li class="list-group-item">Recently seen: {{ concertannouncement.recently_seen }} {% if not concertannouncement.recently_seen %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" alt="not recently seen" />{% endif %}</li>
                 </ul>
             </div>
             <div class="card">
