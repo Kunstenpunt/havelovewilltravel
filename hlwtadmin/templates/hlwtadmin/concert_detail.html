@@ -34,7 +34,7 @@
                     <h3 class="card-title">{{ concert.date|date:"l" }}<br/>{{ concert.date|date:"F" }} {{ concert.date|date:"d" }}<br/>{{ concert.date|date:"Y" }}<br/><small class="text-muted">{% if concert.until_date and concert.until_date != concert.date %}(until {{ concert.until_date|date:"F d" }}){% endif %}</small></h3>
                     <small class="text-muted">
                         {% if concert.verified %}{% load static %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% else %}Not verified{% endif %}
-                        {% if not concert.is_confirmed and not concert.verified %}<span class="badge badge-warning">Unconfirmed</span>{% endif %}
+                        <!--{% if not concert.is_confirmed and not concert.verified %}<span class="badge badge-warning">Unconfirmed</span>{% endif %}-->
                         {% if concert.cancelled %}(Cancelled){% endif %}
                     </small>
                 </li>
