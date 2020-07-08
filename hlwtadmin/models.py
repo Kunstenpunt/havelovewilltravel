@@ -172,7 +172,7 @@ class ConcertAnnouncement(models.Model):
                 self.concert.updated_at = datetime.now()
                 self.concert.latitude = self.latitude
                 self.concert.longitude = self.longitude
-                self.concert.date = self.date
+                self.concert.date = self.date if self.until_date is None else self.concert.date
                 self.concert.until_date = self.until_date if self.concert.until_date is not None else None
                 self.concert.save()
                 if self.raw_venue.organisation and (self.raw_venue.organisation not in [rel.organisation for rel in self.concert.organisationsqs()]):
