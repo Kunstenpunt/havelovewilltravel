@@ -579,9 +579,13 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
     def get_context_data(self, **kwargs):
         filter_val = self.request.GET.get('filter', '')
         if filter_val == 'abroad':
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).exclude(relationconcertorganisation__organisation__location__country__name="Belgium")
+            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).exclude(relationconcertorganisation__organisation__location__country__name="Belgium").distinct()
+        elif filter_val == 'belgium':
+            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).filter(relationconcertorganisation__organisation__location__country__name="Belgium").distinct()
+        elif filter_val == 'cancelignore':
+            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).filter(Q(ignore=True) | Q(cancelled=True)).distinct()
         else:
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object)
+            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).distinct()
         context = super().get_context_data(object_list=object_list, **kwargs)
         context["form"] = ConcertForm()
         return context
