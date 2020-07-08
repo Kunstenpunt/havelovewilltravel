@@ -896,7 +896,7 @@ class ConcertannouncementToConcert:
         mc = Concert.objects.\
             create(title=self.concertannouncement.title,
                    date=self.concertannouncement.date,
-                   until_date=(self.concertannouncement.until_date if self.concertannouncement.until_date else None),
+                   until_date=(self.concertannouncement.until_date if self.concertannouncement.until_date != self.concertannouncement.date else None),
                    latitude=self.concertannouncement.latitude,
                    longitude=self.concertannouncement.longitude)
         mc.save()
