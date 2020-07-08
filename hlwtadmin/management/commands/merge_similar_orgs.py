@@ -9,6 +9,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
+        for org in Organisation.objects.all():
+            if org.name != org.name.strip():
+                org.name = org.name.strip()
+                org.save(update_fields=['name'])
+
         mapper = {
             "Ã¼": "ü",
             "Ã¨": "è",
@@ -25,11 +30,11 @@ class Command(BaseCommand):
         for loc in Location.objects.all():
             for org in Organisation.objects.filter(location=loc).order_by('disambiguation'):
                 for map in mapper:
-                    new_name = str(org.name).replace(map, mapper[map])
+                    new_name = str(org.name).replace(map, mapper[map]).strip()
                     if new_name != org.name:
                         print("about to change", org.name, "to", new_name)
                         org.name = new_name
-                        org.save()
+                        org.save(update_fields=['name'])
                 print("looking for similar orgs to", org, org.pk, org.disambiguation, "in", loc)
                 mergeorgs = []
                 for simorg in Organisation.objects.filter(location=loc).filter(name__unaccent__iexact=org.name).exclude(pk=org.pk):
