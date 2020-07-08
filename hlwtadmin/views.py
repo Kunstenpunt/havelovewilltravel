@@ -588,6 +588,7 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
             object_list = Concert.objects.filter(relationconcertartist__artist=self.object).distinct()
         context = super().get_context_data(object_list=object_list, **kwargs)
         context["form"] = ConcertForm()
+        context["count"] = object_list.count()
         return context
 
 
@@ -817,10 +818,12 @@ class OrganisationDetailView(DetailView, MultipleObjectMixin):
     def get_context_data(self, **kwargs):
         concert_page = self.request.GET.get('page', 1)
         venue_page = self.request.GET.get('venue_page', 1)
-        object_list = Paginator(Concert.objects.filter(relationconcertorganisation__organisation=self.object), 30).page(concert_page)
+        concerts = Concert.objects.filter(relationconcertorganisation__organisation=self.object)
+        object_list = Paginator(concerts, 30).page(concert_page)
         venue_list = Paginator(Venue.objects.filter(organisation=self.object).order_by('raw_venue'), 50).page(venue_page)
         context = super().get_context_data(object_list=object_list, venue_list=venue_list, **kwargs)
         context["form"] = ConcertForm()
+        context["count"] = concerts.count()
         return context
 
 
