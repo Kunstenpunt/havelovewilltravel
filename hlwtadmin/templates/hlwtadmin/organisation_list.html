@@ -49,9 +49,9 @@
         <thead class="thead-light">
             <tr>
                 <th>Name</th>
+                <th>Location</th>
                 <th>Type</th>
                 <th>Genre</th>
-                <th>Location</th>
             </tr>
         </thead>
         {% for organisation in organisation_list %}
@@ -63,14 +63,14 @@
                 <br/>
                 {% if organisation.disambiguation %}<small class="text-muted"><em>{{ organisation.disambiguation }}</em></small>{% endif %}
             </td>
-            <td>{{ organisation.organisation_type.all|join:"," }}</td>
-            <td>{{ organisation.genre.all|join:"," }}</td>
             <td>{{ organisation.location }}
                 {% if organisation.location %}
                     {% load static %}<img title="{{ organisation.location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ organisation.location.country.iso_code }}.png" />
                     {% if organisation.location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
                 {% endif %}
             </td>
+            <td>{{ organisation.organisation_type.all|join:"," }}</td>
+            <td>{{ organisation.genre.all|join:"," }}</td>
           </tr>
         {% endfor %}
     </table>
