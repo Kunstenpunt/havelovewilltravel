@@ -20,18 +20,6 @@
         </div>
         <a class="my-link col-md-4" target="_blank" href=""><img width="100%" src="" class="my-image" id="{{ artist.mbid }}"></a>
     </div>
-    <form method="get" action="{% url request.resolver_match.url_name artist.mbid %}">
-        <div class="from-group">
-            <label for="filter">Show concerts in</label>
-            <select class="form-control" id="filter" name="filter">
-                <option value="">all countries</option>
-                <option value="abroad">countries outside Belgium</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <input class="btn btn-default btn-primary" type="submit" name="submit" value="Submit"/>
-        </div>
-    </form>
 </div>
 <div class="mx-auto" style="width: 800px; text-align: center">
     <p>
