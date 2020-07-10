@@ -49,7 +49,9 @@ class Command(BaseCommand):
         for urlrel in urlrels:
             url = urlrel["target"]
             gigfindername = url.split("/")[2]
-            if gigfindername in ["bandsintown.com", "www.songkick.com", "www.setlist.fm", "www.facebook.com"]:
+            print(gigfindername)
+            if gigfindername in ["www.bandsintown.com", "www.songkick.com", "www.setlist.fm", "www.facebook.com"]:
+                gigfindername = gigfindername.replace("www.bandsintown.com", "bandsintown.com")
                 gf = GigFinder.objects.filter(name=gigfindername).first()
                 if not gf:
                     gf = GigFinder.objects.create(name=gigfindername)

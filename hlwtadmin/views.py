@@ -516,9 +516,7 @@ class ArtistListView(ListView):
 
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
-        new_context = Artist.objects.filter(
-            name__unaccent__iregex=filter_val
-        )
+        new_context = Artist.objects.filter(name__unaccent__iregex=filter_val)
         return new_context
 
     def get_context_data(self, **kwargs):
