@@ -9,7 +9,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True).filter(date__lt=datetime(2016, 4, 15))[:300]:
+        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True).filter(date__lt=datetime(2018, 8, 31))[:1000]:
             print("concertannouncement http://hlwtadmin.herokuapp.com/hlwtadmin/concertannouncement/" + str(concertannouncement.pk))
             ca2c = ConcertannouncementToConcert(concertannouncement)
             ca2c.automate()
