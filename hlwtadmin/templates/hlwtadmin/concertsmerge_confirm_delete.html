@@ -4,11 +4,11 @@
 
 <h1>Merge concerts</h1>
 
-<p>Are you sure you want to merge the concerts: {{ concertsmerge }}?</p>
+<p>Are you sure you want to proceed with this?</p>
 
 <form action="" method="POST">
   {% csrf_token %}
-  <input type="submit" value="Yes, merge.">
+  <input type="submit" value="Yes, go ahead.">
 </form>
 
 {% endblock %}

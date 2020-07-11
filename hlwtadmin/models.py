@@ -604,12 +604,14 @@ class ConcertsMerge(models.Model):
     def __str__(self):
         return self.primary_object.title + " < " + ", ".join([str(ao.title) for ao in self.alias_objects.all()])
 
-    def delete(self, *args, **kwargs):
+    def merge(self, *args, **kwargs):
         mmi = MergedModelInstance.create(self.primary_object, [ao for ao in self.alias_objects.all()], keep_old=False)
-        super(ConcertsMerge, self).delete(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('concertsmerge_delete', args=[str(self.id)])
+        return reverse('concertsmerge_confirm', args=[str(self.id)])
+
+    class Meta:
+        ordering = ['primary_object']
 
 
 class LocationsMerge(models.Model):

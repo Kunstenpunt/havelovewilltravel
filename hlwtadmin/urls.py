@@ -123,11 +123,15 @@ urlpatterns = [
     path('venue-autocomplete/', views.VenueAutocomplete.as_view(model=models.Venue), name='venue_autocomplete'),
     path('subcountry-autocomplete-list/', views.SubcountryAutocompleteFromList.as_view(), name='subcountry_autocomplete_list'),
     path('identifier-autocomplete/', views.IdentifierAutocomplete.as_view(model=models.ExternalIdentifier, create_field='identifier'), name='identifier_autocomplete'),
+
     # merge
     path('organisationsmerge/create/', views.OrganisationsMergeCreate.as_view(model=models.OrganisationsMerge), name='organisationsmerge_create'),
     path('organisationsmerge/<str:pk>/confirm/', views.OrganisationsMergeDelete.as_view(model=models.OrganisationsMerge), name='organisationsmerge_delete'),
     path('concertsmerge/create/', views.ConcertsMergeCreate.as_view(model=models.ConcertsMerge), name='concertsmerge_create'),
-    path('concertsmerge/<str:pk>/confirm/', views.ConcertsMergeDelete.as_view(model=models.ConcertsMerge), name='concertsmerge_delete'),
+    path('concertsmerge/<str:pk>/confirm/', views.ConcertsMergeConfirm.as_view(model=models.ConcertsMerge), name='concertsmerge_confirm'),
+    path('concertsmerge/<str:pk>/update/', views.ConcertsMergeUpdate.as_view(model=models.ConcertsMerge), name='concertsmerge_update'),
+    path('concertsmerge/<str:pk>/delete/', views.ConcertsMergeDelete.as_view(model=models.ConcertsMerge), name='concertsmerge_delete'),
+    path('concertsmerges/', views.ConcertsMergeList.as_view(model=models.ConcertsMerge), name='concertsmerges'),
     path('locationsmerge/create/', views.LocationsMergeCreate.as_view(model=models.LocationsMerge), name='locationsmerge_create'),
     path('locationsmerge/<str:pk>/confirm/', views.LocationsMergeDelete.as_view(model=models.LocationsMerge), name='locationsmerge_delete'),
 ]

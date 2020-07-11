@@ -216,12 +216,46 @@ class ConcertsMergeCreate(CreateView):
         return context
 
 
-class ConcertsMergeDelete(DeleteView):
+class ConcertsMergeUpdate(UpdateView):
+    model = ConcertsMerge
+    form_class = ConcertsMergeForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class ConcertsMergeConfirm(DeleteView):
     model = ConcertsMerge
 
     def get_success_url(self):
         target = self.object.primary_object
+        self.object.merge()
         return reverse_lazy('concert_detail', kwargs={'pk': target.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class ConcertsMergeDelete(DeleteView):
+    model = ConcertsMerge
+
+    def get_success_url(self):
+        return reverse_lazy('concertsmerges')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class ConcertsMergeList(ListView):
+    model = ConcertsMerge
+    paginate_by = 30
+
+    def get_queryset(self):
+        new_context = ConcertsMerge.objects.all()
+        return new_context
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
