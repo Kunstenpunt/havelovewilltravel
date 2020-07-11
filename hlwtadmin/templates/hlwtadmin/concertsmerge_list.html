@@ -31,7 +31,7 @@
             </td>
             <td>
                 <a href="{{ concertmerge.primary_object.get_absolute_url }}">
-                    {{ concertmerge.primary_object.date }}<br>
+                    {{ concertmerge.primary_object.date }} - {{ concertmerge.primary_object.until_date }}<br>
                     {{ concertmerge.primary_object.artists }}<br>
                     {{ concertmerge.primary_object.organisations }}
                 </a>
@@ -41,7 +41,7 @@
                 {% for alias_object in concertmerge.alias_objects.all %}
                     <li class="list-group-item">
                         <a href="{{ alias_object.get_absolute_url }}">
-                            {{ alias_object.date }}<br>
+                            {{ alias_object.date }} - {{ alias_object.until_date }}<br>
                             {{ alias_object.artists }}<br>
                             {{ alias_object.organisations }}
                         </a>

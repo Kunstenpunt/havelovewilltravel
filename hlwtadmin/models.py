@@ -242,13 +242,13 @@ class Concert(models.Model):
         return ", ".join([rel.artist.name for rel in self.artistsqs() if rel.artist])
 
     def artistsqs(self):
-        return RelationConcertArtist.objects.select_related('artist').filter(concert__id=self.id)
+        return RelationConcertArtist.objects.select_related('artist').filter(concert__id=self.id).order_by('artist__pk').distinct('artist')
 
     def organisations(self):
         return ", ".join([rel.organisation.name + " in "+ str(rel.organisation.location) for rel in self.organisationsqs() if rel.organisation])
 
     def organisationsqs(self):
-        return RelationConcertOrganisation.objects.select_related('organisation__location__country').filter(concert__id=self.id)
+        return RelationConcertOrganisation.objects.select_related('organisation__location__country').filter(concert__id=self.id).order_by('organisation__pk').distinct('organisation')
 
     def concertannouncements(self):
         return ConcertAnnouncement.objects.select_related('gigfinder').filter(concert=self)
