@@ -272,7 +272,7 @@ class Concert(models.Model):
         if this_relation and this_relation.organisation:
             if this_relation.organisation.location:
                 this_location = this_relation.organisation.location
-                return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation__location=this_location).exclude(id=self.id)
+                return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation__location=this_location).exclude(id=self.id).distinct()
 
     def is_confirmed(self):
         for ca in ConcertAnnouncement.objects.filter(concert__id=self.id):
