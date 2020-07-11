@@ -17,6 +17,7 @@ import os
 from collections import Counter
 
 from regex import sub
+from collections import Counter
 
 
 # Create your models here.
@@ -61,7 +62,28 @@ class Artist(models.Model):
         return "-".join([str(min(years)), str(max(years))]) if years else None
 
     def concerts(self):
-        return [rel.concert for rel in RelationConcertArtist.objects.filter(artist=self)]
+        return set([rel.concert for rel in RelationConcertArtist.objects.filter(artist=self)])
+
+    def recent_concerts(self, recent=5):
+        return set([rel.concert for rel in RelationConcertArtist.objects.filter(artist=self).order_by('-concert__date')[:recent]])
+
+    def organisations(self, top=5):
+        orgs = []
+        concerts = self.recent_concerts()
+        for concert in concerts:
+            for rel in concert.organisationsqs():
+                orgs.append(rel.organisation)
+        result = [o for o, b in Counter(orgs).most_common(top)]
+        return result
+
+    def find_similar_artists(self, top=5):
+        related_artists = []
+        for org in self.organisations():
+            for artist in org.artists():
+                if artist.pk != self.pk:
+                    related_artists.append(artist)
+        result = [a for a, b in Counter(related_artists).most_common(top)]
+        return result
 
     class Meta:
         ordering = ['name']
@@ -392,6 +414,20 @@ class Organisation(models.Model):
 
     def identifiersqs(self):
         return RelationOrganisationIdentifier.objects.select_related('identifier').filter(organisation=self)
+
+    def concerts(self):
+        return set([rel.concert for rel in RelationConcertOrganisation.objects.filter(organisation=self)])
+
+    def recent_concerts(self, recent=5):
+        return set([rel.concert for rel in RelationConcertOrganisation.objects.filter(organisation=self).order_by('-concert__date')[:recent]])
+
+    def artists(self, top=5):
+        artsts = set()
+        for concert in self.recent_concerts():
+            for rel in concert.artistsqs():
+                artsts.add(rel.artist)
+        result = [a for a, b in Counter(artsts).most_common(top)]
+        return result
 
     class Meta:
         ordering = ['sort_name']
