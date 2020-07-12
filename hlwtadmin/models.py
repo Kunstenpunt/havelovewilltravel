@@ -429,6 +429,15 @@ class Organisation(models.Model):
         result = [a for a, b in Counter(artsts).most_common(top)]
         return result
 
+    def find_similar_organisations(self, top=5):
+        related_organisations = []
+        for artist in self.artists():
+            for org in artist.organisations():
+                if org.pk != self.pk:
+                    related_organisations.append(org)
+        result = [a for a, b in Counter(related_organisations).most_common(top)]
+        return result
+
     class Meta:
         ordering = ['sort_name']
 
