@@ -127,6 +127,20 @@
             </div>
         </div>
 
+        <div class="card">
+            <h5 class="card-header">Statistics</h5>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        {{ artist.name }} performed {{ artist.concert_count }} concerts between {{ artist.period }}
+                    </li>
+                    <li class="list-group-item">{% for d in artist.concerts_in_countries %}
+                        {{ d.0 }} ({{ d.1 }})
+                    {% endfor %}</li>
+                </ul>
+            </div>
+        </div>
+
         {% if user.is_authenticated %}
         <div class="card">
             <h5 class="card-header">Technical details</h5>

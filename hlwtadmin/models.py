@@ -48,24 +48,19 @@ class Artist(models.Model):
         return RelationConcertArtist.objects.filter(artist=self).count()
 
     def concerts_in_countries(self):
-        locations = set()
-        for relation_concert_artist in RelationConcertArtist.objects.filter(artist=self):
-            for relation_concert_organisation in RelationConcertOrganisation.objects.filter(concert=relation_concert_artist.concert):
-                if relation_concert_organisation.organisation:
-                    locations.add(relation_concert_organisation.organisation.location)
-        return len(set([loc.country for loc in locations if loc]))
+        return Counter(RelationConcertArtist.objects.select_related('concert__relationconcertorganisation__organisation__location__country').filter(artist=self).exclude(concert__relationconcertorganisation__organisation__location__country__isnull=True).values_list('concert__relationconcertorganisation__organisation__location__country__name', flat=True)).most_common()
 
     def period(self):
         years = set()
-        for relation_concert_artist in RelationConcertArtist.objects.filter(artist=self):
+        for relation_concert_artist in RelationConcertArtist.objects.select_related('concert').filter(artist=self):
             years.add(relation_concert_artist.concert.date.year)
-        return "-".join([str(min(years)), str(max(years))]) if years else None
+        return " and ".join([str(min(years)), str(max(years))]) if years else None
 
     def concerts(self):
         return set([rel.concert for rel in RelationConcertArtist.objects.filter(artist=self)])
 
     def recent_concerts(self, recent=5):
-        return set([rel.concert for rel in RelationConcertArtist.objects.filter(artist=self).order_by('-concert__date')[:recent]])
+        return set([rel.concert for rel in RelationConcertArtist.objects.filter(artist=self).order_by('-concert__date').distinct()[:recent]])
 
     def organisations(self, top=5):
         orgs = []
@@ -419,7 +414,7 @@ class Organisation(models.Model):
         return set([rel.concert for rel in RelationConcertOrganisation.objects.filter(organisation=self)])
 
     def recent_concerts(self, recent=5):
-        return set([rel.concert for rel in RelationConcertOrganisation.objects.filter(organisation=self).order_by('-concert__date')[:recent]])
+        return set([rel.concert for rel in RelationConcertOrganisation.objects.filter(organisation=self).order_by('-concert__date').distinct()[:recent]])
 
     def artists(self, top=5):
         artsts = set()
