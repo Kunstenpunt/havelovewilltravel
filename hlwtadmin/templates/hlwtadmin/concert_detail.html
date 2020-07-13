@@ -74,14 +74,14 @@
                     {% if relation.previous_concert_by_artist.previous_concert_by_artist %}
                         <li class="list-group-item">
                             <a href="{% url 'concert_detail' relation.previous_concert_by_artist.previous_concert_by_artist.concert.pk %}">
-                                {{ relation.previous_concert_by_artist.previous_concert_by_artist.concert.date }}
+                                {{ relation.previous_concert_by_artist.previous_concert_by_artist.concert.date }}<br>
                                 {{ relation.previous_concert_by_artist.previous_concert_by_artist.concert.organisations }}
                             </a>
                         </li>
                     {% endif %}
                     <li class="list-group-item">
                         <a href="{% url 'concert_detail' relation.previous_concert_by_artist.concert.pk %}">
-                            {{ relation.previous_concert_by_artist.concert.date }}
+                            {{ relation.previous_concert_by_artist.concert.date }}<br>
                             {{ relation.previous_concert_by_artist.concert.organisations }}
                         </a>
                     </li>
@@ -93,20 +93,44 @@
                     </ul>
             {% endfor %}
             </div>
+
+            <div class="card-body">
+            <h5 class="card-title">same day</h5>
+            <ul class="list-group list-group-flush">
+            {% for relation in concert.artistsqs %}
+                {% if relation.simultaneous_concerts_by_artist %}
+                    {% for rel in relation.simultaneous_concerts_by_artist %}
+                        <li class="list-group-item">
+                            <a href="{% url 'concert_detail' rel.concert.pk %}">
+                                {{ rel.concert.date }}<br>
+                                {{ rel.concert.organisations }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="list-group-item">
+                        No concerts on same day
+                    </li>
+                {% endif %}
+                    </ul>
+            {% endfor %}
+            </div>
+
             <div class="card-body">
             <h5 class="card-title">next</h5>
             <ul class="list-group list-group-flush">
             {% for relation in concert.artistsqs %}
                 {% if relation.next_concert_by_artist %}
                     <li class="list-group-item">
-                        <a href="{% url 'concert_detail' relation.next_concert_by_artist.concert.pk %}">{{ relation.next_concert_by_artist.concert.date }}
+                        <a href="{% url 'concert_detail' relation.next_concert_by_artist.concert.pk %}">
+                            {{ relation.next_concert_by_artist.concert.date }}<br>
                             {{ relation.next_concert_by_artist.concert.organisations }}
                         </a>
                     </li>
                     {% if relation.next_concert_by_artist.next_concert_by_artist %}
                         <li class="list-group-item">
                             <a href="{% url 'concert_detail' relation.next_concert_by_artist.next_concert_by_artist.concert.pk %}">
-                                {{ relation.next_concert_by_artist.next_concert_by_artist.concert.date }}
+                                {{ relation.next_concert_by_artist.next_concert_by_artist.concert.date }}<br>
                                 {{ relation.next_concert_by_artist.next_concert_by_artist.concert.organisations }}
                             </a>
                         </li>
