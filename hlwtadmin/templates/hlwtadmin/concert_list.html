@@ -57,7 +57,7 @@
         <td>
             <a href="{{ concert.get_absolute_url }}">{{ concert.date }}{% if concert.until_date and concert.until_date != concert.date %} - <br/>{{ concert.until_date }}{% endif %}</a>
             {% if concert.verified %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
-            <!--{% if not concert.is_confirmed and not concert.verified %}<br/><span class="badge badge-warning">Unconfirmed</span>{% endif %}-->
+            {% if concert.manual %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/manual.png' %}" alt="manual" />{% endif %}
             {% if concert.is_new %}{% load static %}<br/><span class="badge badge-secondary">New</span>{% endif %}
         </td>
         <td valign="top">

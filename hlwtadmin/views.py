@@ -482,7 +482,7 @@ class ConcertForm(BSModalForm):
 
     class Meta:
         model = Concert
-        fields = ['title', 'date', 'until_date', 'genre', 'cancelled', 'ignore', 'verified', 'latitude', 'longitude', 'annotation']
+        fields = ['title', 'date', 'until_date', 'genre', 'manual', 'cancelled', 'ignore', 'verified', 'latitude', 'longitude', 'annotation']
 
 
 class ConcertDetailView(DetailView):

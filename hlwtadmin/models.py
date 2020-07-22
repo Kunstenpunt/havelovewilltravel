@@ -239,6 +239,7 @@ class Concert(models.Model):
     time = models.TimeField(blank=True, null=True)
     cancelled = models.BooleanField(default=False, blank=True, null=True)
     verified = models.BooleanField(default=False, blank=True, null=True)
+    manual = models.BooleanField(default=False, blank=True, null=True)
     ignore = models.BooleanField(default=False, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
