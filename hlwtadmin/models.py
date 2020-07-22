@@ -281,9 +281,15 @@ class Concert(models.Model):
         return reverse('concert_detail', args=[str(self.id)])
 
     def find_concurring_concerts(self):
-        this_org = RelationConcertOrganisation.objects.filter(concert__id=self.id).first()
-        if this_org and this_org.organisation:
-            return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation=this_org.organisation).exclude(id=self.id)
+        l = set()
+        for this_org in RelationConcertOrganisation.objects.filter(concert__id=self.id):
+            if this_org and this_org.organisation:
+                print(this_org.organisation)
+                l.add(this_org.organisation)
+                l.update([r.organisation_b for r in this_org.organisation.organisationa.all()])
+                l.update([r.organisation_a for r in this_org.organisation.organisationb.all()])
+                print(l)
+        return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation__in=l).exclude(id=self.id)
 
     def find_concerts_in_same_city_on_same_day(self):
         this_relation = RelationConcertOrganisation.objects.filter(concert__id=self.id).first()
