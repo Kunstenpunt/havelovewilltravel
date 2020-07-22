@@ -53,7 +53,8 @@ class Artist(models.Model):
     def period(self):
         years = set()
         for relation_concert_artist in RelationConcertArtist.objects.select_related('concert').filter(artist=self):
-            years.add(relation_concert_artist.concert.date.year if relation_concert_artist.concert.date else None)
+            if relation_concert_artist.concert.date:
+                years.add(relation_concert_artist.concert.date.year)
         return " and ".join([str(min(years)), str(max(years))]) if years else None
 
     def concerts(self):
