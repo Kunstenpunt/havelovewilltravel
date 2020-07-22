@@ -616,6 +616,8 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
             object_list = Concert.objects.filter(relationconcertartist__artist=self.object).filter(relationconcertorganisation__organisation__location__country__name="Belgium").distinct()
         elif filter_val == 'cancelignore':
             object_list = Concert.objects.filter(relationconcertartist__artist=self.object).filter(Q(ignore=True) | Q(cancelled=True)).distinct()
+        elif len(filter_val) > 0:
+            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).filter(relationconcertorganisation__organisation__location__country__name=filter_val).distinct()
         else:
             object_list = Concert.objects.filter(relationconcertartist__artist=self.object).distinct()
         context = super().get_context_data(object_list=object_list, **kwargs)
