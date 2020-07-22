@@ -453,6 +453,7 @@ class Location(models.Model):
     country = models.ForeignKey("Country", blank=True, null=True, on_delete=models.PROTECT)
     subcountry = models.CharField(max_length=200, blank=True, null=True)
     verified = models.BooleanField(blank=True, null=True, default=True)
+    disambiguation = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.city + \

@@ -637,7 +637,7 @@ class LocationForm(forms.ModelForm):
 
     class Meta:
         model = Location
-        fields = ['country', 'subcountry', 'city', 'zipcode', 'latitude', 'longitude', 'verified']
+        fields = ['country', 'subcountry', 'city', 'zipcode', 'latitude', 'longitude', 'verified', 'disambiguation']
         widgets = {
             'country': autocomplete.ModelSelect2(
                 url='country_autocomplete',

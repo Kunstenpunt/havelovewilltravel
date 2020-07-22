@@ -18,6 +18,7 @@
     </h1>
     <p class="lead">in {{ location.subcountry }}, <a href="{% url 'locations' %}?filter={{ location.country.name }}&orderby=city" >{{ location.country.name }} <img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" /></a></p>
     <p>Zipcode: {{ location.zipcode }}, GPS: {{ location.latitude }}, {{ location.longitude }}</p>
+    <p>Disambiguation: {{ location.disambiguation }}</p>
         <form method="get" action="{% url 'location_detail' location.id %}">
             <div class="form-group">
                 <label for="orderby">Order organisations</label>
