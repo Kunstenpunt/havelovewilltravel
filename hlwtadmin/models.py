@@ -45,10 +45,10 @@ class Artist(models.Model):
         return reverse('artist_detail', args=[str(self.mbid)])
 
     def concert_count(self):
-        return RelationConcertArtist.objects.filter(artist=self).count()
+        return RelationConcertArtist.objects.filter(artist=self).order_by('concert__id').distinct('concert__id').count()
 
     def concerts_in_countries(self):
-        return Counter(RelationConcertArtist.objects.select_related('concert__relationconcertorganisation__organisation__location__country').filter(artist=self).exclude(concert__relationconcertorganisation__organisation__location__country__isnull=True).values_list('concert__relationconcertorganisation__organisation__location__country__name', flat=True)).most_common()
+        return Counter(RelationConcertArtist.objects.select_related('concert__relationconcertorganisation__organisation__location__country').filter(artist=self).exclude(concert__relationconcertorganisation__organisation__location__country__isnull=True).order_by('concert__id').distinct('concert__id').values_list('concert__relationconcertorganisation__organisation__location__country__name', flat=True)).most_common()
 
     def period(self):
         years = set()
