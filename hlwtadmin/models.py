@@ -509,7 +509,7 @@ class RelationConcertArtist(models.Model):
 
     def simultaneous_concerts_by_artist(self):
         if self.concert.date:
-            return RelationConcertArtist.objects.filter(artist=self.artist).filter(concert__date=self.concert.date)
+            return RelationConcertArtist.objects.filter(artist=self.artist).filter(concert__date=self.concert.date).exclude(concert__id=self.concert.id)
 
     class Meta:
         ordering = ['concert']

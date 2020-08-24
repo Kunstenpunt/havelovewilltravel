@@ -14,8 +14,21 @@
       <p>It shows a link to the artist's MusicBrainz page and a short disambiguation line. The references to the gigfinders are shown, as well as the amount of concerts that we detected.</p>
         <form method="get" action="{% url 'artists' %}">
           <div class="from-group">
-            <label for="filter">Search term</label>
-            <input class="form-control" type="text" id="filter" name="filter"/>
+            <div class="form-row">
+              <div class="col">
+                <label for="filter">Search term</label>
+                <input class="form-control" type="text" id="filter" name="filter"/>
+              </div>
+              <div class="col">
+                <label for="genrefilter">Genre</label>
+                <select class="form-control" id="genrefilter" name="genrefilter">
+                  <option value="">No selection</option>
+                  {% for genre in genres %}
+                      <option value="{{ genre.name }}"{% if genre.name == filter %} selected {% endif %}>{{ genre.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
           </div>
           <div class="form-group">
               <input class="btn btn-primary" type="submit" name="submit" value="Submit"/>

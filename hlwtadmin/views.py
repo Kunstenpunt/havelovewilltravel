@@ -381,14 +381,20 @@ class DefaultConcertListView(ListView):
         context['filter_end'] = self.request.GET.get('filter_end', '2025-12-31')
         context['filter'] = self.request.GET.get('filter', None)
         context['countries'] = Country.objects.all().distinct()
+        context['genres'] = Genre.objects.all().distinct()
         return context
 
     def apply_filters(self):
         filter_start = self.request.GET.get('filter_start', '2020-01-01')
         filter_end = self.request.GET.get('filter_end', '2999-12-31')
         filter_val = self.request.GET.get('filter', None)
-        if filter_val:
+        filter_genre = self.request.GET.get('genrefilter', None)
+        if filter_val and not filter_genre:
             new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end).filter(relationconcertorganisation__organisation__location__country__name=filter_val)
+        elif not filter_val and filter_genre:
+            new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end).filter(genre__name=filter_genre)
+        elif filter_val and filter_genre:
+            new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end).filter(relationconcertorganisation__organisation__location__country__name=filter_val).filter(genre__name=filter_genre)
         else:
             new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end)
         return new_context
@@ -550,13 +556,18 @@ class ArtistListView(ListView):
 
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
-        new_context = Artist.objects.filter(name__unaccent__iregex=filter_val)
+        filter_genre = self.request.GET.get('genrefilter', None)
+        if filter_genre:
+            new_context = Artist.objects.filter(name__unaccent__iregex=filter_val).filter(genre__name=filter_genre)
+        else:
+            new_context = Artist.objects.filter(name__unaccent__iregex=filter_val)
         return new_context
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
         context['num_artists'] = Artist.objects.filter(name__unaccent__iregex=context['filter']).count()
+        context['genres'] = Genre.objects.all().distinct()
         return context
 
 
