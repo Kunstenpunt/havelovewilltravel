@@ -30,7 +30,20 @@
 <hr>
 {% endif %}
 <div class="card-columns">
-<div class="card">
+  {% if user.is_authenticated %}
+  <div class="card">
+    <h5 class="card-header">Contribute</h5>
+    <div class="card-body">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <a href="{% url 'concert_create' %}">Add a manual concert</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="card">
   <h5 class="card-header">Some statistics</h5>
   <div class="card-body">
     <ul class="list-group list-group-flush">

@@ -480,17 +480,6 @@ class ConcertsWithMoreThanOneArtist(DefaultConcertListView):
         return self.apply_filters().annotate(num_artists=Count('relationconcertartist')).filter(num_artists__gt=1)
 
 
-class ConcertForm(BSModalForm):
-    def __init__(self, *args, **kwargs):
-        super(BSModalForm, self).__init__(*args, **kwargs)
-        for visible in self.visible_fields():
-            visible.field.widget.attrs['class'] = 'form-control form-control-sm'
-
-    class Meta:
-        model = Concert
-        fields = ['title', 'date', 'until_date', 'genre', 'manual', 'cancelled', 'ignore', 'verified', 'latitude', 'longitude', 'annotation']
-
-
 class ConcertDetailView(DetailView):
     model = Concert
 
@@ -508,10 +497,9 @@ class ConcertCreate(CreateView):
         return context
 
 
-class ConcertUpdate(BSModalUpdateView):
+class ConcertUpdate(UpdateView):
     model = Concert
-    form_class = ConcertForm
-    template_name = 'hlwtadmin/concert_form.html'
+    fields = '__all__'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -632,7 +620,6 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
         else:
             object_list = Concert.objects.filter(relationconcertartist__artist=self.object).distinct()
         context = super().get_context_data(object_list=object_list, **kwargs)
-        context["form"] = ConcertForm()
         context["count"] = object_list.count()
         return context
 
@@ -867,7 +854,6 @@ class OrganisationDetailView(DetailView, MultipleObjectMixin):
         object_list = Paginator(concerts, 30).page(concert_page)
         venue_list = Paginator(Venue.objects.filter(organisation=self.object).order_by('raw_venue'), 50).page(venue_page)
         context = super().get_context_data(object_list=object_list, venue_list=venue_list, **kwargs)
-        context["form"] = ConcertForm()
         context["count"] = concerts.count()
         return context
 
