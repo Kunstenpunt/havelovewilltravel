@@ -14,20 +14,24 @@
     <div class="card-deck">
         <div class="card">
             <ul class="list-group list-group-flush">
-                {% for relation in concert.artistsqs %}
-                    <li class="list-group-item">
-                      <h3 class="card-title">
-                          <a href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a>
-                          {% if perms.hlwtadmin.can_update_relationconcerartist %}<a href="{% url 'relationconcertartist_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
-                          {% if perms.hlwtadmin.can_delete_relationconcerartist %}<a href="{% url 'relationconcertartist_delete' relation.id concert.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
-                      </h3>
-                      {% if relation.artist_credited_as %}
-                      <small class="text-muted">
-                        (credited as "{{ relation.artist_credited_as }}")
-                      </small>
-                      {% endif %}
-                    </li>
-                {% endfor %}
+                {% if concert.artistsqs %}
+                    {% for relation in concert.artistsqs %}
+                        <li class="list-group-item">
+                          <h3 class="card-title">
+                              <a href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a>
+                              {% if perms.hlwtadmin.can_update_relationconcerartist %}<a href="{% url 'relationconcertartist_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
+                              {% if perms.hlwtadmin.can_delete_relationconcerartist %}<a href="{% url 'relationconcertartist_delete' relation.id concert.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
+                          </h3>
+                          {% if relation.artist_credited_as %}
+                          <small class="text-muted">
+                            (credited as "{{ relation.artist_credited_as }}")
+                          </small>
+                          {% endif %}
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    {% if perms.hlwtadmin.can_create_relationconcertartist %}<li class="list-group-item">No artist <a href="{% url 'relationconcertartist_create' concert.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="add artist"></a></li>{% endif %}
+                {% endif %}
             </ul>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
@@ -40,27 +44,31 @@
                 </li>
             </ul>
             <ul class="list-group list-group-flush">
-                {% for relation in concert.organisationsqs %}
-                    <li class="list-group-item">
-                        <h3 class="card-title">
-                            {{ relation.relation_type.all|join:"," }}
-                            {% if relation.organisation %}
-                                <a href="{% url 'organisation_detail' relation.organisation.pk %}">{{ relation.organisation.name }}</a>
-                            {% else %}
-                                Missing organisation
-                            {% endif %}
+                {% if concert.organisationsqs %}
+                    {% for relation in concert.organisationsqs %}
+                        <li class="list-group-item">
+                            <h3 class="card-title">
+                                {{ relation.relation_type.all|join:"," }}
+                                {% if relation.organisation %}
+                                    <a href="{% url 'organisation_detail' relation.organisation.pk %}">{{ relation.organisation.name }}</a>
+                                {% else %}
+                                    Missing organisation
+                                {% endif %}
+                                <small class="text-muted">
+                                    {% if perms.hlwtadmin.can_update_relationconcertorganisation %}<a href="{% url 'relationconcertorganisation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
+                                    {% if perms.hlwtadmin.can_delete_relationconcertorganisation %}<a href="{% url 'relationconcertorganisation_delete' relation.id concert.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
+                                </small>
+                            </h3>
                             <small class="text-muted">
-                                {% if perms.hlwtadmin.can_update_relationconcertorganisation %}<a href="{% url 'relationconcertorganisation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
-                                {% if perms.hlwtadmin.can_delete_relationconcertorganisation %}<a href="{% url 'relationconcertorganisation_delete' relation.id concert.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
+                                {% if relation.organisation_credited_as %}(credited as "{{ relation.organisation_credited_as }}"){% endif %}
+                                {% if relation.organisation.location %}in <a href="{% url 'location_detail' relation.organisation.location.id %}">{{ relation.organisation.location }}</a> {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ relation.organisation.location.country.iso_code }}.png" />{% endif %}
+                                {% if relation.organisation.location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
                             </small>
-                        </h3>
-                        <small class="text-muted">
-                            {% if relation.organisation_credited_as %}(credited as "{{ relation.organisation_credited_as }}"){% endif %}
-                            {% if relation.organisation.location %}in <a href="{% url 'location_detail' relation.organisation.location.id %}">{{ relation.organisation.location }}</a> {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ relation.organisation.location.country.iso_code }}.png" />{% endif %}
-                            {% if relation.organisation.location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
-                        </small>
-                    </li>
-                {% endfor %}
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    {% if perms.hlwtadmin.can_create_relationconcertorganisation %}<li class="list-group-item">No organisation <a href="{% url 'relationconcertorganisation_create' concert.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a></li>{% endif %}
+                {% endif %}
             </ul>
         </div>
 
