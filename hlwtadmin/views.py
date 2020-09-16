@@ -727,7 +727,9 @@ class LocationDetailView(DetailView, MultipleObjectMixin):
 
     def get_context_data(self, **kwargs):
         order = self.request.GET.get('orderby', 'name')
-        object_list = Organisation.objects.filter(location=self.object).annotate(num_concerts=Count('relationconcertorganisation')).order_by(order)
+        locations = [subloc[0] for subloc in RelationLocationLocation.objects.filter(location_b=self.object).filter(relation_type__pk=1).values_list('location_a')] # id=1 > is part of
+        locations.append(self.object.pk)
+        object_list = Organisation.objects.filter(location__pk__in=locations).annotate(num_concerts=Count('relationconcertorganisation')).order_by(order)
         context = super().get_context_data(object_list=object_list, **kwargs)
         context["form"] = OrganisationForm()
         return context

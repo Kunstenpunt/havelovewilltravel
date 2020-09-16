@@ -37,6 +37,7 @@
         {% for organisation in object_list %}
           <li class="list-group-item d-flex justify-content-between align-items-center">
               <a href="{% url 'organisation_detail' organisation.id %}">{{ organisation.name }}</a>
+              {% if organisation.location != location%}<span class="text-muted">{{ organisation.location }}</span>{% endif %}
               <span class="badge badge-primary badge-pill">{{ organisation.num_concerts }}</span>
           </li>
         {% endfor %}
