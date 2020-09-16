@@ -70,6 +70,17 @@
 <div class="container my-4">
     <h4 class="display-4">More information</h4>
     <div class="card-columns">
+        <div class="card">
+        <h5 class="card-header">Concerts</h5>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a href="{% url 'concerts' %}?location={{ location.pk }}">See concerts in this city</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         {% if location.locationa.all or location.locationb.all %}
         <div class="card">
             <h5 class="card-header">Related location</h5>

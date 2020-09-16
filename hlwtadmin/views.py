@@ -389,14 +389,15 @@ class DefaultConcertListView(ListView):
         filter_end = self.request.GET.get('filter_end', '2999-12-31')
         filter_val = self.request.GET.get('filter', None)
         filter_genre = self.request.GET.get('genrefilter', None)
-        if filter_val and not filter_genre:
-            new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end).filter(relationconcertorganisation__organisation__location__country__name=filter_val)
-        elif not filter_val and filter_genre:
-            new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end).filter(genre__name=filter_genre)
-        elif filter_val and filter_genre:
-            new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end).filter(relationconcertorganisation__organisation__location__country__name=filter_val).filter(genre__name=filter_genre)
-        else:
-            new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end)
+        filter_loc = self.request.GET.get('location', None)
+
+        new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end)
+        if filter_val:
+            new_context = new_context.filter(relationconcertorganisation__organisation__location__country__name=filter_val)
+        if filter_genre:
+            new_context = new_context.filter(genre__name=filter_genre)
+        if filter_loc:
+            new_context = new_context.filter(relationconcertorganisation__organisation__location__pk=filter_loc)
         return new_context
 
 
