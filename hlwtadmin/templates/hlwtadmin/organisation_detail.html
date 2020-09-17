@@ -87,6 +87,9 @@
                 {% if concert.verified %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
                 {% if concert.manual %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/manual.png' %}" alt="manual" />{% endif %}
                 {% if concert.is_new %}{% load static %}<br/><span class="badge badge-secondary">New</span>{% endif %}
+                {% for rel in concert.organisationsqs %}
+                    {% if rel.organisation != organisation %}<br/><span class="text-muted">{{ rel.organisation.name }}</span>{% endif %}
+                {% endfor %}
             </td>
             <td valign="top">
               {% for relation in concert.artistsqs %}
