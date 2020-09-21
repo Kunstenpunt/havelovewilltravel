@@ -19,6 +19,9 @@
     <p class="lead">in {{ location.subcountry }}, <a href="{% url 'locations' %}?filter={{ location.country.name }}&orderby=city" >{{ location.country.name }} <img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" /></a></p>
     <p>Zipcode: {{ location.zipcode }}, GPS: {{ location.latitude }}, {{ location.longitude }}</p>
     <p>Disambiguation: {{ location.disambiguation }}</p>
+    <p>
+        <a href="{% url 'concerts' %}?location={{ location.pk }}">See concerts in this city</a>
+    </p>
         <form method="get" action="{% url 'location_detail' location.id %}">
             <div class="form-group">
                 <label for="orderby">Order organisations</label>
@@ -71,16 +74,6 @@
 <div class="container my-4">
     <h4 class="display-4">More information</h4>
     <div class="card-columns">
-        <div class="card">
-        <h5 class="card-header">Concerts</h5>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <a href="{% url 'concerts' %}?location={{ location.pk }}">See concerts in this city</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
 
         {% if location.locationa.all or location.locationb.all %}
         <div class="card">
