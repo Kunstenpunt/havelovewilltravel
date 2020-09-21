@@ -1,4 +1,4 @@
-from hlwtadmin.models import Artist, GigFinderUrl, GigFinder, ConcertAnnouncement, Venue, Location, Organisation, Country, Concert, RelationConcertConcert, RelationConcertOrganisation, RelationConcertArtist, Location, OrganisationsMerge
+from hlwtadmin.models import Artist, GigFinderUrl, GigFinder, ConcertAnnouncement, Venue, Location, Organisation, Country, Concert, RelationConcertConcert, RelationConcertOrganisation, RelationConcertArtist, Location, OrganisationsMerge, RelationLocationLocation
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -27,18 +27,19 @@ class Command(BaseCommand):
             "ĂŠ": "é"
         }
 
-        for loc in Location.objects.all():
+        for rel in RelationLocationLocation.objects.all():
+            loc = Location.objects.get(pk=rel.location_a.pk)
+            superloc = Location.objects.get(pk=rel.location_b.pk)
+            print(loc, "part of", superloc)
             for org in Organisation.objects.filter(location=loc).order_by('disambiguation'):
                 for map in mapper:
                     new_name = str(org.name).replace(map, mapper[map]).strip()
                     if new_name != org.name:
-                        print("about to change", org.name, "to", new_name)
                         org.name = new_name
                         org.save(update_fields=['name'])
-                print("looking for similar orgs to", org, org.pk, org.disambiguation, "in", loc)
                 mergeorgs = []
-                for simorg in Organisation.objects.filter(location=loc).filter(name__unaccent__iexact=org.name).exclude(pk=org.pk):
-                    print("\tThe given organisation is very similar to", simorg, simorg.id)
+                for simorg in Organisation.objects.filter(location=superloc).filter(name__unaccent__iexact=org.name).exclude(pk=org.pk):
+                    print("\t", org, org.id, "is very similar to", simorg, simorg.id)
                     mergeorgs.append(simorg)
 
                 if len(mergeorgs) > 0:
@@ -48,7 +49,8 @@ class Command(BaseCommand):
                         )
                         org_merge.alias_objects.set(mergeorgs)
                         org_merge.delete()
-                        print("done!")
+                        print("\tdone!")
                     except Exception as e:
-                        print("exception", e)
+                        print("\texception", e)
                         pass
+            input()
