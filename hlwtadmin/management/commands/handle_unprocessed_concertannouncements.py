@@ -9,7 +9,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True).filter(date__lte=datetime(2010, 12, 31)):
+        for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True):
         #for concertannouncement in ConcertAnnouncement.objects.filter(concert__isnull=True).exclude(ignore=True).filter(raw_venue__organisation__location__pk=34789):
             print("concertannouncement\thttp://hlwtadmin.herokuapp.com/hlwtadmin/concertannouncement/" + str(concertannouncement.pk) + "\trelated venue\thttp://hlwtadmin.herokuapp.com/hlwtadmin/venue/" + str(concertannouncement.raw_venue.pk) if concertannouncement.raw_venue else "---")
             ca2c = ConcertannouncementToConcert(concertannouncement)
