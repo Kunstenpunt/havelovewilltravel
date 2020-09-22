@@ -776,11 +776,16 @@ class ConcertannouncementToConcert:
     def __init__(self, concertannouncement):
         self.concertannouncement = concertannouncement
         self.masterconcert = None
-        self.locations = [self.concertannouncement.most_likely_clean_location()]
-        extra_locations_a = [subloc[0] for subloc in RelationLocationLocation.objects.filter(location_b=locations[0]).values_list('location_a')]
-        extra_locations_b = [subloc[0] for subloc in RelationLocationLocation.objects.filter(location_a=locations[0]).values_list('location_b')]
-        self.locations.append(extra_locations_a)
-        self.locations.append(extra_locations_b)
+        most_likely_clean_location = self.concertannouncement.most_likely_clean_location()
+        extra_locations_a = [subloc[0] for subloc in RelationLocationLocation.objects.filter(location_b=most_likely_clean_location).values_list('location_a')]
+        extra_locations_b = [subloc[0] for subloc in RelationLocationLocation.objects.filter(location_a=most_likely_clean_location).values_list('location_b')]
+        self.locations = []
+        self.locations.extend(extra_locations_a)
+        self.locations.extend(extra_locations_b)
+        self.locations.append(most_likely_clean_location.pk)
+        print(self.locations)
+        print("location of CA", [Location.objects.get(pk=loc) for loc in self.locations])
+        input()
 
     def automate(self):
         print("working on", self.concertannouncement, self.concertannouncement.pk)
@@ -843,7 +848,7 @@ class ConcertannouncementToConcert:
             exclude(ignore=True).\
             exclude(cancelled=True).\
             filter(relationconcertartist__artist=self.concertannouncement.artist).\
-            filter(relationconcertorganisation__organisation__location__in=self.locations)
+            filter(relationconcertorganisation__organisation__location__pk__in=self.locations)
         if period_concert:
             return period_concert.first()
         else:
@@ -854,7 +859,7 @@ class ConcertannouncementToConcert:
                 exclude(ignore=True).\
                 exclude(cancelled=True).\
                 filter(relationconcertartist__artist=self.concertannouncement.artist).\
-                filter(relationconcertorganisation__organisation__location__in=self.locations)
+                filter(relationconcertorganisation__organisation__location__pk__in=self.locations)
             if specific_concert:
                 return specific_concert.first()
             else:
@@ -868,7 +873,7 @@ class ConcertannouncementToConcert:
             exclude(ignore=True).\
             exclude(cancelled=True).\
             filter(relationconcertartist__artist=self.concertannouncement.artist).\
-            filter(relationconcertorganisation__organisation__location__in=self.locations)
+            filter(relationconcertorganisation__organisation__location__pk__in=self.locations)
         if period_concert:
             return period_concert.first()
         else:
@@ -878,7 +883,7 @@ class ConcertannouncementToConcert:
                 exclude(ignore=True).\
                 exclude(cancelled=True).\
                 filter(relationconcertartist__artist=self.concertannouncement.artist).\
-                filter(relationconcertorganisation__organisation__location__in=self.locations)
+                filter(relationconcertorganisation__organisation__location__pk__in=self.locations)
             if specific_concert:
                 return specific_concert.first()
             else:
