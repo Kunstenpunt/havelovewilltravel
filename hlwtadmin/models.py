@@ -783,9 +783,6 @@ class ConcertannouncementToConcert:
         self.locations.extend(extra_locations_a)
         self.locations.extend(extra_locations_b)
         self.locations.append(most_likely_clean_location.pk)
-        print(self.locations)
-        print("location of CA", [Location.objects.get(pk=loc) for loc in self.locations])
-        input()
 
     def automate(self):
         print("working on", self.concertannouncement, self.concertannouncement.pk)
