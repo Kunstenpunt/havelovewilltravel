@@ -63,6 +63,7 @@
         </thead>
         {% for concert in concert_list %}
         {% if concert.cancelled %}<tr style="text-decoration: line-through;">{% else %} <tr> {% endif %}
+        {% if concert.multiple_organisations_in_related_locations and request.resolver_match.url_name == "concerts_with_multiple_organisations_in_different_countries" %}<tr class="table-info">{% else %} <tr> {% endif %}
         <td>
             <a href="{{ concert.get_absolute_url }}">{{ concert.date }}{% if concert.until_date and concert.until_date != concert.date %} - <br/>{{ concert.until_date }}{% endif %}</a>
             {% if concert.verified %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}

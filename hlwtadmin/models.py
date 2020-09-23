@@ -295,7 +295,13 @@ class Concert(models.Model):
         if this_relation and this_relation.organisation:
             if this_relation.organisation.location:
                 this_location = this_relation.organisation.location
-                return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation__location=this_location).exclude(id=self.id).distinct()
+                extra_locations_a = [subloc[0] for subloc in RelationLocationLocation.objects.filter(location_b=this_location).values_list('location_a')]
+                extra_locations_b = [subloc[0] for subloc in RelationLocationLocation.objects.filter(location_a=this_location).values_list('location_b')]
+                locations = []
+                locations.extend(extra_locations_a)
+                locations.extend(extra_locations_b)
+                locations.append(this_location.pk)
+                return Concert.objects.filter(date=self.date).filter(relationconcertorganisation__organisation__location__pk__in=locations).exclude(id=self.id).distinct()
 
     def is_confirmed(self):
         for ca in ConcertAnnouncement.objects.filter(concert__id=self.id):
@@ -308,6 +314,13 @@ class Concert(models.Model):
         RelationConcertConcert.objects.filter(concert_a=self).all().delete()
         RelationConcertConcert.objects.filter(concert_b=self).all().delete()
         super(Concert, self).delete()
+
+    def multiple_organisations_in_related_locations(self):
+        locs = set([rel.organisation.location for rel in self.organisationsqs()])
+        for loc_a in locs:
+            for loc_b in locs:
+                if loc_a.related_to(loc_b):
+                    return True
 
     def save(self, *args, **kwargs):
         send = False
@@ -465,6 +478,9 @@ class Location(models.Model):
                (" (" + self.zipcode + ")" if self.zipcode else "") + \
                (" [" + self.subcountry + "]" if self.subcountry and self.country.name != "Belgium" else "") + \
                (", " + self.country.name if self.country else ", No country")
+
+    def related_to(self, other_location):
+        return RelationLocationLocation.objects.filter(location_a=self).filter(location_b=other_location).exists() or RelationLocationLocation.objects.filter(location_a=other_location).filter(location_b=self).exists()
 
     def get_absolute_url(self):
         return reverse('location_detail', args=[str(self.id)])
@@ -782,7 +798,8 @@ class ConcertannouncementToConcert:
         self.locations = []
         self.locations.extend(extra_locations_a)
         self.locations.extend(extra_locations_b)
-        self.locations.append(most_likely_clean_location.pk)
+        if most_likely_clean_location:
+            self.locations.append(most_likely_clean_location.pk)
 
     def automate(self):
         print("working on", self.concertannouncement, self.concertannouncement.pk)

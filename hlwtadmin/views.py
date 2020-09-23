@@ -422,7 +422,7 @@ class ConcertsWithMultipleOrganisationsInDifferentCountries(DefaultConcertListVi
     paginate_by = 30
 
     def get_queryset(self):
-        return self.apply_filters().annotate(num_countries=Count('relationconcertorganisation__organisation__location', distinct=True)).filter(num_countries__gte=2)
+        return self.apply_filters().annotate(num_countries=Count('relationconcertorganisation__organisation__location', distinct=True)).filter(num_countries__gte=2).exclude(verified=True)
 
 
 class RecentlyAddedConcertListView(DefaultConcertListView):
