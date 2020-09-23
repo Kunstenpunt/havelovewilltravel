@@ -377,16 +377,16 @@ class RelationConcertOrganisationsListView(ListView):
 class DefaultConcertListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_start'] = self.request.GET.get('filter_start', (datetime.date() - timedelta(days=365)).date().isoformat())
-        context['filter_end'] = self.request.GET.get('filter_end', (datetime.date() + timedelta(days=365)).date().isoformat())
+        context['filter_start'] = self.request.GET.get('filter_start', (datetime.now() - timedelta(days=365)).date().isoformat())
+        context['filter_end'] = self.request.GET.get('filter_end', (datetime.now() + timedelta(days=365)).date().isoformat())
         context['filter'] = self.request.GET.get('filter', None)
         context['countries'] = Country.objects.all().distinct()
         context['genres'] = Genre.objects.all().distinct()
         return context
 
     def apply_filters(self):
-        filter_start = self.request.GET.get('filter_start', (datetime.date() - timedelta(days=365)).date().isoformat())
-        filter_end = self.request.GET.get('filter_end', (datetime.date() + timedelta(days=365)).date().isoformat())
+        filter_start = self.request.GET.get('filter_start', (datetime.now() - timedelta(days=365)).date().isoformat())
+        filter_end = self.request.GET.get('filter_end', (datetime.now() + timedelta(days=365)).date().isoformat())
         filter_val = self.request.GET.get('filter', None)
         filter_genre = self.request.GET.get('genrefilter', None)
         filter_loc = self.request.GET.get('location', None)
