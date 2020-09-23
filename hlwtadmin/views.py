@@ -855,7 +855,7 @@ class OrganisationDetailView(DetailView, MultipleObjectMixin):
         venue_page = self.request.GET.get('venue_page', 1)
         organisations = [suborg[0] for suborg in RelationOrganisationOrganisation.objects.filter(organisation_b=self.object).values_list('organisation_a')]
         organisations.append(self.object.pk)
-        concerts = Concert.objects.filter(relationconcertorganisation__organisation__pk__in=organisations)
+        concerts = Concert.objects.filter(relationconcertorganisation__organisation__pk__in=organisations).distinct()
         object_list = Paginator(concerts, 30).page(concert_page)
         venue_list = Paginator(Venue.objects.filter(organisation=self.object).order_by('raw_venue'), 50).page(venue_page)
         context = super().get_context_data(object_list=object_list, venue_list=venue_list, **kwargs)
