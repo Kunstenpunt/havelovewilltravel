@@ -23,3 +23,5 @@ class Command(BaseCommand):
                             line = [str(i), "concert", str(concert), str(concert.pk), "with organisation", str(organisation), str(organisation.pk), "has ca", str(ca), str(ca.pk), "with raw venue", str(raw_venue), str(raw_venue.pk), "which has organisation", str(venue_organisation), str(venue_organisation.pk) if venue_organisation else str(None)]
                             print("\t".join(line))
                             i += 1
+                            rel.organisation = venue_organisation
+                            rel.save()
