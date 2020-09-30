@@ -19,12 +19,15 @@ from collections import Counter
 from regex import sub
 from collections import Counter
 
+from simple_history.models import HistoricalRecords
+
 
 # Create your models here.
 class GigFinder(models.Model):
     name = models.CharField(max_length=200)
     base_url = models.URLField()
     api_key = models.CharField(max_length=500)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -124,6 +127,7 @@ class ConcertAnnouncement(models.Model):
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
     cancelled = models.BooleanField(null=True, blank=True, default=False)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.title
@@ -211,6 +215,7 @@ class Venue(models.Model):
     raw_location = models.CharField(max_length=200, blank=True, null=True)
     organisation = models.ForeignKey("Organisation", on_delete=models.PROTECT, blank=True, null=True)
     non_assignable = models.BooleanField(default=False)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.raw_venue
@@ -250,6 +255,7 @@ class Concert(models.Model):
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
     annotation = models.CharField(max_length=500, blank=True, null=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.title
@@ -355,6 +361,7 @@ class Organisation(models.Model):
     capacity = models.CharField(max_length=250, null=True, blank=True)
     annotation = models.CharField(max_length=500, null=True, blank=True)
     address = models.CharField(max_length=200, blank=True, null=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -414,6 +421,7 @@ class Location(models.Model):
     subcountry = models.CharField(max_length=200, blank=True, null=True)
     verified = models.BooleanField(blank=True, null=True, default=True)
     disambiguation = models.CharField(max_length=200, blank=True, null=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.city + \
@@ -434,6 +442,7 @@ class Location(models.Model):
 class Country(models.Model):
     name = models.CharField(max_length=200)
     iso_code = models.CharField(max_length=2, blank=True, null=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -447,6 +456,7 @@ class RelationConcertArtist(models.Model):
     artist_credited_as = models.CharField(max_length=200, blank=True, null=True)
     concert = models.ForeignKey("Concert", on_delete=models.PROTECT)
     relation_type = models.ManyToManyField("RelationConcertArtistType", blank=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.concert.title + " - " + self.artist.name
@@ -473,6 +483,7 @@ class RelationConcertArtist(models.Model):
 
 class RelationConcertArtistType(models.Model):
     name = models.CharField(max_length=200)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -484,6 +495,7 @@ class RelationConcertOrganisation(models.Model):
     organisation_credited_as = models.CharField(max_length=200, blank=True, null=True)
     relation_type = models.ManyToManyField("RelationConcertOrganisationType", blank=True)
     verified = models.BooleanField(blank=True, default=False)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.concert.title + " " + (self.organisation_credited_as + " (" + self.organisation.name + ")" if self.organisation_credited_as else str(self.organisation))
@@ -508,6 +520,7 @@ class RelationConcertOrganisation(models.Model):
 
 class RelationConcertOrganisationType(models.Model):
     name = models.CharField(max_length=200)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -529,6 +542,7 @@ class RelationOrganisationOrganisation(models.Model):
     end_date = models.DateField(blank=True, null=True)
     end_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
     relation_type = models.ManyToManyField("RelationOrganisationOrganisationType", blank=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         startdate = self.start_date.strftime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
@@ -547,6 +561,7 @@ class RelationOrganisationOrganisation(models.Model):
 
 class RelationOrganisationOrganisationType(models.Model):
     name = models.CharField(max_length=200)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -568,6 +583,7 @@ class RelationArtistArtist(models.Model):
     end_date = models.DateField(blank=True, null=True)
     end_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
     relation_type = models.ManyToManyField("RelationArtistArtistType", blank=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         startdate = self.start_date.strptime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
@@ -586,6 +602,7 @@ class RelationArtistArtist(models.Model):
 
 class RelationArtistArtistType(models.Model):
     name = models.CharField(max_length=200)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -640,6 +657,7 @@ class LocationsMerge(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(max_length=200)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -649,6 +667,7 @@ class RelationConcertConcert(models.Model):
     concert_a = models.ForeignKey("Concert", on_delete=models.PROTECT, related_name='concerta')
     concert_b = models.ForeignKey("Concert", on_delete=models.PROTECT, related_name='concertb')
     relation_type = models.ManyToManyField("RelationConcertConcertType", blank=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.concert_a.title + " " + self.relation_type + " " + self.concert_b.title
@@ -659,6 +678,7 @@ class RelationConcertConcert(models.Model):
 
 class RelationConcertConcertType(models.Model):
     name = models.CharField(max_length=200)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -668,6 +688,7 @@ class RelationLocationLocation(models.Model):
     location_a = models.ForeignKey("Location", on_delete=models.PROTECT, related_name='locationa')
     location_b = models.ForeignKey("Location", on_delete=models.PROTECT, related_name='locationb')
     relation_type = models.ManyToManyField("RelationLocationLocationType", blank=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return str(self.location_a) + " " + self.relation_type + " " + str(self.location_b)
@@ -678,6 +699,7 @@ class RelationLocationLocation(models.Model):
 
 class RelationLocationLocationType(models.Model):
     name = models.CharField(max_length=200)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -686,6 +708,7 @@ class RelationLocationLocationType(models.Model):
 class ExternalIdentifierService(models.Model):
     name = models.CharField(max_length=200)
     base_url = models.URLField()
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -694,6 +717,7 @@ class ExternalIdentifierService(models.Model):
 class ExternalIdentifier(models.Model):
     identifier = models.CharField(max_length=200)
     service = models.ForeignKey("ExternalIdentifierService", on_delete=models.PROTECT, null=True, blank=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.identifier + " (" + (self.service.name if self.service else "No service provided") + ")"
@@ -714,6 +738,7 @@ class RelationOrganisationIdentifier(models.Model):
     end_date_precision = models.PositiveSmallIntegerField(choices=PRECISION, default=YEAR)
     organisation = models.ForeignKey("Organisation", on_delete=models.PROTECT)
     identifier = models.ForeignKey("ExternalIdentifier", on_delete=models.PROTECT)
+    history = HistoricalRecords()
 
     def __str__(self):
         startdate = self.start_date.strptime("%Y/%m/%d"[0:self.start_date_precision]) if self.start_date else "?"
