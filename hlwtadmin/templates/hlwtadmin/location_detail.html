@@ -83,15 +83,15 @@
                     {% for relation in location.locationa.all %}
                       <li class="list-group-item">
                           {{ location.city }} {{ relation.relation_type.all|join:" and " }} <a href="{{ relation.location_b.id }}">{{ relation.location_b.city }} in {{ relation.location_b.subcountry }}, {{ relation.location_b.country.name }}</a>
-                          {% if perms.hlwtadmin.can_update_relationlocationlocation %}<a href="{% url 'relationlocationlocation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
-                          {% if perms.hlwtadmin.can_delete_relationlocationlocation %}<a href="{% url 'relationlocationlocation_delete' relation.id location.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
+                          {% if perms.hlwtadmin.update_relationlocationlocation %}<a href="{% url 'relationlocationlocation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
+                          {% if perms.hlwtadmin.delete_relationlocationlocation %}<a href="{% url 'relationlocationlocation_delete' relation.id location.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
                       </li>
                     {% endfor %}
                     {% for relation in location.locationb.all %}
                       <li class="list-group-item">
                           <a href="{{ relation.location_a.id }}">{{ relation.location_a.city }} in {{ relation.location_a.subcountry }}, {{ relation.location_a.country.name }}</a> {{ relation.relation_type.all|join:", " }} {{ location.city }}
-                          {% if perms.hlwtadmin.can_update_relationlocationlocation %}<a href="{% url 'relationlocationlocation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
-                          {% if perms.hlwtadmin.can_delete_relationlocationlocation %}<a href="{% url 'relationlocationlocation_delete' relation.id location.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
+                          {% if perms.hlwtadmin.update_relationlocationlocation %}<a href="{% url 'relationlocationlocation_update' relation.id %}">{% load static %}<img src="{% static 'icons/edit.png' %}" alt="edit" /></a>{% endif %}
+                          {% if perms.hlwtadmin.delete_relationlocationlocation %}<a href="{% url 'relationlocationlocation_delete' relation.id location.id %}">{% load static %}<img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
                       </li>
                     {% endfor %}
                 </ul>

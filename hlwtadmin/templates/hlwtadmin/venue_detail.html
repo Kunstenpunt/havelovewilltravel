@@ -80,7 +80,7 @@
             <h5 class="card-header">Actions</h5>
             <div class="card-body">
                 <ul class="list-unstyled">
-                    <li>{% if perms.hlwtadmin.can_update_venue %}<a href="{% url 'venue_update' venue.id %}">Relate this venue to an organisation</a>{% endif %}</li>
+                    <li>{% if perms.hlwtadmin.update_venue %}<a href="{% url 'venue_update' venue.id %}">Relate this venue to an organisation</a>{% endif %}</li>
                 </ul>
             </div>
         </div>
