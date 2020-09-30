@@ -505,7 +505,8 @@ class SongkickLeecher(PlatformLeecher):
                             raw_venue=venue,
                             ignore=False,
                             latitude=concert["latitude"],
-                            longitude=concert["longitude"]
+                            longitude=concert["longitude"],
+                            cancelled=concert["cancelled"]
                         )
                         ca.save()
                     else:
@@ -523,6 +524,8 @@ class SongkickLeecher(PlatformLeecher):
                             concertannouncement.latitude = concert["latitude"]
                         if concert["longitude"] != concertannouncement.longitude:
                             concertannouncement.longitude = concert["longitude"]
+                        if concert["cancelled"] != concert.cancelled:
+                            concertannouncement.cancelled = concert["cancelled"]
                         concertannouncement.last_seen_on = datetime.now()
                         concertannouncement.save()
 
@@ -546,5 +549,6 @@ class SongkickLeecher(PlatformLeecher):
             "longitude": event["venue"]["lng"],
             "source": self.platform,
             "event_id": str(event["id"]),
-            "event_type": event["type"].lower()
+            "event_type": event["type"].lower(),
+            "cancelled": event["status"] != "ok"
         }

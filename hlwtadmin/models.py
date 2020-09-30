@@ -123,6 +123,7 @@ class ConcertAnnouncement(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
+    cancelled = models.BooleanField(null=True, blank=True, default=False)
 
     def __str__(self):
         return self.title
@@ -192,6 +193,7 @@ class ConcertAnnouncement(models.Model):
                 self.concert.longitude = self.longitude
                 self.concert.date = self.date if self.until_date is None else self.concert.date
                 self.concert.until_date = self.until_date if self.concert.until_date is not None else None
+                self.concert.cancelled = self.cancelled
                 self.concert.save()
                 if self.raw_venue.organisation and (self.raw_venue.organisation not in [rel.organisation for rel in self.concert.organisationsqs()]):
                     rel = RelationConcertOrganisation.objects.\
