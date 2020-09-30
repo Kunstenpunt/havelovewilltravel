@@ -106,7 +106,6 @@
     {% if user.is_authenticated %}
     <div class="card">
         <h5 class="card-header">Actions</h5>
-        <p>{{ perms.hlwtadmin.change_location }}</p>
         <div class="card-body">
             <ul class="list-group list-group-flush">
                 {% if perms.hlwtadmin.change_location %}<li class="list-group-item"><a href="{% url 'location_update' location.id %}">Update this location</a></li>{% endif %}
