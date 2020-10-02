@@ -11,10 +11,13 @@ from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location
 # Define the admin class
 class ArtistAdmin(admin.ModelAdmin):
     search_fields = ["name"]
+    list_filter = ["genre"]
 
 
 class ConcertAnnouncementAdmin(SimpleHistoryAdmin):
     autocomplete_fields = ["artist", "concert", "raw_venue"]
+    list_filter = ["date", "until_date"]
+    search_fields = ["artist__name"]
 
 
 class VenueAdmin(SimpleHistoryAdmin):
@@ -22,8 +25,20 @@ class VenueAdmin(SimpleHistoryAdmin):
     autocomplete_fields = ["organisation"]
 
 
+class RelationConcertArtistInline(admin.TabularInline):
+    model = RelationConcertArtist
+    autocomplete_fields = ["concert", "artist"]
+
+
+class RelationConcertOrganisationInline(admin.TabularInline):
+    model = RelationConcertOrganisation
+    autocomplete_fields = ["concert", "organisation"]
+
+
 class ConcertAdmin(SimpleHistoryAdmin):
-    search_fields = ["title"]
+    search_fields = ["title", "relationconcertartist__artist__name", "relationconcertorganisation__organisation__name"]
+    list_filter = ["date", "genre"]
+    inlines = [RelationConcertArtistInline, RelationConcertOrganisationInline]
 
 
 class OrganisationAdmin(SimpleHistoryAdmin):
@@ -32,8 +47,9 @@ class OrganisationAdmin(SimpleHistoryAdmin):
 
 
 class LocationAdmin(SimpleHistoryAdmin):
-    search_fields = ["city"]
+    search_fields = ["city", "country__name"]
     autocomplete_fields = ["country"]
+    list_filter = ["country__name"]
 
 
 class CountryAdmin(SimpleHistoryAdmin):
@@ -46,10 +62,12 @@ class ExternalIdentifierAdmin(SimpleHistoryAdmin):
 
 class RelationConcertArtistAdmin(SimpleHistoryAdmin):
     autocomplete_fields = ["artist", "concert"]
+    search_fields = ["artist__name"]
 
 
 class RelationConcertOrganisationAdmin(SimpleHistoryAdmin):
     autocomplete_fields = ["concert", "organisation"]
+    search_fields = ["organisation__name"]
 
 
 class RelationOrganisationOrganisationAdmin(SimpleHistoryAdmin):
