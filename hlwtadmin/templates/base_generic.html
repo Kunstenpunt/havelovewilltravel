@@ -62,15 +62,18 @@
                             <a class="dropdown-item" href="{% url 'venues' %}">Venues</a>
                             <a class="dropdown-item" href="{% url 'concertannouncements' %}">Concertannouncements</a>
                             <a class="dropdown-item" href="{% url 'gigfinderurls' %}">Gigfinderurls</a>
+                            <a class="dropdown-item" href="{% url 'users' %}">Users</a>
                         </div>
                     </li>
                     {% endif %}
                 </ul>
+                {% if user.is_authenticated %}
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'concert_create' %}">Add a manual concert</a>
                     </li>
                 </ul>
+                {% endif %}
                 <ul class="navbar-nav my-2 my-lg-0">
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">

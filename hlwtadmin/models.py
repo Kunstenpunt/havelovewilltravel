@@ -258,7 +258,7 @@ class Concert(models.Model):
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.title
+        return self.artists() + " @ " + self.organisations() + " on " + self.date.isoformat()
 
     def is_ontologically_sound(self):
         concert_organisations = set([rel.organisation.pk for rel in self.organisationsqs()])
@@ -329,6 +329,43 @@ class Concert(models.Model):
             for loc_b in locs:
                 if loc_a.related_to(loc_b):
                     return True
+
+    def get_changelist(self):
+        changes = []
+        for new_record in self.history.all():
+            old_record = new_record.prev_record
+            if old_record:
+                delta = new_record.diff_against(old_record)
+                changes.append(delta)
+        return changes
+
+    def get_organisations_changelist(self):
+        changes = []
+        for relation in RelationConcertOrganisation.history.filter(concert=self):
+            if relation.history_type == "-":
+                changes.append({"new_record": relation, "changes": [{"field": "organisation", "old": relation.instance.organisation.pk, "new": "deleted"}]})
+            if relation.history_type == "~":
+                old_record = relation.prev_record
+                if old_record:
+                    delta = relation.diff_against(old_record)
+                    changes.append(delta)
+            if relation.history_type == "+":
+                changes.append({"new_record": relation, "changes": [{"field": "organisation", "old": "not existing", "new": relation.instance.organisation.pk}]})
+        return changes
+
+    def get_artists_changelist(self):
+        changes = []
+        for relation in RelationConcertArtist.history.filter(concert=self):
+            if relation.history_type == "-":
+                changes.append({"new_record": relation, "changes": [{"field": "artist", "old": relation.instance.artist.pk, "new": "deleted"}]})
+            if relation.history_type == "~":
+                old_record = relation.prev_record
+                if old_record:
+                    delta = relation.diff_against(old_record)
+                    changes.append(delta)
+            if relation.history_type == "+":
+                changes.append({"new_record": relation, "changes": [{"field": "artist", "old": "not existing", "new": relation.instance.artist.pk}]})
+        return changes
 
     class Meta:
         ordering = ['-date']
@@ -435,6 +472,17 @@ class Location(models.Model):
     def get_absolute_url(self):
         return reverse('location_detail', args=[str(self.id)])
 
+    def get_changelist(self):
+        changes = []
+        for new_record in self.history.all():
+            old_record = new_record.prev_record
+            if old_record:
+                delta = new_record.diff_against(old_record)
+                changes.append(delta)
+                for change in delta.changes:
+                    print("{} changed from {} to {}".format(change.field, change.old, change.new))
+        return changes
+
     class Meta:
         ordering = ['country', 'city']
 
@@ -463,7 +511,6 @@ class RelationConcertArtist(models.Model):
 
     def save(self, *args, **kwargs):
         super(RelationConcertArtist, self).save(*args, **kwargs)
-        self.concert.save()
 
     def previous_concert_by_artist(self):
         if self.concert.date:
@@ -502,7 +549,6 @@ class RelationConcertOrganisation(models.Model):
 
     def save(self, *args, **kwargs):
         super(RelationConcertOrganisation, self).save(*args, **kwargs)
-        self.concert.save()
 
     def previous_concert_at_organisation(self):
         if self.concert.date:

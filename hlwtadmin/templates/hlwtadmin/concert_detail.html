@@ -267,10 +267,6 @@
                     <td>Created at</td>
                     <td>{{ concert.created_at }}</td>
                 </tr>
-                <tr>
-                    <td>Updated at</td>
-                    <td>{{ concert.updated_at }}</td>
-                </tr>
             </table>
         </div>
     </div>
@@ -322,29 +318,46 @@
             </ul>
         </div>
     </div>
+    <div class="card">
+        <h5 class="card-header">Concert history</h5>
+        {% for delta in concert.get_changelist %}
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item list-group-item-dark">On {{ delta.new_record.history_date}}, {{ delta.new_record.history_user }} changed</li>
+                    {% for change in delta.changes %}
+                        <li class="list-group-item">{{ change.field }} from {{ change.old }} to {{ change.new }}</li>
+                    {% endfor %}
+                    </ul>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="card">
+    <h5 class="card-header">Related organisations history</h5>
+    {% for delta in concert.get_organisations_changelist %}
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-dark">On {{ delta.new_record.history_date}}, {{ delta.new_record.history_user }} changed</li>
+                {% for change in delta.changes %}
+                    <li class="list-group-item">{{ change.field }} from {{ change.old }} to {{ change.new }}</li>
+                {% endfor %}
+                </ul>
+        </div>
+    {% endfor %}
+    </div>
+    <div class="card">
+    <h5 class="card-header">Related artists history</h5>
+    {% for delta in concert.get_artists_changelist %}
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-dark">On {{ delta.new_record.history_date}}, {{ delta.new_record.history_user }} changed</li>
+                {% for change in delta.changes %}
+                    <li class="list-group-item">{{ change.field }} from {{ change.old }} to {{ change.new }}</li>
+                {% endfor %}
+                </ul>
+        </div>
+    {% endfor %}
+    </div>
 </div>
 {% endif %}
 </div>
-
-
-<!--<div class="modal fade" tabindex="-1" role="dialog" id="modal">-->
-<!--  <div class="modal-dialog" role="document">-->
-<!--    <div class="modal-content">-->
-
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
 {% endblock %}
-
-<!--{% block javascript %}-->
-<!--<script type="text/javascript">-->
-<!--$(document).ready(function() {-->
-
-<!--    $(".concert-update").modalForm({-->
-<!--        formURL: "{% url 'concert_update' concert.id %}"-->
-<!--    });-->
-
-<!--});-->
-<!--</script>-->
-<!--{% endblock %}-->

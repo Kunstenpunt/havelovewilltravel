@@ -7,7 +7,7 @@ from dal import autocomplete
 from django.db.models import Q, Exists, Count, F, Max, DateField
 from django.db.models.functions import Length
 from django.utils.html import format_html
-
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 
 from datetime import datetime, timedelta
@@ -170,7 +170,11 @@ def index(request):
         'num_locations': Location.objects.count(),
         'num_excluded_artists': Artist.objects.filter(exclude=True).count(),
         'num_included_artists': Artist.objects.filter(include=True).count(),
-        'concerts_abroad_today': Concert.objects.filter(date=datetime.now().date()).exclude(relationconcertorganisation__organisation__location__country__name='Belgium')
+        'concerts_abroad_today': Concert.objects.filter(date=datetime.now().date()).exclude(relationconcertorganisation__organisation__location__country__name='Belgium'),
+        'concert_history': Concert.history.all()[:10],
+        'relconcertartist_history': RelationConcertArtist.history.all()[:10],
+        'relconcertorganisation_history': RelationConcertOrganisation.history.all()[:10],
+        'location_history': Location.history.all()[:10]
     }
 
     # Render the HTML template index.html with the data in the context variable
@@ -1544,4 +1548,26 @@ class RelationLocationLocationDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        return context
+
+
+class UserList(ListView):
+    model = User
+    paginate_by = 30
+
+
+class UserDetail(DetailView, MultipleObjectMixin):
+    model = User
+    fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        page_concert = self.request.GET.get('page_concert', 1)
+        page_relconcorg = self.request.GET.get('page_relconcorg', 1)
+        page_relconcart = self.request.GET.get('page_relconcart', 1)
+        page_location = self.request.GET.get('page_location', 1)
+        concert_changes = Paginator(Concert.history.filter(history_user=self.object.pk), 5).page(page_concert)
+        relationconcertorganisation_changes = Paginator(RelationConcertOrganisation.history.filter(history_user=self.object.pk), 5).page(page_relconcorg)
+        relationconcertartist_changes = Paginator(RelationConcertArtist.history.filter(history_user=self.object.pk), 5).page(page_relconcart)
+        location_changes = Paginator(Location.history.filter(history_user=self.object.pk), 5).page(page_location)
+        context = super().get_context_data(object_list=[], concert_changes=concert_changes, relationconcertorganisation_changes=relationconcertorganisation_changes, relationconcertartist_changes=relationconcertartist_changes, location_changes=location_changes, **kwargs)
         return context

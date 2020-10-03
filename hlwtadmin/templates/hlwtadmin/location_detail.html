@@ -98,6 +98,19 @@
             </div>
         </div>
         {% endif %}
+        <div class="card">
+            <h5 class="card-header">History</h5>
+            {% for delta in location.get_changelist %}
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item list-group-item-dark">On {{ delta.new_record.history_date}}, {{ delta.new_record.history_user }} changed</li>
+                        {% for change in delta.changes %}
+                            <li class="list-group-item">{{ change.field }} from {{ change.old }} to {{ change.new }}</li>
+                        {% endfor %}
+                        </ul>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 

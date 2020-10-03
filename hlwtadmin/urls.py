@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views, models
+from django.contrib.auth.models import User
 
 
 urlpatterns = [
@@ -134,6 +135,10 @@ urlpatterns = [
     path('concertsmerges/', views.ConcertsMergeList.as_view(model=models.ConcertsMerge), name='concertsmerges'),
     path('locationsmerge/create/', views.LocationsMergeCreate.as_view(model=models.LocationsMerge), name='locationsmerge_create'),
     path('locationsmerge/<str:pk>/confirm/', views.LocationsMergeDelete.as_view(model=models.LocationsMerge), name='locationsmerge_delete'),
+
+    # users
+    path('users/', views.UserList.as_view(model=User), name='users'),
+    path('user/<str:pk>', views.UserDetail.as_view(model=User), name='user_detail'),
 ]
 
 from django.conf import settings
