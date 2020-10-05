@@ -1,83 +1,25 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<div class="card-columns">
-    <div class="card">
-        <h5 class="card-header">Concert changes</h5>
-        <div class="card-body">
-            {% for change in concert_changes %}
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">{{ change.history_date }} - <a href="{% url 'concert_detail' change.instance.pk %}">{{ change.instance }}</a> [<a href="{% url 'admin:hlwtadmin_concert_history' change.instance.pk %}">admin<a/>]</li>
-            </ul>
-            {% endfor %}
-            {% load my_tags %}
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    {% if concert_changes.has_previous %}<li class="page-item"><a class="page-link" href="?{% param_replace page_concert=concert_changes.previous_page_number %}">previous</a></li>{% endif %}
-                    <li class="page-item"><a class="page-link" href="#">Page {{ concert_changes.number }} of {{ concert_changes.paginator.num_pages }}</a></li>
-                    {% if concert_changes.has_next %}<li class="page-item"><a class="page-link" href="?{% param_replace page_concert=concert_changes.next_page_number %}">next</a></li>{% endif %}
-                </ul>
-            </nav>
-        </div>
-    </div>
-
-    <div class="card">
-        <h5 class="card-header">Relation Concert Organisation changes</h5>
-        <div class="card-body">
-            {% for change in relationconcertorganisation_changes %}
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">{{ change.history_date }} - <a href="{% url 'concert_detail' change.instance.concert.pk %}">{{ change.instance }}</a> [<a href="{% url 'admin:hlwtadmin_relationconcertorganisation_history' change.instance.pk %}">admin<a/>]</li>
-            </ul>
-            {% endfor %}
-            {% load my_tags %}
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    {% if relationconcertorganisation_changes.has_previous %}<li class="page-item"><a class="page-link" href="?{% param_replace page_relconcorg=relationconcertorganisation_changes.previous_page_number %}">previous</a></li>{% endif %}
-                    <li class="page-item"><a class="page-link" href="#">Page {{ relationconcertorganisation_changes.number }} of {{ relationconcertorganisation_changes.paginator.num_pages }}</a></li>
-                    {% if relationconcertorganisation_changes.has_next %}<li class="page-item"><a class="page-link" href="?{% param_replace page_relconcorg=relationconcertorganisation_changes.next_page_number %}">next</a></li>{% endif %}
-                </ul>
-            </nav>
-        </div>
-    </div>
-
-    <div class="card">
-        <h5 class="card-header">Relation Concert Artist changes</h5>
-        <div class="card-body">
-            {% for change in relationconcertartist_changes %}
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">{{ change.history_date }} - <a href="{% url 'concert_detail' change.instance.concert.pk %}">{{ change.instance }}</a> [<a href="{% url 'admin:hlwtadmin_relationconcertartist_history' change.instance.pk %}">admin<a/>]</li>
-            </ul>
-            {% endfor %}
-            {% load my_tags %}
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    {% if relationconcertartist_changes.has_previous %}<li class="page-item"><a class="page-link" href="?{% param_replace page_relconcart=relationconcertartist_changes.previous_page_number %}">previous</a></li>{% endif %}
-                    <li class="page-item"><a class="page-link" href="#">Page {{ relationconcertartist_changes.number }} of {{ relationconcertartist_changes.paginator.num_pages }}</a></li>
-                    {% if relationconcertartist_changes.has_next %}<li class="page-item"><a class="page-link" href="?{% param_replace page_relconcart=relationconcertartist_changes.next_page_number %}">next</a></li>{% endif %}
-                </ul>
-            </nav>
-        </div>
-    </div>
-
-    <div class="card">
-        <h5 class="card-header">Location changes</h5>
-        <div class="card-body">
-            {% for change in location_changes %}
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">{{ change.history_date }} - <a href="{% url 'location_detail' change.instance.pk %}">{{ change.instance }}</a> [<a href="{% url 'admin:hlwtadmin_location_history' change.instance.pk %}">admin</a>]</li>
-            </ul>
-            {% endfor %}
-            {% load my_tags %}
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    {% if location_changes.has_previous %}<li class="page-item"><a class="page-link" href="?{% param_replace page_location=location_changes.previous_page_number %}">previous</a></li>{% endif %}
-                    <li class="page-item"><a class="page-link" href="#">Page {{ location_changes.number }} of {{ location_changes.paginator.num_pages }}</a></li>
-                    {% if location_changes.has_next %}<li class="page-item"><a class="page-link" href="?{% param_replace page_location=location_changes.next_page_number %}">next</a></li>{% endif %}
-                </ul>
-            </nav>
-        </div>
-    </div>
-
-
-</div>
+<h1 class="h1">Changes made by {{ user }}</h1>
+    <table class="table table-striped">
+        <tr>
+            <th>Timestamp</th>
+            <th>Object</th>
+        </tr>
+        {% for change in report_changes %}
+        <tr>
+            <td class="text-nowrap">{{ change.history_date }}</td>
+            <td>{{ change.instance }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% load my_tags %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if report_changes.has_previous %}<li class="page-item"><a class="page-link" href="?{% param_replace page_report=report_changes.previous_page_number %}">previous</a></li>{% endif %}
+            <li class="page-item"><a class="page-link" href="#">Page {{ report_changes.number }} of {{ report_changes.paginator.num_pages }}</a></li>
+            {% if report_changes.has_next %}<li class="page-item"><a class="page-link" href="?{% param_replace page_report=report_changes.next_page_number %}">next</a></li>{% endif %}
+        </ul>
+    </nav>
 {% endblock %}

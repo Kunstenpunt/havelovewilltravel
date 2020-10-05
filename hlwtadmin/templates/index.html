@@ -117,51 +117,6 @@
         </div>
   </div>
 {% endif %}
-  </div>
-
-<div class="card-columns">
-  <div class="card">
-    <h5 class="card-header">Concert changes</h5>
-    <div class="card-body">
-      <ul class="list-group list-group-flush">
-        {% for hist in concert_history %}
-        <li class="list-group-item">{{ hist }} by {{ hist.history_user }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-
-  <div class="card">
-    <h5 class="card-header">Relation Concert Artist changes</h5>
-    <div class="card-body">
-      <ul class="list-group list-group-flush">
-        {% for hist in relconcertartist_history %}
-        <li class="list-group-item">{{ hist }} by {{ hist.history_user }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-
-  <div class="card">
-  <h5 class="card-header">Relation Concert Organisation changes</h5>
-    <div class="card-body">
-      <ul class="list-group list-group-flush">
-        {% for hist in relconcertorganisation_history %}
-        <li class="list-group-item">{{ hist }} by {{ hist.history_user }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-
-  <div class="card">
-  <h5 class="card-header">Location changes</h5>
-    <div class="card-body">
-      <ul class="list-group list-group-flush">
-        {% for hist in location_history %}
-        <li class="list-group-item">{{ hist }} by {{ hist.history_user }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
 </div>
+
 {% endblock %}
