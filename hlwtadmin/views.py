@@ -1553,7 +1553,7 @@ class UserList(ListView, MultipleObjectMixin):
 
     def get_context_data(self, **kwargs):
         page_report = self.request.GET.get('page_report', 1)
-        lookback = 3
+        lookback = 6
         concert_changes = Concert.history.filter(history_date__gt=datetime.now() - timedelta(days=lookback))
         relationconcertorganisation_changes = RelationConcertOrganisation.history.filter(history_date__gt=datetime.now() - timedelta(days=lookback))
         relationconcertartist_changes = RelationConcertArtist.history.filter(history_date__gt=datetime.now() - timedelta(days=lookback))

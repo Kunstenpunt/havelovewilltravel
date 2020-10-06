@@ -336,35 +336,62 @@ class Concert(models.Model):
             old_record = new_record.prev_record
             if old_record:
                 delta = new_record.diff_against(old_record)
-                changes.append(delta)
+                if len(delta.changes) > 0:
+                    changes.append(delta)
         return changes
 
     def get_organisations_changelist(self):
         changes = []
         for relation in RelationConcertOrganisation.history.filter(concert=self):
             if relation.history_type == "-":
-                changes.append({"new_record": relation, "changes": [{"field": "organisation", "old": relation.instance.organisation.pk, "new": "deleted"}]})
+                changes.append({"new_record": relation, "changes": [{"field": "organisation", "old": (relation.instance.organisation.pk, relation.instance.organisation.name), "new": ("deleted", "deleted")}]})
             if relation.history_type == "~":
                 old_record = relation.prev_record
                 if old_record:
                     delta = relation.diff_against(old_record)
+                    deltachanges = []
+                    for change in delta.changes:
+                        field = change.field
+                        old = (Organisation.objects.get(pk=change.old).pk, Organisation.objects.get(pk=change.old).name) if field == "organisation" else change.old
+                        new = (Organisation.objects.get(pk=change.new).pk, Organisation.objects.get(pk=change.new).name) if field == "organisation" else change.new
+                        deltachanges.append(
+                            {
+                                "field": field,
+                                "old": old,
+                                "new": new
+                            }
+                        )
+                    delta.changes = deltachanges
                     changes.append(delta)
             if relation.history_type == "+":
-                changes.append({"new_record": relation, "changes": [{"field": "organisation", "old": "not existing", "new": relation.instance.organisation.pk}]})
+                changes.append({"new_record": relation, "changes": [{"field": "organisation", "old": ("not existing", "not existing"), "new": (relation.instance.organisation.pk, relation.instance.organisation.name)}]})
         return changes
 
     def get_artists_changelist(self):
         changes = []
         for relation in RelationConcertArtist.history.filter(concert=self):
             if relation.history_type == "-":
-                changes.append({"new_record": relation, "changes": [{"field": "artist", "old": relation.instance.artist.pk, "new": "deleted"}]})
+                changes.append({"new_record": relation, "changes": [{"field": "artist", "old": (relation.instance.artist.pk, relation.instance.artist.name), "new": ("deleted", "deleted")}]})
             if relation.history_type == "~":
                 old_record = relation.prev_record
                 if old_record:
                     delta = relation.diff_against(old_record)
+                    deltachanges = []
+                    for change in delta.changes:
+                        field = change.field
+                        old = (Artist.objects.get(mbid=change.old).pk, Artist.objects.get(mbid=change.old).name) if field == "artist" else change.old
+                        new = (Artist.objects.get(mbid=change.new).pk, Artist.objects.get(mbid=change.new).name) if field == "artist" else change.new
+                        deltachanges.append(
+                            {
+                                "field": field,
+                                "old": old,
+                                "new": new
+                            }
+                        )
+                    delta.changes = deltachanges
                     changes.append(delta)
             if relation.history_type == "+":
-                changes.append({"new_record": relation, "changes": [{"field": "artist", "old": "not existing", "new": relation.instance.artist.pk}]})
+                changes.append({"new_record": relation, "changes": [{"field": "artist", "old": ("not existing", "not existing"), "new": (relation.instance.artist.pk, relation.instance.artist.name)}]})
         return changes
 
     class Meta:
