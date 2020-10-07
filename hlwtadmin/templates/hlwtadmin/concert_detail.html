@@ -357,7 +357,7 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item list-group-item-dark">On {{ delta.new_record.history_date}}, {{ delta.new_record.history_user }} changed</li>
                 {% for change in delta.changes %}
-                <li class="list-group-item"><em>{{ change.field }}</em> from <em>{ change.old.1 }}</em> to <em>{{ change.new.1 }}</em></li>
+                <li class="list-group-item"><em>{{ change.field }}</em> from <em>{{ change.old.1 }}</em> to <em>{{ change.new.1 }}</em></li>
                 {% endfor %}
                 </ul>
         </div>
