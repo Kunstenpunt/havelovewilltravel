@@ -1,6 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+<div class="container my-4">
 <h1 class="h1">Changes made by {{ user }}</h1>
     <table class="table table-striped">
         <tr>
@@ -10,7 +11,7 @@
         {% for change in report_changes %}
         <tr>
             <td class="text-nowrap">{{ change.history_date }}</td>
-            <td>{{ change.instance }}</td>
+            <td>{{ change.history_type }} <a href="{{ change.revert_url }}">{{ change.instance }}</a></td>
         </tr>
         {% endfor %}
     </table>
@@ -22,4 +23,5 @@
             {% if report_changes.has_next %}<li class="page-item"><a class="page-link" href="?{% param_replace page_report=report_changes.next_page_number %}">next</a></li>{% endif %}
         </ul>
     </nav>
+</div>
 {% endblock %}

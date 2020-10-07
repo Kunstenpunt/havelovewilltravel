@@ -1582,6 +1582,6 @@ class UserDetail(DetailView, MultipleObjectMixin):
         location_changes = Location.history.filter(history_user=self.object.pk).filter(history_date__gt=datetime.now() - timedelta(days=lookback))
         report = chain(concert_changes, relationconcertorganisation_changes, relationconcertartist_changes, location_changes)
         report = sorted(report, key=lambda x: x.history_date, reverse=True)
-        report_changes = Paginator(list(report), 30).page(page_report)
-        context = super().get_context_data(object_list=[], report_changes=report_changes, concert_changes=concert_changes, relationconcertorganisation_changes=relationconcertorganisation_changes, relationconcertartist_changes=relationconcertartist_changes, location_changes=location_changes, **kwargs)
+        report_changes = Paginator(report, 30).page(page_report)
+        context = super().get_context_data(object_list=[], report_changes=report_changes, **kwargs)
         return context

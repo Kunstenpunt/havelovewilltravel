@@ -38,7 +38,7 @@
 </div>
 
 
-<table class="table table-striped">
+    <table class="table table-striped">
         <tr>
             <th>Timestamp</th>
             <th>Object</th>
@@ -47,7 +47,7 @@
         {% for change in report_changes %}
         <tr>
             <td class="text-nowrap">{{ change.history_date }}</td>
-            <td>{{ change.instance }}</td>
+            <td>{{ change.history_type }} <a href="{{ change.revert_url }}">{{ change.instance }}</a></td>
             <td>{{ change.history_user }}</td>
         </tr>
         {% endfor %}

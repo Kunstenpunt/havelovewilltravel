@@ -293,7 +293,6 @@
 </div>
 
 {% if user.is_authenticated %}
-
 <div class="container my-4">
     <h4 class="display-4">Administration</h4>
     <div class="card-columns">
@@ -318,18 +317,25 @@
             </ul>
         </div>
     </div>
+    </div>
+</div>
+<div class="container my-4">
+    <h4 class="display-4">History</h4>
+    <div class="card-columns">
     <div class="card">
         <h5 class="card-header">Concert history</h5>
-        {% for delta in concert.get_changelist %}
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item list-group-item-dark">On {{ delta.new_record.history_date}}, {{ delta.new_record.history_user }} changed</li>
-                    {% for change in delta.changes %}
-                        <li class="list-group-item">{{ change.field }} from {{ change.old }} to {{ change.new }}</li>
-                    {% endfor %}
-                    </ul>
-            </div>
-        {% endfor %}
+        {% if concert.get_changelist %}
+            {% for delta in concert.get_changelist %}
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item list-group-item-dark">On {{ delta.new_record.history_date}}, {{ delta.new_record.history_user }} changed</li>
+                        {% for change in delta.changes %}
+                            <li class="list-group-item">{{ change.field }} from {{ change.old }} to {{ change.new }}</li>
+                        {% endfor %}
+                        </ul>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
     <div class="card">
     <h5 class="card-header">Related organisations history</h5>
@@ -338,7 +344,7 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item list-group-item-dark">On {{ delta.new_record.history_date}}, {{ delta.new_record.history_user }} changed</li>
                 {% for change in delta.changes %}
-                    <li class="list-group-item">{{ change.field }} from {{ change.old.1 }} to {{ change.new.1 }}</li>
+                    <li class="list-group-item"><em>{{ change.field }}</em> from <em>{{ change.old.1 }}</em> to <em>{{ change.new.1 }}</em></li>
                 {% endfor %}
                 </ul>
         </div>
@@ -351,14 +357,13 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item list-group-item-dark">On {{ delta.new_record.history_date}}, {{ delta.new_record.history_user }} changed</li>
                 {% for change in delta.changes %}
-                    <li class="list-group-item">{{ change.field }} from {{ change.old.1 }} to {{ change.new.1 }}</li>
+                <li class="list-group-item"><em>{{ change.field }}</em> from <em>{ change.old.1 }}</em> to <em>{{ change.new.1 }}</em></li>
                 {% endfor %}
                 </ul>
         </div>
     {% endfor %}
     </div>
 </div>
-{% endif %}
 </div>
-
+{% endif %}
 {% endblock %}
