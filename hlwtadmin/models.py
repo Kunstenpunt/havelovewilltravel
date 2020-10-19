@@ -534,7 +534,10 @@ class RelationConcertArtist(models.Model):
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.concert.title + " - " + self.artist.name
+        try:
+            return self.concert.title + " - " + self.artist.name
+        except Exception as e:
+            return str(e)
 
     def save(self, *args, **kwargs):
         super(RelationConcertArtist, self).save(*args, **kwargs)
@@ -572,7 +575,10 @@ class RelationConcertOrganisation(models.Model):
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.concert.title + " " + (self.organisation_credited_as + " (" + self.organisation.name + ")" if self.organisation_credited_as else str(self.organisation))
+        try:
+            return self.concert.title + " " + (self.organisation_credited_as + " (" + self.organisation.name + ")" if self.organisation_credited_as else str(self.organisation))
+        except Exception as e:
+            return str(e)
 
     def save(self, *args, **kwargs):
         super(RelationConcertOrganisation, self).save(*args, **kwargs)
