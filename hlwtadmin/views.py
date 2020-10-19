@@ -1553,7 +1553,7 @@ class UserList(ListView, MultipleObjectMixin):
 
     def get_context_data(self, **kwargs):
         page_report = self.request.GET.get('page_report', 1)
-        lookback = 30
+        lookback = 15
         concert_changes = Concert.history.filter(history_date__gt=datetime.now() - timedelta(days=lookback))
         relationconcertorganisation_changes = RelationConcertOrganisation.history.filter(history_date__gt=datetime.now() - timedelta(days=lookback))
         relationconcertartist_changes = RelationConcertArtist.history.filter(history_date__gt=datetime.now() - timedelta(days=lookback))
@@ -1575,7 +1575,7 @@ class UserDetail(DetailView, MultipleObjectMixin):
 
     def get_context_data(self, **kwargs):
         page_report = self.request.GET.get('page_report', 1)
-        lookback = 365
+        lookback = 100
         concert_changes = Concert.history.filter(history_user=self.object.pk).filter(history_date__gt=datetime.now() - timedelta(days=lookback))
         relationconcertorganisation_changes = RelationConcertOrganisation.history.filter(history_user=self.object.pk).filter(history_date__gt=datetime.now() - timedelta(days=lookback))
         relationconcertartist_changes = RelationConcertArtist.history.filter(history_user=self.object.pk).filter(history_date__gt=datetime.now() - timedelta(days=lookback))
