@@ -141,7 +141,7 @@ class FacebookScraper(PlatformLeecher):
         try:
             ld = loads(soup.find("script", {"type": "application/ld+json"}).text)
             datum = dateparse(ld["startDate"]).date()
-            einddatum = dateparse(ld["endDate"]).date()
+            einddatum = dateparse(ld["endDate"]).date() if "endDate" in ld else None
             location = self._get_location(ld)
             titel = ld["name"]
             event_data = {
@@ -209,7 +209,7 @@ class FacebookScraper(PlatformLeecher):
                                 title=concert["titel"],
                                 artist=Artist.objects.filter(mbid=mbid).first(),
                                 date=concert["datum"].isoformat(),
-                                until_date=concert["einddatum"].isoformat(),
+                                until_date=concert["einddatum"].isoformat() if concert["einddatum"] else None,
                                 gigfinder=self.gf,
                                 gigfinder_concert_id=concert["event_id"],
                                 last_seen_on=datetime.now(),
@@ -497,7 +497,7 @@ class SongkickLeecher(PlatformLeecher):
                             title=concert["titel"][0:199],
                             artist=Artist.objects.filter(mbid=mbid).first(),
                             date=concert["datum"].isoformat(),
-                            until_date=concert["einddatum"].isoformat(),
+                            until_date=concert["einddatum"].isoformat() if concert["einddatum"] else None,
                             is_festival=concert["is_festival"],
                             gigfinder=self.gf,
                             gigfinder_concert_id=concert["event_id"],
@@ -524,7 +524,7 @@ class SongkickLeecher(PlatformLeecher):
                             concertannouncement.latitude = concert["latitude"]
                         if concert["longitude"] != concertannouncement.longitude:
                             concertannouncement.longitude = concert["longitude"]
-                        if concert["cancelled"] != concert.cancelled:
+                        if concert["cancelled"] != concertannouncement.cancelled:
                             concertannouncement.cancelled = concert["cancelled"]
                         concertannouncement.last_seen_on = datetime.now()
                         concertannouncement.save()
