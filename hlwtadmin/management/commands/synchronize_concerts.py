@@ -102,7 +102,7 @@ class PlatformLeecher(object):
 class FacebookScraper(PlatformLeecher):
     def __init__(self):
         super(FacebookScraper, self).__init__()
-        self.platform = "facebook"
+        self.platform = "www.facebook.com"
         self.gf = GigFinder.objects.filter(name="www.facebook.com").first()
         self.ua = UserAgent()
 
@@ -140,8 +140,16 @@ class FacebookScraper(PlatformLeecher):
         soup = BeautifulSoup(r, 'html.parser')
         try:
             ld = loads(soup.find("script", {"type": "application/ld+json"}).text)
-            datum = dateparse(ld["startDate"]).date()
-            einddatum = dateparse(ld["endDate"]).date() if "endDate" in ld else None
+            datum = dateparse(ld["startDate"])
+            einddatum = dateparse(ld["endDate"]) if "endDate" in ld else None
+            if einddatum:
+                if einddatum.hour < 12 and datum < einddatum:
+                    einddatum = (einddatum - timedelta(days=1))
+                einddatum = einddatum.date()
+                datum = datum.date()
+                if einddatum == datum:
+                    einddatum = None
+
             location = self._get_location(ld)
             titel = ld["name"]
             event_data = {
