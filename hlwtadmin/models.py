@@ -539,9 +539,6 @@ class RelationConcertArtist(models.Model):
         except Exception as e:
             return str(e)
 
-    def save(self, *args, **kwargs):
-        super(RelationConcertArtist, self).save(*args, **kwargs)
-
     def previous_concert_by_artist(self):
         if self.concert.date:
             return RelationConcertArtist.objects.filter(artist=self.artist).filter(concert__date__lt=self.concert.date).order_by('-concert__date').first()
@@ -579,9 +576,6 @@ class RelationConcertOrganisation(models.Model):
             return self.concert.title + " " + (self.organisation_credited_as + " (" + self.organisation.name + ")" if self.organisation_credited_as else str(self.organisation))
         except Exception as e:
             return str(e)
-
-    def save(self, *args, **kwargs):
-        super(RelationConcertOrganisation, self).save(*args, **kwargs)
 
     def previous_concert_at_organisation(self):
         if self.concert.date:
