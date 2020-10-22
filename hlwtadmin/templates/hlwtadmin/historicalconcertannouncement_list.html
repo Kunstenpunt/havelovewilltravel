@@ -1,0 +1,66 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="jumbotron my-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Concertannouncements</li>
+      </ol>
+    </nav>
+  <h1>Concert Announcement List</h1>
+    <p class="lead">This page provides an overview of the individual ConcertAnnouncements that underly the Concerts in this database.</p>
+    <hr class="my-4">
+    <form method="get" action="{% url request.resolver_match.url_name %}">
+        <div class="form-group">
+            <table>
+                {{ form.as_table }}
+            </table>
+        </div>
+        <div class="form-group">
+            <input class="btn btn-primary" type="submit" name="submit" value="Submit"/>
+        </div>
+      </form>
+</div>
+
+{% if historicalconcertannouncement_list %}
+<div class="container my-4">
+    <table class="table table-striped table-sm">
+        <thead class="thead-light">
+            <tr>
+                <th>CA</th>
+            </tr>
+        </thead>
+        {% for concertannouncement in historicalconcertannouncement_list %}
+        <tr {% if concertannouncement.ignore %}class="table-danger" style="text-decoration: line-through"{% endif %}>
+            <td>
+                {{ concertannouncement.history_date }} <a href="{% url 'concertannouncement_detail' concertannouncement.pk %}">{{ concertannouncement.title }}</a> [{{ concertannouncement.history_change_reason }}]
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% load my_tags %}
+    {% if is_paginated %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?{% param_replace page=1 %}">First</a></li>
+              {% if page_obj.previous_page_number != 1 %}
+              <li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a></li>
+              {% endif %}
+            {% endif %}
+
+            <li class="page-item"><a class="page-link" href="#">Page {{ page_obj.number }} of {{ paginator.num_pages }}</a></li>
+
+            {% if page_obj.has_next %}
+              {% if page_obj.next_page_number != paginator.num_pages %}
+              <li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.next_page_number %}">Next</a></li>
+              {% endif %}
+            <li class="page-item"><a class="page-link" href="?{% param_replace page=paginator.num_pages %}">Last</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

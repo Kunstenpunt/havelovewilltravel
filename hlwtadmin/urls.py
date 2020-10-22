@@ -78,6 +78,7 @@ urlpatterns = [
     path('concertannouncement/create/', views.ConcertAnnouncementCreate.as_view(), name='concertannouncement_create'),
     path('concertannouncement/<int:pk>/update/', views.ConcertAnnouncementUpdate.as_view(), name='concertannouncement_update'),
     path('concertannouncement/<int:pk>/delete/', views.ConcertAnnouncementDelete.as_view(), name='concertannouncement_delete'),
+    path('concertannouncements_leech/', views.ConcertAnnouncementLeechListView.as_view(), name='concertannouncements_leech'),
     # relationconcertorganisations
     path('relationconcertorganisations/', views.RelationConcertOrganisationsListView.as_view(), name='relationconcertorganisations'),
     path('relationconcertorganisation/create/<int:pk>', views.RelationConcertOrganisationCreate.as_view(), name='relationconcertorganisation_create'),

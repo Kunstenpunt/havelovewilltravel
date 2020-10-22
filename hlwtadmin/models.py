@@ -8,7 +8,7 @@ from django_super_deduper.merge import MergedModelInstance
 from json import dumps
 import hashlib
 import hmac
-
+from simple_history.utils import update_change_reason
 from requests import post
 from datetime import datetime, timedelta, date
 import pytz
@@ -199,11 +199,13 @@ class ConcertAnnouncement(models.Model):
                 self.concert.until_date = self.until_date if self.concert.until_date is not None else None
                 self.concert.cancelled = self.cancelled
                 self.concert.save()
+                update_change_reason(self.concert, "automatic_change_" + datetime.now().date().isoformat())
                 if self.raw_venue.organisation and (self.raw_venue.organisation not in [rel.organisation for rel in self.concert.organisationsqs()]):
                     rel = RelationConcertOrganisation.objects.\
                         create(concert=self.concert,
                                organisation=self.raw_venue.organisation)
                     rel.save()
+                    update_change_reason(rel, "automatic_create_" + datetime.now().date().isoformat())
         super(ConcertAnnouncement, self).save(*args, **kwargs)
 
     class Meta:
@@ -856,6 +858,8 @@ class ConcertannouncementToConcert:
                 if self._is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert():
                     print("\t\t\tattach the organisation of the venue to the concert")
                     self._relate_organisation_related_to_venue_also_to_the_masterconcert()
+                self.masterconcert._change_reason = "automatic_" + datetime.now().date().isoformat()
+                self.masterconcert.save()
             else:
                 print("\t\tmaking a new MC")
                 if self._venue_is_not_related_to_organisation():
@@ -875,6 +879,8 @@ class ConcertannouncementToConcert:
                 if self._is_venue_related_to_organisation_other_than_organisations_already_related_to_masterconcert():
                     print("\t\t\tattach the organisation of the venue to the concert")
                     self._relate_organisation_related_to_venue_also_to_the_masterconcert()
+                self.masterconcert._change_reason = "automatic_change_" + datetime.now().date().isoformat()
+                self.masterconcert.save()
             else:
                 print("\t\tmaking new MC")
                 if self._venue_is_not_related_to_organisation():
@@ -954,7 +960,6 @@ class ConcertannouncementToConcert:
             print("----specifying masterconcert date")
             self.concertannouncement.concert.date = self.concertannouncement.date
             self.concertannouncement.concert.until_date = None
-            self.concertannouncement.concert.save()
 
     def _relate_organisation_related_to_venue_also_to_the_masterconcert(self):
         if not self.concertannouncement.raw_venue.non_assignable and self.concertannouncement.raw_venue.organisation is not None:
@@ -963,6 +968,7 @@ class ConcertannouncementToConcert:
                 create(concert=self.masterconcert,
                        organisation=self.concertannouncement.raw_venue.organisation,
                        verified=False)
+            rco._change_reason = "automatic_create_" + datetime.now().date().isoformat()
             rco.save()
 
     def _relate_organisation_related_to_masterconcert_to_venue(self):
@@ -972,6 +978,7 @@ class ConcertannouncementToConcert:
                 if org.location == self.clean_location_from_string():
                     print("----attach organisation of concert to assignable venue without organisation")
                     self.concertannouncement.raw_venue.organisation = org.organisation
+                    self.concertannouncement.raw_venue._change_reason = "automatic_change_" + datetime.now().date().isoformat()
                     self.concertannouncement.raw_venue.save()
 
     def _venue_is_not_related_to_organisation(self):
@@ -1006,9 +1013,11 @@ class ConcertannouncementToConcert:
                                annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (land if len(land.strip()) else "unknown country") + " (" + bron + ")",
                                location=loc,
                                verified=False)
+                    org._change_reason = "automatic_create_" + datetime.now().date().isoformat()
                     org.save()
                 if self.concertannouncement.raw_venue.organisation is None and not self.concertannouncement.raw_venue.non_assignable and org is not None:
                     self.concertannouncement.raw_venue.organisation = org
+                    self.concertannouncement.raw_venue._change_reason = "automatic_change_" + datetime.now().date().isoformat()
                     self.concertannouncement.raw_venue.save()
         except ValueError as e:
             print("----something went wrong", e)
@@ -1021,12 +1030,13 @@ class ConcertannouncementToConcert:
                    until_date=(self.concertannouncement.until_date if self.concertannouncement.until_date != self.concertannouncement.date else None),
                    latitude=self.concertannouncement.latitude,
                    longitude=self.concertannouncement.longitude)
-        mc.save()
         for genre in self.concertannouncement.artist.genre.all():
             mc.genre.add(genre)
         if self.concertannouncement.raw_venue.organisation:
             relco = RelationConcertOrganisation(concert=mc, organisation=self.concertannouncement.raw_venue.organisation, verified=False)
+            relco._change_reason = "automatic_create_" + datetime.now().date().isoformat()
             relco.save()
         relca = RelationConcertArtist(concert=mc, artist=self.concertannouncement.artist)
+        relca._change_reason = "automatic_create_" + datetime.now().date().isoformat()
         relca.save()
         self.concertannouncement.concert = mc

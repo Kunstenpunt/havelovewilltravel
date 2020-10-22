@@ -6,7 +6,7 @@ import pytz
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import DatabaseError
-
+from simple_history.utils import update_change_reason
 from time import sleep
 
 from json import decoder, loads, dumps
@@ -41,7 +41,7 @@ class Command(BaseCommand):
         leecher_bit = BandsInTownLeecher()
         leecher_setlist = SetlistFmLeecher()
         leecher_songkick = SongkickLeecher()
-        for gfurl in GigFinderUrl.objects.filter(last_synchronized__lte=datetime.now(pytz.utc)-timedelta(days=4)):
+        for gfurl in GigFinderUrl.objects.filter(last_synchronized__lte=datetime.now(pytz.utc)-timedelta(days=0)):
             print(gfurl.artist, gfurl.artist.mbid, gfurl.url, gfurl.gigfinder.name, gfurl.last_synchronized)
             if gfurl.gigfinder.name == "www.facebook.com" and gfurl.artist.exclude is not True:
                 leecher_fb.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
@@ -146,9 +146,9 @@ class FacebookScraper(PlatformLeecher):
                 if einddatum.hour < 12 and datum < einddatum:
                     einddatum = (einddatum - timedelta(days=1))
                 einddatum = einddatum.date()
-                datum = datum.date()
-                if einddatum == datum:
+                if einddatum == datum.date():
                     einddatum = None
+            datum = datum.date()
 
             location = self._get_location(ld)
             titel = ld["name"]
@@ -210,6 +210,7 @@ class FacebookScraper(PlatformLeecher):
                                 raw_venue=venue_name,
                                 raw_location="|".join([concert["stad"], concert["land"], self.platform])
                             )
+                            venue._change_reason = "automatic_create_" + datetime.now().date().isoformat()
                             venue.save()
 
                         if not concertannouncement:
@@ -226,7 +227,9 @@ class FacebookScraper(PlatformLeecher):
                                 latitude=concert["latitude"],
                                 longitude=concert["longitude"]
                             )
+                            ca._change_reason = "automatic_create_" + datetime.now().date().isoformat()
                             ca.save()
+
                         else:
                             if concert["titel"] != concertannouncement.title:
                                 concertannouncement.title = concert["titel"]
@@ -241,6 +244,7 @@ class FacebookScraper(PlatformLeecher):
                             if concert["longitude"] != concertannouncement.longitude:
                                 concertannouncement.longitude = concert["longitude"]
                             concertannouncement.last_seen_on = datetime.now()
+                            concertannouncement._change_reason = "automatic_change_" + datetime.now().date().isoformat()
                             concertannouncement.save()
 
 
@@ -288,6 +292,7 @@ class BandsInTownLeecher(PlatformLeecher):
                             raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
                         )
                         venue.save()
+                        update_change_reason(venue, "automatic_create_" + datetime.now().date().isoformat())
 
                     if not concertannouncement:
                         ca = ConcertAnnouncement.objects.create(
@@ -302,7 +307,9 @@ class BandsInTownLeecher(PlatformLeecher):
                             latitude=concert["latitude"],
                             longitude=concert["longitude"]
                         )
+                        ca._change_reason = "automatic_change_" + datetime.now().date().isoformat()
                         ca.save()
+
                     else:
                         if concert["titel"] != concertannouncement.title:
                             concertannouncement.title = concert["titel"][0:199].replace(u"\x00", '')
@@ -315,6 +322,7 @@ class BandsInTownLeecher(PlatformLeecher):
                         if concert["longitude"] != concertannouncement.longitude:
                             concertannouncement.longitude = concert["longitude"]
                         concertannouncement.last_seen_on = datetime.now()
+                        concertannouncement._change_reason = "automatic_change_" + datetime.now().date().isoformat()
                         concertannouncement.save()
 
     def map_platform_to_schema(self, concert, band, mbid, other):
@@ -391,6 +399,7 @@ class SetlistFmLeecher(PlatformLeecher):
                             raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
                         )
                         venue.save()
+                        update_change_reason(venue, "automatic_create_" + datetime.now().date().isoformat())
 
                     if not concertannouncement:
                         ca = ConcertAnnouncement.objects.create(
@@ -405,7 +414,9 @@ class SetlistFmLeecher(PlatformLeecher):
                             latitude=concert["latitude"],
                             longitude=concert["longitude"]
                         )
+                        ca._change_reason = "automatic_create_" + datetime.now().date().isoformat()
                         ca.save()
+
                     else:
                         if concert["titel"] != concertannouncement.title:
                             concertannouncement.title = concert["titel"][0:199]
@@ -418,6 +429,7 @@ class SetlistFmLeecher(PlatformLeecher):
                         if concert["longitude"] != concertannouncement.longitude:
                             concertannouncement.longitude = concert["longitude"]
                         concertannouncement.last_seen_on = datetime.now()
+                        concertannouncement._change_reason = "automatic_change_" + datetime.now().date().isoformat()
                         concertannouncement.save()
 
     def map_platform_to_schema(self, concert, band, mbid, other):
@@ -498,6 +510,7 @@ class SongkickLeecher(PlatformLeecher):
                             raw_venue=venue_name[0:199],
                             raw_location="|".join([concert["stad"], concert["land"], self.platform])[0:199]
                         )
+                        venue._change_reason = "automatic_create_" + datetime.now().date().isoformat()
                         venue.save()
 
                     if not concertannouncement:
@@ -516,7 +529,9 @@ class SongkickLeecher(PlatformLeecher):
                             longitude=concert["longitude"],
                             cancelled=concert["cancelled"]
                         )
+                        ca._change_reason = "automatic_create_" + datetime.now().date().isoformat()
                         ca.save()
+
                     else:
                         if concert["titel"] != concertannouncement.title:
                             concertannouncement.title = concert["titel"]
@@ -535,6 +550,7 @@ class SongkickLeecher(PlatformLeecher):
                         if concert["cancelled"] != concertannouncement.cancelled:
                             concertannouncement.cancelled = concert["cancelled"]
                         concertannouncement.last_seen_on = datetime.now()
+                        concertannouncement._change_reason = "automatic_change_" + datetime.now().date().isoformat()
                         concertannouncement.save()
 
     def map_platform_to_schema(self, event, band, mbid, other):

@@ -1022,6 +1022,19 @@ class ArtistAutocompleteForm(forms.ModelForm):
         }
 
 
+class ConcertAnnouncementLeechListView(ListView):
+    model = ConcertAnnouncement
+    paginate_by = 30
+
+    def get_context_date(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_queryset(self):
+        new_context = ConcertAnnouncement.history.exclude(history_change_reason=None)
+        return new_context
+
+
 class DefaultConcertAnnouncementListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
