@@ -47,7 +47,14 @@
         {% for change in report_changes %}
         <tr>
             <td class="text-nowrap">{{ change.history_date }}</td>
-            <td>{{ change.history_type }} <a href="{{ change.revert_url }}">{{ change.instance }}</a></td>
+            <td>
+                {{ change.history_type }} <a href="{{ change.revert_url }}">{{ change.history_change_reason }}</a>
+                {% if change.get_change %}
+                {% for c in change.get_change.changes %}
+                    <p>{{ c.field }} changed from {{ c.old }} to {{ c.new }}</p>
+                {% endfor %}
+                {% endif %}
+            </td>
             <td>{{ change.history_user }}</td>
         </tr>
         {% endfor %}

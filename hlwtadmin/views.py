@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from itertools import chain
 from datetime import datetime, timedelta
+from simple_history.models import HistoricalChanges
 
 from django.views.generic.list import MultipleObjectMixin
 
@@ -1573,7 +1574,7 @@ class UserList(ListView, MultipleObjectMixin):
         location_changes = Location.history.filter(history_date__gt=datetime.now() - timedelta(days=lookback))
         report = chain(concert_changes, relationconcertorganisation_changes, relationconcertartist_changes,location_changes)
         report = sorted(report, key=lambda x: x.history_date, reverse=True)
-        report_changes = Paginator(list(report), 30).page(page_report)
+        report_changes = Paginator(list(report), 10).page(page_report)
         context = super().get_context_data(report_changes=report_changes,
                                            concert_changes=concert_changes,
                                            relationconcertorganisation_changes=relationconcertorganisation_changes,
@@ -1598,3 +1599,13 @@ class UserDetail(DetailView, MultipleObjectMixin):
         report_changes = Paginator(report, 30).page(page_report)
         context = super().get_context_data(object_list=[], report_changes=report_changes, **kwargs)
         return context
+
+
+def get_change(self):
+    old_record = self.prev_record
+    if old_record:
+        delta = self.diff_against(old_record)
+        return delta
+
+
+setattr(HistoricalChanges, 'get_change', get_change)

@@ -192,14 +192,18 @@ class ConcertAnnouncement(models.Model):
         if self.id:
             self.seen_count += 1
             if self.concert and not self.concert.verified:
-                self.concert.updated_at = datetime.now()
-                self.concert.latitude = self.latitude
-                self.concert.longitude = self.longitude
-                self.concert.date = self.date if self.until_date is None else self.concert.date
-                self.concert.until_date = self.until_date if self.concert.until_date is not None else None
-                self.concert.cancelled = self.cancelled
-                self.concert.save()
-                update_change_reason(self.concert, "automatic_change_" + datetime.now().date().isoformat())
+                changed = False
+                if self.concert.date != self.date:
+                    self.concert.date = self.date if self.until_date is None else self.concert.date
+                if self.concert.until_date != self.until_date:
+                    self.concert.until_date = self.until_date if self.concert.until_date is not None else None
+                if self.concert.cancelled != self.cancelled:
+                    self.concert.cancelled = self.cancelled
+
+                if changed:
+                    self.concert.updated_at = datetime.now()
+                    self.concert.save()
+                    update_change_reason(self.concert, "automatic_change_" + datetime.now().date().isoformat())
                 if self.raw_venue.organisation and (self.raw_venue.organisation not in [rel.organisation for rel in self.concert.organisationsqs()]):
                     rel = RelationConcertOrganisation.objects.\
                         create(concert=self.concert,
