@@ -116,6 +116,17 @@
             </ul>
         </div>
   </div>
+
+  <div class="card">
+    <h5 class="card-header">Leeches</h5>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+        {% for leech in leeches %}
+          <ul class="list-group-item">{{ leech.0 }} had {{ leech.1 }} edits.</ul>
+        {% endfor %}
+        </ul>
+      </div>
+  </div>
 {% endif %}
 </div>
 

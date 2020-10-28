@@ -12,7 +12,7 @@ from django.core.paginator import Paginator
 from itertools import chain
 from datetime import datetime, timedelta
 from simple_history.models import HistoricalChanges
-
+from collections import Counter
 from django.views.generic.list import MultipleObjectMixin
 
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, RelationConcertConcert, \
@@ -160,9 +160,19 @@ class VenueAutocomplete(autocomplete.Select2QuerySetView):
 
 def index(request):
     """View function for home page of site."""
+    lookback = 15
+    concert_changes = Concert.history.filter(history_user__isnull=True).filter(history_date__gt=datetime.now() - timedelta(days=lookback)).exclude(history_change_reason__isnull=True)
+    relationconcertorganisation_changes = RelationConcertOrganisation.history.filter(history_user__isnull=True).filter(history_date__gt=datetime.now() - timedelta(days=lookback)).exclude(history_change_reason__isnull=True)
+    relationconcertartist_changes = RelationConcertArtist.history.filter(history_user__isnull=True).filter(history_date__gt=datetime.now() - timedelta(days=lookback)).exclude(history_change_reason__isnull=True)
+    location_changes = Location.history.filter(history_user__isnull=True).filter(history_date__gt=datetime.now() - timedelta(days=lookback)).exclude(history_change_reason__isnull=True)
+    report = chain(concert_changes, relationconcertorganisation_changes, relationconcertartist_changes, location_changes)
+    report = sorted(report, key=lambda x: x.history_date, reverse=True)
+    leeches = Counter([item.history_change_reason for item in report])
+    leeches = sorted([leech for leech in leeches.most_common() if leech[0].startswith('automatic_')], key=lambda x: x[0], reverse=True)
 
     # Generate counts of some of the main objects
     context = {
+        'leeches': leeches,
         'num_concerts': Concert.objects.count(),
         'num_artists': Artist.objects.count(),
         'num_organisations': Organisation.objects.count(),
