@@ -1568,18 +1568,16 @@ class UserList(ListView, MultipleObjectMixin):
     def get_context_data(self, **kwargs):
         page_report = self.request.GET.get('page_report', 1)
         lookback = 15
-        concert_changes = Concert.history.filter(history_date__gt=datetime.now() - timedelta(days=lookback))
-        relationconcertorganisation_changes = RelationConcertOrganisation.history.filter(history_date__gt=datetime.now() - timedelta(days=lookback))
-        relationconcertartist_changes = RelationConcertArtist.history.filter(history_date__gt=datetime.now() - timedelta(days=lookback))
-        location_changes = Location.history.filter(history_date__gt=datetime.now() - timedelta(days=lookback))
-        report = chain(concert_changes, relationconcertorganisation_changes, relationconcertartist_changes,location_changes)
+        concert_changes = Concert.history.filter(history_user__isnull=True).filter(history_date__gt=datetime.now() - timedelta(days=lookback)).exclude(history_change_reason__isnull=True)
+        relationconcertorganisation_changes = RelationConcertOrganisation.history.filter(history_user__isnull=True).filter(history_date__gt=datetime.now() - timedelta(days=lookback)).exclude(history_change_reason__isnull=True)
+        relationconcertartist_changes = RelationConcertArtist.history.filter(history_user__isnull=True).filter(history_date__gt=datetime.now() - timedelta(days=lookback)).exclude(history_change_reason__isnull=True)
+        location_changes = Location.history.filter(history_user__isnull=True).filter(history_date__gt=datetime.now() - timedelta(days=lookback)).exclude(history_change_reason__isnull=True)
+        report = chain(concert_changes, relationconcertorganisation_changes, relationconcertartist_changes, location_changes)
         report = sorted(report, key=lambda x: x.history_date, reverse=True)
+        leeches = set([item.history_change_reason for item in report])
+        leeches = [item for item in leeches if str(item).startswith("automatic_")]
         report_changes = Paginator(list(report), 10).page(page_report)
-        context = super().get_context_data(report_changes=report_changes,
-                                           concert_changes=concert_changes,
-                                           relationconcertorganisation_changes=relationconcertorganisation_changes,
-                                           relationconcertartist_changes=relationconcertartist_changes,
-                                           location_changes=location_changes, **kwargs)
+        context = super().get_context_data(report_changes=report_changes, leeches=leeches, **kwargs)
         return context
 
 
@@ -1608,4 +1606,8 @@ def get_change(self):
         return delta
 
 
+def get_model(self):
+    return self._meta.model_name
+
 setattr(HistoricalChanges, 'get_change', get_change)
+setattr(HistoricalChanges, 'get_model', get_model)

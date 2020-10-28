@@ -37,6 +37,8 @@
   {% endif %}
 </div>
 
+<div class="container my-4">
+    <h1 class="h1">Automated edits</h1>
 
     <table class="table table-striped">
         <tr>
@@ -48,11 +50,14 @@
         <tr>
             <td class="text-nowrap">{{ change.history_date }}</td>
             <td>
-                {{ change.history_type }} <a href="{{ change.revert_url }}">{{ change.history_change_reason }}</a>
+                <a href="{{ change.revert_url }}">{{ change.get_model }}</a>
+                {{ change.history_change_reason }}
                 {% if change.get_change %}
+                <ul class="list-group">
                 {% for c in change.get_change.changes %}
-                    <p>{{ c.field }} changed from {{ c.old }} to {{ c.new }}</p>
+                    <li class="list-group-item">{{ c.field }} changed from {{ c.old }} to {{ c.new }}</li>
                 {% endfor %}
+                </ul>
                 {% endif %}
             </td>
             <td>{{ change.history_user }}</td>
@@ -67,5 +72,7 @@
             {% if report_changes.has_next %}<li class="page-item"><a class="page-link" href="?{% param_replace page_report=report_changes.next_page_number %}">next</a></li>{% endif %}
         </ul>
     </nav>
+
+</div>
 
 {% endblock %}
