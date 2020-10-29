@@ -428,6 +428,14 @@ class IgnoredConcertListView(DefaultConcertListView):
         return self.apply_filters().filter(ignore=True)
 
 
+class ConcertsInNonNeighbouringCountries(DefaultConcertListView):
+    model = Concert
+    paginate_by = 30
+
+    def get_queryset(self):
+        return self.apply_filters().exclude(relationconcertorganisation__organisation__location__country__name__in=["Belgium", "Ireland", "France", "Germany", "United Kingdom", "Netherlands", "Spain", "Portugal", "Italy", "Denmark"]).exclude(verified=True)
+
+
 class ConcertsWithMultipleOrganisationsInDifferentCountries(DefaultConcertListView):
     model = Concert
     paginate_by = 30
