@@ -1,9 +1,8 @@
 from django.urls import path
-from . import views, models
+from . import models, views
 from django.contrib.auth.models import User
 
-
-urlpatterns = [
+urlpatterns = [   
     path('', views.index, name='index'),
     # concerts
     path('concerts/', views.ConcertListView.as_view(), name='concerts'),
@@ -22,6 +21,7 @@ urlpatterns = [
     path('concert/<int:pk>/update/', views.ConcertUpdate.as_view(), name='concert_update'),
     path('concert/<int:pk>/delete/', views.ConcertDelete.as_view(), name='concert_delete'),
     path('concert/<int:pk>/delete/<int:concert_delete_with_ca_on_ignore>', views.ConcertDelete.as_view(), name='concert_delete_with_ca_on_ignore'),
+    path('concert-check/', views.concertcheckduplicate, name='concert-check-duplicate'),
     # artists
     path('artists/', views.ArtistListView.as_view(), name='artists'),
     path('includeartists/', views.IncludeArtistListView.as_view(), name='includeartists'),
@@ -116,11 +116,14 @@ urlpatterns = [
 
     # autocompletes
     path('artist-autocomplete/', views.ArtistAutocomplete.as_view(model=models.Artist), name='artist_autocomplete'),
+    path('artist-autocomplete-select/', views.ArtistAutocompleteSelect.as_view(model=models.Artist), name='artist_autocomplete_select'),
     path('concert-autocomplete/', views.ConcertAutocomplete.as_view(model=models.Concert, create_field='title'), name='concert_autocomplete'),
     path('concert-autocomplete-no-create/', views.ConcertAutocomplete.as_view(model=models.Concert), name='concert_autocomplete_no_create'),
     path('organisation-autocomplete/', views.OrganisationAutocomplete.as_view(model=models.Organisation, create_field='name'), name='organisation_autocomplete'),
+    path('organisation-autocomplete-select/', views.OrganisationAutocompleteSelect.as_view(model=models.Organisation, create_field='name'), name='organisation_autocomplete_select'),
     path('organisation-autocomplete-no-create/', views.OrganisationAutocomplete.as_view(model=models.Organisation), name='organisation_autocomplete_no_create'),
     path('location-autocomplete/', views.LocationAutocomplete.as_view(model=models.Location, create_field='city'), name='location_autocomplete'),
+    path('location-autocomplete-select/', views.LocationAutocompleteSelect.as_view(model=models.Location, create_field='city'), name='location_autocomplete_select'),
     path('location-autocomplete-no-create/', views.LocationAutocomplete.as_view(model=models.Location), name='location_autocomplete_no_create'),
     path('country-autocomplete/', views.CountryAutocomplete.as_view(model=models.Country), name='country_autocomplete'),
     path('venue-autocomplete/', views.VenueAutocomplete.as_view(model=models.Venue), name='venue_autocomplete'),
@@ -141,7 +144,7 @@ urlpatterns = [
     # users
     path('users/', views.UserList.as_view(model=User), name='users'),
     path('user/<str:pk>', views.UserDetail.as_view(model=User), name='user_detail'),
-]
+    ]
 
 from django.conf import settings
 from django.urls import include, path  # For django versions from 2.0 and up

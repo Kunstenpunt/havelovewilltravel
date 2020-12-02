@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse
+from django.http import JsonResponse
+
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
@@ -7,6 +9,7 @@ from dal import autocomplete
 from django.db.models import Q, Exists, Count, F, Max, DateField
 from django.db.models.functions import Length
 from django.utils.html import format_html
+
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from itertools import chain
@@ -14,6 +17,7 @@ from datetime import datetime, timedelta
 from simple_history.models import HistoricalChanges
 from collections import Counter
 from django.views.generic.list import MultipleObjectMixin
+from .forms import ConcertForm 
 
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, RelationConcertConcert, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
@@ -22,7 +26,8 @@ from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location
 
 from bootstrap_modal_forms.forms import BSModalForm
 from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView
-
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit, Layout
 
 class SubcountryAutocompleteFromList(autocomplete.Select2ListView):
     def get_list(self):
@@ -92,6 +97,17 @@ class ArtistAutocomplete(autocomplete.Select2QuerySetView):
         return format_html('{} <i>{}</i> -- <a target="_blank" href="{}">ctrl+click to open</a>', item.name, (item.disambiguation if item.disambiguation else "No disambiguation"), item.get_absolute_url())
 
 
+class ArtistAutocompleteSelect(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Artist.objects.all()
+        if self.q:
+            qs = qs.filter(name__unaccent__istartswith=self.q)
+        return qs
+
+    def get_result_label(self, item):
+        return item.name
+
+
 class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Organisation.objects.all()
@@ -123,6 +139,24 @@ class OrganisationAutocomplete(autocomplete.Select2QuerySetView):
             )
 
 
+class OrganisationAutocompleteSelect(autocomplete.Select2QuerySetView):
+    template_name='templates/hlwtadmin/organisation_autocomplete.html'
+
+    def get_queryset(self):
+        qs = Organisation.objects.all()
+
+        location = self.forwarded.get('location', None)
+        if location:
+            qs = qs.filter(location__id=location)
+
+        if self.q:
+            qs = qs.filter(name__unaccent__istartswith=self.q)
+        return qs
+
+    def get_result_label(self, item):
+        return(item.name)
+
+
 class LocationAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Location.objects.all()
@@ -139,6 +173,22 @@ class LocationAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             #qs = qs.filter(Q(city__unaccent__iregex=self.q) | Q(country__name__unaccent__iregex=self.q))
             qs = qs.filter(city__unaccent__iregex=self.q)
+        return qs
+
+
+class LocationAutocompleteSelect(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Location.objects.all()
+
+        country = self.forwarded.get('country', None)
+
+        if country:
+            qs = qs.filter(country__id=country)
+
+        if self.q:
+            qs = qs.filter(city__unaccent__istartswith=self.q)
+            if not qs:
+                qs = qs.filter(country__unaccent__istartswith=self.q)
         return qs
 
 
@@ -510,20 +560,12 @@ class ConcertDetailView(DetailView):
 
 class ConcertCreate(CreateView):
     model = Concert
-    fields = '__all__'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+    form_class = ConcertForm
 
 
 class ConcertUpdate(UpdateView):
     model = Concert
-    fields = '__all__'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+    form_class = ConcertForm
 
 
 class ConcertDelete(DeleteView):
@@ -538,6 +580,15 @@ class ConcertDelete(DeleteView):
         if ignore_concertannouncements == 2:
             ConcertAnnouncement.objects.filter(concert=self.object).delete()
         return context
+
+
+def concertcheckduplicate(request):
+    if request.method == "POST":
+        existing_concerts = Concert.objects.filter(artist=request.POST['artist']).filter(date=request.POST['date'])
+        info = [({'title': ec.title, 'date': ec.date, 'link': ec.get_absolute_url()}) for ec in existing_concerts]
+        # expand to include range of concerts
+        #.filter(created_at__range=(start_date, end_date)))
+        return JsonResponse({'data':info})
 
 
 class ArtistCreate(CreateView):

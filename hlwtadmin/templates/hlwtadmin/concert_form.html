@@ -1,25 +1,128 @@
-{% extends "base_generic.html" %}
-
-{% block title %}Concert edit: {{ concert }} {% endblock %}
+{% extends "base_generic.html" %} {% load crispy_forms_tags %} 
+{% block title%} Concert edit: {{ concert }} {% endblock %} 
+{% block head %}{% endblock %} 
 
 {% block content %}
-<h1>Create/update a Concert</h1>
-    <form action="" method="post">
-        {% csrf_token %}
+<!-- Modal -->
+<div class="modal fade" id="duplicateModal" tabindex="-1" role="dialog" aria-labelledby="duplicateModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="duplicateModalLabel">Possible duplicate concert</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fuck off</button>
+        <button type="button" onclick="activateDetailPage()" class="btn btn-primary">Edit existing concert</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-        {% for field in form %}
-        <div class="form-group{% if field.errors %} invalid{% endif %} mb-1">
-            <label class="" for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% for error in field.errors %}
-            <p class="help-block">{{ error }}</p>
-            {% endfor %}
-        </div>
-        {% endfor %}
+{% crispy form %} 
+{% endblock %} 
+{% block css %}
+<style>
+  #extra-fields {
+    display: none;
+  }
 
-        <div class="form-group">
-            <input type="submit" value="submit">
-        </div>
-    </form>
+  .btn-toggle {
+    background: none !important;
+    border: none;
+    margin-bottom: 0.5em;
+    padding: 6px;
+    /*input has OS specific font-family*/
+    color: #069;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .btn-toggle:focus {
+    outline: 0 !important;
+  }
+  .autocomplete-list {
+    width: 100% !important;
+  }
+  .select2-container {
+    min-width: auto !important;
+  }
+  .select2-selection--single {
+    height: 45px !important;
+  }
+  .select2 {
+    width: 100% !important;
+  }
+  .select2-container .select2-selection--multiple {
+    min-height: 45px !important;
+  }
 
-{% endblock %}
+  .select2-container--default
+    .select2-selection--multiple
+    .select2-selection__rendered {
+    height: 100% !important;
+  }
+  .select2-container .select2-selection--multiple .select2-selection__rendered {
+    overflow: auto;
+    overflow-x: hidden !important;
+  }
+</style>
+{% endblock css %} {% block javascript %}
+<script>
+$(document).ready(function() {
+  $.ajaxSetup({
+            async: false,
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            }  
+})});
+
+var chosenDate = "";
+var chosenArtist = "";
+var detailDuplicate = "";
+
+  function toggleDetails(e) {
+      var x = document.getElementById("extra-fields");
+      if ( window.getComputedStyle(x, null).getPropertyValue("display") === 'none') {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+
+  function checkDuplicate() {
+    $.post("{% url 'concert-check-duplicate' %}",
+      {
+        'date': chosenDate,
+        'artist': chosenArtist
+      },
+      function(data, status) {
+        console.log(JSON.stringify(data));
+        detailDuplicate = data.data[0].link
+        $(".modal-body").html("The selected artist already has a concert on " + data.data[0].date  + " called " + data.data[0].title);
+        $("#duplicateModal").modal();
+      }
+    )};
+
+document.querySelector('select[name="artist"]').onchange=function() {
+  chosenArtist = $(this).children("option:selected").val();
+  if (chosenDate !== '') {
+    checkDuplicate();
+    }
+}
+
+$("form input[name='date']").blur(function () {
+    chosenDate = $(this).val();
+    if (chosenArtist !== '') {
+    checkDuplicate();
+    }
+});
+
+function activateDetailPage() {
+    window.location.href=detailDuplicate;
+}
+
+</script>
+{% endblock javascript %}

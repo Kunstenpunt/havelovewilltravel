@@ -40,12 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'hlwtadmin',
     'simple_history',
-    'django.contrib.postgres',
     'corsheaders',
     'debug_toolbar',
     'bootstrap_modal_forms',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -164,3 +165,5 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = False
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

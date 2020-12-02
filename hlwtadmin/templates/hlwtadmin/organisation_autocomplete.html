@@ -1,0 +1,14 @@
+{% load i18n %}
+{% load autocomplete_light_tags %}
+{% if choices %}
+<h2>{% trans 'Please select a person' %}</h2>
+{% for choice in choices %}
+{{ choice|autocomplete_light_choice_html:autocomplete }}
+{% endfor %}
+{% else %}
+<h2>{% trans 'No matching person found' %}</h2>
+<p>
+{% blocktrans %}Sometimes, persons have not filled their name,
+maybe try to search based on email addresses ?{% endblocktrans %}
+</p>
+{% endif %}

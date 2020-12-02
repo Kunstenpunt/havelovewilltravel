@@ -249,6 +249,8 @@ class Venue(models.Model):
 class Concert(models.Model):
     title = models.CharField(max_length=200)
     date = models.DateField(blank=True, null=True)
+    artist = models.ManyToManyField("Artist", blank=True, default=None, related_name='concert_model',through='RelationConcertArtist')
+    organisation = models.ManyToManyField("Organisation", blank=True, default=None, related_name='concert_model',through='RelationConcertOrganisation')
     until_date = models.DateField(blank=True, null=True, default=None)
     time = models.TimeField(blank=True, null=True)
     cancelled = models.BooleanField(default=False, blank=True, null=True)
@@ -261,6 +263,7 @@ class Concert(models.Model):
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
     annotation = models.CharField(max_length=500, blank=True, null=True)
+    description = models.CharField(max_length=1000, blank=True, null=True)
     history = HistoricalRecords()
 
     def __str__(self):

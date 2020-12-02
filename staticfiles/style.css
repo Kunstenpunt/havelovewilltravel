@@ -1,0 +1,9 @@
+.sidebar-nav {
+    margin-top: 20px;
+    padding: 0;
+    list-style: none;
+}
+
+.select2-container {
+    min-width: 50em !important;
+}
