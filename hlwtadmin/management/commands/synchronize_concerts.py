@@ -181,7 +181,11 @@ class FacebookScraper(PlatformLeecher):
             location_country = ld["location"]["address"]["addressCountry"]
         except KeyError:
             location_country = ""
-        loc_info = self.get_lat_lon_for_venue(location_name, location_street, location_country)
+        # loc_info = self.get_lat_lon_for_venue(location_name, location_street, location_country)
+        loc_info = {
+            "lat": None,
+            "lng": None
+        }
         loc_info["venue"] = location_name[0:199]
         loc_info["city"] = location_street[0:199]
         loc_info["country"] = location_country[0:199]
