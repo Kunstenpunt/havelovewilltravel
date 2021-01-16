@@ -215,7 +215,7 @@ class FacebookScraper(PlatformLeecher):
                             venue = Venue.objects.create(
                                 raw_venue=venue_name,
                                 raw_location="|".join([concert["stad"], concert["land"], self.platform]),
-                                non_assignable=("|".join([concert["stad"], concert["land"], self.platform]) != "||www.facebook.com")
+                                non_assignable=("|".join([concert["stad"], concert["land"], self.platform]) == "||www.facebook.com")
                             )
                             venue._change_reason = "automatic_create_" + datetime.now().date().isoformat()
                             venue.save()
