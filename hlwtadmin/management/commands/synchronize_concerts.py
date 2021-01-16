@@ -181,11 +181,13 @@ class FacebookScraper(PlatformLeecher):
             location_country = ld["location"]["address"]["addressCountry"]
         except KeyError:
             location_country = ""
-        # loc_info = self.get_lat_lon_for_venue(location_name, location_street, location_country)
         loc_info = {
             "lat": None,
             "lng": None
         }
+        if location_name != "" and location_street != "" and location_country != "":
+            print("trying my luck with Google Places API")
+            loc_info = self.get_lat_lon_for_venue(location_name, location_street, location_country)
         loc_info["venue"] = location_name[0:199]
         loc_info["city"] = location_street[0:199]
         loc_info["country"] = location_country[0:199]
@@ -212,7 +214,8 @@ class FacebookScraper(PlatformLeecher):
                         if not venue:
                             venue = Venue.objects.create(
                                 raw_venue=venue_name,
-                                raw_location="|".join([concert["stad"], concert["land"], self.platform])
+                                raw_location="|".join([concert["stad"], concert["land"], self.platform]),
+                                non_assignable=("|".join([concert["stad"], concert["land"], self.platform]) != "||www.facebook.com")
                             )
                             venue._change_reason = "automatic_create_" + datetime.now().date().isoformat()
                             venue.save()
