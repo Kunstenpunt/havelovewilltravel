@@ -73,13 +73,13 @@ class PlatformLeecher(object):
         try:
             result = loads(get(url.format(venue_search, self.google_places_api_key)).text)
         except Exception as e:
-            print("exception", e)
+            print("exception places api", e)
             result = {"status": "ZERO_RESULTS"}
         if result["status"] == "ZERO_RESULTS":
             try:
                 result = loads(get(url.format(city_search, self.google_places_api_key)).text)
             except Exception as e:
-                print("exception", e)
+                print("exception places api", e)
                 result = {"results": []}
         if len(result["results"]) > 0:
             if "types" in result["results"][0]:
@@ -113,12 +113,12 @@ class FacebookScraper(PlatformLeecher):
         try:
             r = get(url, headers=headers)
         except Exception as e:
-            print("exception", e)
+            print("exception FB", e)
             sleep(60.0)
             try:
                 r = get(url, headers=headers)
             except Exception as e:
-                print("exception", e)
+                print("exception FB", e)
                 sleep(360)
                 r = get(url, headers=headers)
         event_ids = regex.findall(r.text)
@@ -164,7 +164,7 @@ class FacebookScraper(PlatformLeecher):
                 "titel": titel[0:199]
             }
         except AttributeError as e:
-            print("error", e)
+            print("error FB", e)
             event_data = {}
         return event_data
 
@@ -273,11 +273,12 @@ class BandsInTownLeecher(PlatformLeecher):
                 try:
                     events = self.bitc.artists_events(bandnaam, date=period)
                 except requests.exceptions.ConnectionError:
+                    print("error BIT connection")
                     events = None
                 if events is not None:
                     while "errors" in events:
                         if "Rate limit exceeded" in events["errors"]:
-                            print("one moment!")
+                            print("one moment! (BIT)")
                             sleep(60.0)
                             events = self.bitc.artists_events(bandnaam, date=period)
                         else:
