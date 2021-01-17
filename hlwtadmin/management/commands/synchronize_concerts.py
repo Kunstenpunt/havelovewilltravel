@@ -185,9 +185,9 @@ class FacebookScraper(PlatformLeecher):
             "lat": None,
             "lng": None
         }
-        if location_name != "" and location_street != "" and location_country != "":
-            print("trying my luck with Google Places API")
-            loc_info = self.get_lat_lon_for_venue(location_name, location_street, location_country)
+        #if location_name != "" and location_street != "" and location_country != "":
+        #    print("trying my luck with Google Places API")
+        #    loc_info = self.get_lat_lon_for_venue(location_name, location_street, location_country)
         loc_info["venue"] = location_name[0:199]
         loc_info["city"] = location_street[0:199]
         loc_info["country"] = location_country[0:199]
