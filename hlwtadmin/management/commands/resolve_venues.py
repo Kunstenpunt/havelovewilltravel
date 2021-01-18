@@ -95,9 +95,9 @@ class Command(BaseCommand):
                     land_input = input("land: ")
                     stad_input = input("stad: ")
 
-                    if land_input == "":
+                    if land_input != "":
                         land = land_input
-                    if stad_input == "":
+                    if stad_input != "":
                         stad = stad_input
 
                     try:
