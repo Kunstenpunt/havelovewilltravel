@@ -100,6 +100,8 @@ class Command(BaseCommand):
                     if stad_input != "":
                         stad = stad_input
 
+                    print("working with", land, stad, country_pk[land])
+
                     try:
                         country = Country.objects.filter(id=country_pk[land]).first()
                     except KeyError:
