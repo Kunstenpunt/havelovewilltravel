@@ -103,19 +103,21 @@ class Command(BaseCommand):
                     print("working with", land, stad, country_pk[land])
 
                     try:
-                        country = Country.objects.filter(id=country_pk[land]).first()
+                        loc = Location.objects.filter(id=location_pk[(stad.strip().lower(), land.strip().lower())]).first()
+                        print("found loc", loc)
                     except KeyError:
-                        country = None
-                    loc = Location.objects.create(
-                        verified=False,
-                        city=stad,
-                        country=country
-                    )
-                    loc.save()
-                    location_pk[(stad, land)] = loc.id
-                    print("created loc", loc)
-                    loc = None
-                    print("no loc found")
+                        try:
+                            country = Country.objects.filter(id=country_pk[land]).first()
+                        except KeyError:
+                            country = None
+                        loc = Location.objects.create(
+                            verified=False,
+                            city=stad,
+                            country=country
+                        )
+                        loc.save()
+                        location_pk[(stad, land)] = loc.id
+                        print("created loc", loc)
 
                 if loc:
                     try:
