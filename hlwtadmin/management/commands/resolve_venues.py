@@ -60,7 +60,8 @@ class Command(BaseCommand):
             country_pk[country] = loc.country.id if loc.country else None
 
         venues_without_org = Venue.objects.exclude(raw_venue__icontains="nan|").exclude(raw_venue__icontains="|none|none|").exclude(raw_venue__icontains="||").filter(organisation__isnull=True).filter(non_assignable=False)#.filter(pk__gt=100000)
-        for venue in venues_without_org:
+        for i, venue in enumerate(venues_without_org):
+            print(i, "of", len(venues_without_org))
             try:
                 name_prop, stad, land, bron, *rest = venue.raw_venue.split("|")
                 print(name_prop, stad, land)
