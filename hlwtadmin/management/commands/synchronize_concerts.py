@@ -73,13 +73,13 @@ class PlatformLeecher(object):
         try:
             result = loads(get(url.format(venue_search, self.google_places_api_key)).text)
         except Exception as e:
-            print("exception", e)
+            print("exception places api", e)
             result = {"status": "ZERO_RESULTS"}
         if result["status"] == "ZERO_RESULTS":
             try:
                 result = loads(get(url.format(city_search, self.google_places_api_key)).text)
             except Exception as e:
-                print("exception", e)
+                print("exception places api", e)
                 result = {"results": []}
         if len(result["results"]) > 0:
             if "types" in result["results"][0]:
@@ -113,12 +113,12 @@ class FacebookScraper(PlatformLeecher):
         try:
             r = get(url, headers=headers)
         except Exception as e:
-            print("exception", e)
+            print("exception FB", e)
             sleep(60.0)
             try:
                 r = get(url, headers=headers)
             except Exception as e:
-                print("exception", e)
+                print("exception FB", e)
                 sleep(360)
                 r = get(url, headers=headers)
         event_ids = regex.findall(r.text)
@@ -164,7 +164,7 @@ class FacebookScraper(PlatformLeecher):
                 "titel": titel[0:199]
             }
         except AttributeError as e:
-            print("error", e)
+            print("error FB", e)
             event_data = {}
         return event_data
 
@@ -181,7 +181,13 @@ class FacebookScraper(PlatformLeecher):
             location_country = ld["location"]["address"]["addressCountry"]
         except KeyError:
             location_country = ""
-        loc_info = self.get_lat_lon_for_venue(location_name, location_street, location_country)
+        loc_info = {
+            "lat": None,
+            "lng": None
+        }
+        #if location_name != "" and location_street != "" and location_country != "":
+        #    print("trying my luck with Google Places API")
+        #    loc_info = self.get_lat_lon_for_venue(location_name, location_street, location_country)
         loc_info["venue"] = location_name[0:199]
         loc_info["city"] = location_street[0:199]
         loc_info["country"] = location_country[0:199]
@@ -208,7 +214,8 @@ class FacebookScraper(PlatformLeecher):
                         if not venue:
                             venue = Venue.objects.create(
                                 raw_venue=venue_name,
-                                raw_location="|".join([concert["stad"], concert["land"], self.platform])
+                                raw_location="|".join([concert["stad"], concert["land"], self.platform]),
+                                non_assignable=("|".join([concert["stad"], concert["land"], self.platform]) == "||www.facebook.com")
                             )
                             venue._change_reason = "automatic_create_" + datetime.now().date().isoformat()
                             venue.save()
@@ -266,11 +273,12 @@ class BandsInTownLeecher(PlatformLeecher):
                 try:
                     events = self.bitc.artists_events(bandnaam, date=period)
                 except requests.exceptions.ConnectionError:
+                    print("error BIT connection")
                     events = None
                 if events is not None:
                     while "errors" in events:
                         if "Rate limit exceeded" in events["errors"]:
-                            print("one moment!")
+                            print("one moment! (BIT)")
                             sleep(60.0)
                             events = self.bitc.artists_events(bandnaam, date=period)
                         else:

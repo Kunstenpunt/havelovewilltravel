@@ -59,8 +59,9 @@ class Command(BaseCommand):
             location_pk[(city, country)] = loc.id
             country_pk[country] = loc.country.id if loc.country else None
 
-        venues_without_org = Venue.objects.exclude(raw_venue__icontains="|none|none|").exclude(raw_venue__icontains="||").filter(organisation__isnull=True).filter(non_assignable=False)#.filter(pk__gt=100000)
-        for venue in venues_without_org:
+        venues_without_org = Venue.objects.exclude(raw_venue__icontains="nan|").exclude(raw_venue__icontains="|none|none|").exclude(raw_venue__icontains="||").filter(organisation__isnull=True).filter(non_assignable=False)#.filter(pk__gt=100000)
+        for i, venue in enumerate(venues_without_org):
+            print(i, "of", len(venues_without_org))
             try:
                 name_prop, stad, land, bron, *rest = venue.raw_venue.split("|")
                 print(name_prop, stad, land)
@@ -92,20 +93,32 @@ class Command(BaseCommand):
                     loc = Location.objects.filter(id=location_pk[(stad.strip().lower(), land.strip().lower())]).first()
                     print("found loc", loc)
                 except KeyError:
-                    # try:
-                    #     country = Country.objects.filter(id=country_pk[land]).first()
-                    # except KeyError:
-                    #     country = None
-                    # loc = Location.objects.create(
-                    #     verified=False,
-                    #     city=stad,
-                    #     country=country
-                    # )
-                    # loc.save()
-                    # location_pk[(stad, land)] = loc.id
-                    # print("created loc", loc)
-                    loc = None
-                    print("no loc found")
+                    land_input = input("land: ")
+                    stad_input = input("stad: ")
+
+                    if land_input != "":
+                        land = land_input
+                    if stad_input != "":
+                        stad = stad_input
+
+                    print("working with", land, stad, country_pk[land])
+
+                    try:
+                        loc = Location.objects.filter(id=location_pk[(stad.strip().lower(), land.strip().lower())]).first()
+                        print("found loc", loc)
+                    except KeyError:
+                        try:
+                            country = Country.objects.filter(id=country_pk[land]).first()
+                        except KeyError:
+                            country = None
+                        loc = Location.objects.create(
+                            verified=False,
+                            city=stad,
+                            country=country
+                        )
+                        loc.save()
+                        location_pk[(stad, land)] = loc.id
+                        print("created loc", loc)
 
                 if loc:
                     try:

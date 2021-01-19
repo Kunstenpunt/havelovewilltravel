@@ -237,7 +237,7 @@ class Venue(models.Model):
         return location
 
     def location_estimated_from_venues_with_similar_raw_loc(self):
-        loclist = [venue.organisation.location for venue in Venue.objects.select_related('organisation__location').filter(raw_location=self.raw_location).exclude(organisation=None)]
+        loclist = [venue.organisation.location for venue in Venue.objects.select_related('organisation__location').filter(raw_location=self.raw_location).exclude(organisation=None).exclude(non_assignable=True).exclude(raw_location="||www.facebook.com").exclude(raw_location__contains="||facebook").exclude(raw_location__icontains="None|None")]
         if len(loclist) > 0:
             return Counter(loclist).most_common(1)[0][0]
 

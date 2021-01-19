@@ -8,15 +8,14 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        done = []
         i = 1
-        for raw_venue in Venue.objects.all():
-            if raw_venue.pk not in done:
-                try:
-                    for dup_venue in Venue.objects.filter(raw_venue=raw_venue.raw_venue).exclude(organisation=raw_venue.organisation).exclude(pk=raw_venue.pk):
-                        print(i, "http://hlwtadmin.herokuapp.com/hlwtadmin/venue/" + str(raw_venue.pk), str(raw_venue).encode('utf-8'), "is similar to", "http://hlwtadmin.herokuapp.com/hlwtadmin/venue/" + str(dup_venue.pk), str(dup_venue).encode('utf-8'))
-                        done.append(dup_venue.pk)
-                        i += 1
-                except Exception as e:
-                    pass
+        for raw_venue in Venue.objects.filter(non_assignable=False).filter(raw_location__icontains="||").filter(organisation__location__city="Gent"):
+            print(i, raw_venue)
+            raw_venue.non_assignable = True
+            if "Gent" not in raw_venue.raw_venue:
+                print("\tremoving organisation")
+                raw_venue.organisation = None
+            raw_venue.save()
+            i += 1
+
 
