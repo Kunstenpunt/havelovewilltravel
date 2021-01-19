@@ -18,6 +18,7 @@ urlpatterns = [
     path('concerts_in_non_neighbouring_countries/', views.ConcertsInNonNeighbouringCountries.as_view(), name='concerts_in_non_neighbouring_countries'),
     path('concert/<int:pk>', views.ConcertDetailView.as_view(), name='concert_detail'),
     path('concert/create/', views.ConcertCreate.as_view(), name='concert_create'),
+    path('concert/create/<int:pk>', views.ConcertCreate.as_view(), name='concert-create-similar'),
     path('concert/<int:pk>/update/', views.ConcertUpdate.as_view(), name='concert_update'),
     path('concert/<int:pk>/delete/', views.ConcertDelete.as_view(), name='concert_delete'),
     path('concert/<int:pk>/delete/<int:concert_delete_with_ca_on_ignore>', views.ConcertDelete.as_view(), name='concert_delete_with_ca_on_ignore'),
@@ -30,6 +31,7 @@ urlpatterns = [
     path('artist/<str:pk>', views.ArtistDetailView.as_view(), name='artist_detail'),
     path('artist/create/', views.ArtistCreate.as_view(), name='artist_create'),
     path('artist/<str:pk>/update', views.ArtistUpdate.as_view(), name='artist_update'),
+    # path('artist_bulk_add_role'), views.ArtistBulkAddRole, name='artist_bulk_add_role'),
     # locations
     path('locations/', views.LocationListView.as_view(), name='locations'),
     path('recently_added_locations/', views.RecentlyAddedLocationsListView.as_view(), name='recently_added_locations'),

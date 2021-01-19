@@ -94,8 +94,10 @@ class ArtistAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     def get_result_label(self, item):
-        return format_html('{} <i>{}</i> -- <a target="_blank" href="{}">ctrl+click to open</a>', item.name, (item.disambiguation if item.disambiguation else "No disambiguation"), item.get_absolute_url())
-
+        if item:
+            return format_html('{} <i>{}</i> -- <a target="_blank" href="{}">ctrl+click to open</a>', item.name, (item.disambiguation if item.disambiguation else "No disambiguation"), item.get_absolute_url())
+        else:
+            return item.name
 
 class ArtistAutocompleteSelect(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -562,6 +564,16 @@ class ConcertCreate(CreateView):
     model = Concert
     form_class = ConcertForm
 
+    def get(self, request, *args, **kwargs):
+        if 'pk' in kwargs:
+            example_concert = get_object_or_404(Concert, pk=self.kwargs.get('pk'))
+            form = ConcertForm(instance=example_concert)
+            context = {'form': form}
+            return render(request, 'hlwtadmin/concert_form.html', context)
+        
+        context = {'form': ConcertForm()}
+        return render(request, 'hlwtadmin/concert_form.html', context)
+
 
 class ConcertUpdate(UpdateView):
     model = Concert
@@ -629,6 +641,20 @@ class ArtistListView(ListView):
         context['genres'] = Genre.objects.all().distinct()
         return context
 
+'''
+def ArtistBulkAddRole(request, id=None):
+    if request.method == 'POST': #<- Checking for method type
+        id_list = request.POST.getlist('artists')
+        role = request.POST.get('role')
+    #This will submit an array of the value attributes of all the                
+    #checkboxes that have been checked, that is an array of {{obj.id}}
+
+        # Now all that is left is to iterate over the array fetch the   
+        #object with the ID and delete it. 
+    artists = Artist.objects.filter(id__in=id_list)
+    
+            Agent.objects.get(id=agent_id).delete()
+'''
 
 class IncludeArtistListView(ListView):
     model = Artist

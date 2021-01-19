@@ -18,9 +18,11 @@ from collections import Counter
 
 from regex import sub
 from collections import Counter
+from multiselectfield import MultiSelectField
 
 from simple_history.models import HistoricalRecords
 
+from .choices import ROLE_CHOICES
 
 # Create your models here.
 class GigFinder(models.Model):
@@ -264,6 +266,8 @@ class Concert(models.Model):
     longitude = models.FloatField(blank=True, null=True)
     annotation = models.CharField(max_length=500, blank=True, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
+    program = models.CharField(max_length=1000, blank=True, null=True)
+    evidence = models.CharField(max_length=1000, blank=True, null=True)
     history = HistoricalRecords()
 
     def __str__(self):
@@ -537,6 +541,7 @@ class Country(models.Model):
 
 class RelationConcertArtist(models.Model):
     artist = models.ForeignKey("Artist", on_delete=models.PROTECT)
+    roles = MultiSelectField(choices=ROLE_CHOICES, blank=True, null=True)
     artist_credited_as = models.CharField(max_length=200, blank=True, null=True)
     concert = models.ForeignKey("Concert", on_delete=models.PROTECT)
     relation_type = models.ManyToManyField("RelationConcertArtistType", blank=True)

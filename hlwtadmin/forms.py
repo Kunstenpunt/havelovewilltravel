@@ -9,13 +9,16 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Div, ButtonHolder, Submit, HTML, Button
 
 from dal import autocomplete
-import dal as autocomplete_light
-
 
 class ConcertForm(forms.ModelForm):
     location = forms.ModelChoiceField(
             queryset=Location.objects.all(),
-            widget=autocomplete.ModelSelect2(url='location_autocomplete_select'),
+            widget=autocomplete.ModelSelect2(url='location_autocomplete_select', attrs={
+                # Set some placeholder
+                'data-placeholder': 'Autocomplete ...',
+                # Only trigger autocompletion after 3 characters have been typed
+                'data-minimum-input-length': 3,
+            },),
             required=False,
         )
 
@@ -50,6 +53,8 @@ class ConcertForm(forms.ModelForm):
 
         self.fields['description']=forms.CharField(widget=forms.Textarea(attrs={'rows': 1 }), required=False)
         self.fields['annotation']=forms.CharField(widget=forms.Textarea(attrs={'rows': 1}), required=False)
+        self.fields['program']=forms.CharField(widget=forms.Textarea(attrs={'rows': 1}), required=False)
+        self.fields['evidence']=forms.CharField(widget=forms.Textarea(attrs={'rows': 1}), required=False)
 
 
         self.fields['organisation'].widget.attrs.update({'class' : 'autocomplete-list'})
@@ -85,9 +90,17 @@ class ConcertForm(forms.ModelForm):
                 Column('description', css_class='form-group col-md-12 mb-0'),
                 css_class='form-row'
                 ),
-            Div(
+
+            Div(            
+                Row(
+                    Column('evidence', css_class='form-group col-md-12 mb-0'),
+                    css_class='form-row'
+                    ),
                 Row(
                     Column('annotation', css_class='form-group col-md-12 mb-0')
+                    ),
+                Row(
+                    Column('program', css_class='form-group col-md-12 mb-0')
                     ),
                 Row(
                     Column('cancelled', css_class='form-group col-md-3 mb-0'),

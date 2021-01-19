@@ -1,6 +1,9 @@
 {% extends "base_generic.html" %} {% load crispy_forms_tags %} 
 {% block title%} Concert edit: {{ concert }} {% endblock %} 
-{% block head %}{% endblock %} 
+{% block head %}
+{% load static %}
+<link rel="stylesheet" href={% static "css/customselect.css" %}>
+{% endblock %} 
 
 {% block content %}
 <!-- Modal -->
@@ -24,52 +27,7 @@
 
 {% crispy form %} 
 {% endblock %} 
-{% block css %}
-<style>
-  #extra-fields {
-    display: none;
-  }
-
-  .btn-toggle {
-    background: none !important;
-    border: none;
-    margin-bottom: 0.5em;
-    padding: 6px;
-    /*input has OS specific font-family*/
-    color: #069;
-    text-decoration: underline;
-    cursor: pointer;
-  }
-  .btn-toggle:focus {
-    outline: 0 !important;
-  }
-  .autocomplete-list {
-    width: 100% !important;
-  }
-  .select2-container {
-    min-width: auto !important;
-  }
-  .select2-selection--single {
-    height: 45px !important;
-  }
-  .select2 {
-    width: 100% !important;
-  }
-  .select2-container .select2-selection--multiple {
-    min-height: 45px !important;
-  }
-
-  .select2-container--default
-    .select2-selection--multiple
-    .select2-selection__rendered {
-    height: 100% !important;
-  }
-  .select2-container .select2-selection--multiple .select2-selection__rendered {
-    overflow: auto;
-    overflow-x: hidden !important;
-  }
-</style>
-{% endblock css %} {% block javascript %}
+{% block javascript %}
 <script>
 $(document).ready(function() {
   $.ajaxSetup({
@@ -83,28 +41,35 @@ var chosenDate = "";
 var chosenArtist = "";
 var detailDuplicate = "";
 
-  function toggleDetails(e) {
-      var x = document.getElementById("extra-fields");
-      if ( window.getComputedStyle(x, null).getPropertyValue("display") === 'none') {
-        x.style.display = "block";
-      } else {
-        x.style.display = "none";
-      }
-    }
+// needed when using existing entry as basis for new one
+$('document').ready(function(){
+  chosendate = $("form input[name='date']").val();
+  chosenArtist = document.querySelector('select[name="artist"]').value;
+});
 
-  function checkDuplicate() {
-    $.post("{% url 'concert-check-duplicate' %}",
-      {
-        'date': chosenDate,
-        'artist': chosenArtist
-      },
-      function(data, status) {
-        console.log(JSON.stringify(data));
-        detailDuplicate = data.data[0].link
-        $(".modal-body").html("The selected artist already has a concert on " + data.data[0].date  + " called " + data.data[0].title);
-        $("#duplicateModal").modal();
-      }
-    )};
+
+function toggleDetails(e) {
+    var x = document.getElementById("extra-fields");
+    if ( window.getComputedStyle(x, null).getPropertyValue("display") === 'none') {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
+  }
+
+function checkDuplicate() {
+  $.post("{% url 'concert-check-duplicate' %}",
+    {
+      'date': chosenDate,
+      'artist': chosenArtist
+    },
+    function(data, status) {
+      console.log(JSON.stringify(data));
+      detailDuplicate = data.data[0].link
+      $(".modal-body").html("The selected artist already has a concert on " + data.data[0].date  + " called " + data.data[0].title);
+      $("#duplicateModal").modal();
+    }
+  )};
 
 document.querySelector('select[name="artist"]').onchange=function() {
   chosenArtist = $(this).children("option:selected").val();
@@ -121,7 +86,7 @@ $("form input[name='date']").blur(function () {
 });
 
 function activateDetailPage() {
-    window.location.href=detailDuplicate;
+    window.location.href= detailDuplicate;
 }
 
 </script>
