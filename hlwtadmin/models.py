@@ -165,7 +165,7 @@ class ConcertAnnouncement(models.Model):
         return False
 
     def clean_location_from_assignments(self):
-        loclist = [venue.organisation.location for venue in Venue.objects.select_related('organisation__location').filter(raw_location=self.raw_venue.raw_location).exclude(organisation=None)]
+        loclist = [venue.organisation.location for venue in Venue.objects.select_related('organisation__location').filter(raw_location=self.raw_venue.raw_location).exclude(organisation=None).exclude(non_assignable=True)]
         if len(loclist) > 0:
             return Counter(loclist).most_common(1)[0][0]
 
@@ -997,10 +997,6 @@ class ConcertannouncementToConcert:
         return (not self.concertannouncement.raw_venue.non_assignable) and (self.concertannouncement.raw_venue.organisation is None)
 
     def _create_new_unverified_organisation_and_relate_to_venue(self):
-        # what is the most likely location of the venue
-        # is there an organisation in that location that is similar to the raw_venue
-        # if there is, relate that organisation to venue
-        # if not, create new organisation
         try:
             stad, land, bron = self.concertannouncement.raw_venue.raw_venue.split("|")[-3:]
             name_prop = "|".join(self.concertannouncement.raw_venue.raw_venue.split("|")[:-3])
@@ -1017,8 +1013,9 @@ class ConcertannouncementToConcert:
             loc = None
             org = None
             if land.lower() != "none" or stad.lower() != "none" or land != "" or stad != "":
-                if name not in ("None", "nan"):
+                if str(name).strip() not in ("None", "nan", ""):
                     loc = self.concertannouncement.most_likely_clean_location()
+                    # TODO check if there is a similar org in this location?
                     org = Organisation.objects.\
                         create(name=name,
                                sort_name=name,
