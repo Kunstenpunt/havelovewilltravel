@@ -20,8 +20,8 @@
     {% for concert in concerts_abroad_today %}
         <li class="list-group-item">
           <a href="{% url 'concert_detail' concert.pk %}">{{ concert.date }}</a> >
-          {% for rel in concert.artistsqs %}<a href="{% url 'artist_detail' rel.artist.pk %}">{{ rel.artist.name }}</a>{% endfor %} at
-          {% for rel in concert.organisationsqs %}<a href="{% url 'organisation_detail' rel.organisation.pk %}">{{ rel.organisation.name }}</a> in <a href="{% url 'location_detail' rel.organisation.location.pk %}">{{ rel.organisation.location }}</a>{% endfor %}
+          {% for artist in concert.related_artists %}<a href="{% url 'artist_detail' artist.pk %}">{{ artist.name }}</a>{% endfor %} at
+          {% for organisation in concert.related_organisations %}<a href="{% url 'organisation_detail' organisation.pk %}">{{ organisation.name }}</a> in <a href="{% url 'location_detail' organisation.location.pk %}">{{ organisation.location }}</a>{% endfor %}
         </li>
     {% endfor %}
     </ul>
@@ -86,6 +86,7 @@
       <li class="list-group-item"><a href="{% url 'concerts_without_genre' %}">Concerts without genre</a></li>
       <li class="list-group-item"><a href="{% url 'artists_without_genre' %}">Artists without genre</a></li>
     </ul>
+
   </div>
   </div>
 

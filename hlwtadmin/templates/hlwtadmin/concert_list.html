@@ -71,20 +71,20 @@
             {% if concert.is_new %}{% load static %}<br/><span class="badge badge-secondary">New</span>{% endif %}
         </td>
         <td valign="top">
-          {% for relation in concert.artistsqs %}
-            <a title="{{ relation.artist.disambiguation }}" href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a><br>
+          {% for artist in concert.related_artists %}
+            <a title="{{ artist.disambiguation }}" href="{% url 'artist_detail' artist.mbid %}">{{ artist.name }}</a><br>
           {% endfor %}
         </td>
         <td valign="top">
-          {% for relation in concert.organisationsqs %}
-            {% if relation.organisation %}
-              <a href="{% url 'organisation_detail' relation.organisation.id %}">{{ relation.organisation.name }}</a>
+          {% for organisation in concert.related_organisations %}
+            {% if organisation %}
+              <a href="{% url 'organisation_detail' organisation.id %}">{{ organisation.name }}</a>
             {% else %}
               Missing organisation
             {% endif %}
-            {% if relation.organisation.location %}
-              <br>{{ relation.organisation.location }} {% load static %}<img title="{{ organisation.location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ relation.organisation.location.country.iso_code }}.png" />
-              {% if relation.organisation.location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
+            {% if organisation.location %}
+              <br>{{ organisation.location }}<img title="{{ organisation.location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ organisation.location.country.iso_code }}.png" />
+              {% if organisation.location.verified %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
             {% endif %}
             <br>
           {% endfor %}

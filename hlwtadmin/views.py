@@ -8,6 +8,7 @@ from django import forms
 from dal import autocomplete
 from django.db.models import Q, Exists, Count, F, Max, DateField
 from django.db.models.functions import Length
+from django.db.models import Prefetch
 from django.utils.html import format_html
 
 from django.contrib.auth.models import User
@@ -221,6 +222,14 @@ def index(request):
     report = sorted(report, key=lambda x: x.history_date, reverse=True)
     leeches = Counter([item.history_change_reason for item in report])
     leeches = sorted([leech for leech in leeches.most_common() if leech[0].startswith('automatic_')], key=lambda x: x[0], reverse=True)
+    
+    concerts_abroad_today = Concert.objects.filter(
+        date=datetime.now().date()
+        ).exclude(organisation__location__country__name='Belgium'
+        ).prefetch_related(
+            Prefetch('artist',Artist.objects.all(), to_attr='related_artists'),
+            Prefetch('organisation',Organisation.objects.all(), to_attr='related_organisations'),
+            ).all()
 
     # Generate counts of some of the main objects
     context = {
@@ -233,7 +242,7 @@ def index(request):
         'num_locations': Location.objects.count(),
         'num_excluded_artists': Artist.objects.filter(exclude=True).count(),
         'num_included_artists': Artist.objects.filter(include=True).count(),
-        'concerts_abroad_today': Concert.objects.filter(date=datetime.now().date()).exclude(relationconcertorganisation__organisation__location__country__name='Belgium')
+        'concerts_abroad_today': concerts_abroad_today
     }
 
     # Render the HTML template index.html with the data in the context variable
@@ -440,27 +449,38 @@ class RelationConcertOrganisationsListView(ListView):
 class DefaultConcertListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_start'] = self.request.GET.get('filter_start', (datetime.now() - timedelta(days=365)).date().isoformat())
-        context['filter_end'] = self.request.GET.get('filter_end', (datetime.now() + timedelta(days=365)).date().isoformat())
+        now = datetime.now()
+        context['filter_start'] = self.request.GET.get('filter_start', (now - timedelta(days=365)).date().isoformat())
+        context['filter_end'] = self.request.GET.get('filter_end', (now + timedelta(days=365)).date().isoformat())
         context['filter'] = self.request.GET.get('filter', None)
         context['countries'] = Country.objects.all().distinct()
         context['genres'] = Genre.objects.all().distinct()
         return context
 
     def apply_filters(self):
-        filter_start = self.request.GET.get('filter_start', (datetime.now() - timedelta(days=365)).date().isoformat())
-        filter_end = self.request.GET.get('filter_end', (datetime.now() + timedelta(days=365)).date().isoformat())
+        now = datetime.now()
+        filter_start = self.request.GET.get('filter_start', (now - timedelta(days=365)).date().isoformat())
+        filter_end = self.request.GET.get('filter_end', (now + timedelta(days=365)).date().isoformat())
         filter_val = self.request.GET.get('filter', None)
         filter_genre = self.request.GET.get('genrefilter', None)
         filter_loc = self.request.GET.get('location', None)
 
-        new_context = Concert.objects.filter(date__gte=filter_start).filter(date__lte=filter_end)
+        basic_query= Q(date__gte=filter_start) 
+        basic_query.add(Q(date__lte=filter_end),basic_query.connector)
         if filter_val:
-            new_context = new_context.filter(relationconcertorganisation__organisation__location__country__name=filter_val)
+            basic_query.add(Q(organisation__location__country__name=filter_val),basic_query.connector)
         if filter_genre:
-            new_context = new_context.filter(genre__name=filter_genre)
+            basic_query.add(Q(genre__name=filter_genre),basic_query.connector)
         if filter_loc:
-            new_context = new_context.filter(relationconcertorganisation__organisation__location__pk=filter_loc)
+            basic_query.add(Q(organisation__location__pk=filter_loc),basic_query.connector)
+
+        new_context = Concert.objects.filter(
+            basic_query
+            ).prefetch_related(
+                Prefetch('artist',Artist.objects.all(), to_attr='related_artists'),
+                Prefetch('organisation',Organisation.objects.all(), to_attr='related_organisations'),
+                ).all()
+
         return new_context
 
 
@@ -509,7 +529,7 @@ class UpcomingConcertListView(DefaultConcertListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return self.apply_filters().filter(date__gte=datetime.now().date()).order_by('date', 'relationconcertorganisation__organisation__location__country')
+        return self.apply_filters().filter(date__gte=datetime.now().date()).order_by('date', 'organisation__location__country')
 
 
 class ConcertsWithoutArtistsListView(DefaultConcertListView):

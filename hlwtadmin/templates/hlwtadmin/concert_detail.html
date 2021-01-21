@@ -75,7 +75,7 @@
                 </ul>
                 <ul class="concert-detail-edit">
                     <li>{% if perms.hlwtadmin.update_concert %}<a href="{% url 'concert_update' concert.id %}">Update this concert</a></li>{% endif %}
-                    <li>{% if user.is_authenticated %}<a href="{% url 'concert-create-similar' concert.pk %}">Create Similar Concert</a></li>{% endif %}
+                    <li>{% if perms.hlwtadmin.create_concert %}<a href="{% url 'concert-create-similar' concert.pk %}">Create Similar Concert</a></li>{% endif %}
                 </ul>
             </div>
         </div>

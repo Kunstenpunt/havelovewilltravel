@@ -1,0 +1,41 @@
+.sidebar-nav {
+    margin-top: 20px;
+    padding: 0;
+    list-style: none;
+}
+
+.select2-container {
+    min-width: 50em !important;
+}
+
+
+.concert-detail {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 250px;
+  }
+
+.concert-detail-edit {
+    margin-top: auto;
+    margin-left:auto;
+}
+
+ul.concert-detail-edit li {
+    list-style-type: none;
+    margin: 0px;
+    padding: 5px;
+}
+
+.button-add {
+    font: bold 11px Arial;
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 2px 6px 2px 6px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+    border-left: 1px solid #CCCCCC;
+    margin: 1em auto 1em 2em;
+  }
