@@ -1,4 +1,5 @@
 {% extends "base_generic.html" %}
+{% block head %}{% load static %}{% endblock head %}
 
 {% block content %}
 <div class="jumbotron my-4">
@@ -59,17 +60,17 @@
     {% for location in location_list %}
       <tr>
           <td>
-              <span class="badge badge-primary badge-pill">{{ location.organisation_set.count }}</span>
+              <span class="badge badge-primary badge-pill">{{ location.num_organisations }}</span>
           </td>
           <td>
                 <a href="{{ location.get_absolute_url }}">{{ location.city }}</a> {% if location.zipcode %}<span class="text-muted"><em>({{ location.zipcode }})</em></span> {% endif %}{% if location.subcountry %}<span class="text-muted"><em>{{ location.subcountry }}</em></span>{% endif %}
           </td>
           <td>
-                {% if location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
+                {% if location.verified %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
           </td>
           <td>
                 <span class="text-muted"><em>{{ location.country.name }}</em></span>
-                {% load static %}<img title="{{ location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" />
+                <img title="{{ location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ location.country.iso_code }}.png" />
           </td>
       </tr>
     {% endfor %}
