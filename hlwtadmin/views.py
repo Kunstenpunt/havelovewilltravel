@@ -508,7 +508,7 @@ class ConcertsInNonNeighbouringCountries(DefaultConcertListView):
         return self.apply_filters().exclude(relationconcertorganisation__organisation__location__country__name__in=["Belgium", "Luxembourg", "Ireland", "France", "Germany", "United Kingdom", "Netherlands", "Spain", "Portugal", "Italy", "Denmark"]).exclude(verified=True)
 
 
-class ConcertsWithMultipleOrganisationsInDifferentCountries(DefaultConcertListView):
+class ConcertsWithMultipleOrganisationsInDifferentLocations(DefaultConcertListView):
     model = Concert
     paginate_by = 30
 
