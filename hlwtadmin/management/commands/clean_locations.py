@@ -9,24 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        repmap = [
-            ", Nederland",
-            ", UK",
-            ", België",
-            ", Duitsland",
-            ", CZ",
-            ", RU",
-            ", HR"
-        ]
-
-        for loc in Location.objects.exclude(country__isnull=True).filter(city__contains=', '):
-            city = loc.city
-            print(city)
-            city_new = city
-            for rep in repmap:
-                city_new = city_new.replace(rep, "")
-            if city_new != city:
-                print("changing", city, "for", city_new)
-                input()
-                loc.city = city_new
-                loc.save()
+        for org in Organisation.objects.filter(location__pk=34789):
+            print(org)
+            org.location = None
+            org.save(update_fields=["location"])
