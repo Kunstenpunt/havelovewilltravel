@@ -28,11 +28,11 @@
             </tr>
             <tr>
                 <td>Type</td>
-                <td>{{ organisation.organisation_type.all|join:", " }}</td>
+                <td>{{ organisation_type|join:", " }}</td>
             </tr>
             <tr>
                 <td>Genre</td>
-                <td>{{ organisation.genre.all|join:", " }}</td>
+                <td>{{ genre|join:", " }}</td>
             </tr>
             {% if user.is_authenticated %}
             <tr>
@@ -87,19 +87,19 @@
                 {% if concert.verified %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
                 {% if concert.manual %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/manual.png' %}" alt="manual" />{% endif %}
                 {% if concert.is_new %}{% load static %}<br/><span class="badge badge-secondary">New</span>{% endif %}
-                {% for rel in concert.organisationsqs %}
-                    {% if rel.organisation != organisation %}<br/><span class="text-muted">{{ rel.organisation.name }}</span>{% endif %}
+                {% for org in concert.related_organisations %}
+                    {% if org != organisation %}<br/><span class="text-muted">{{ org.name }}</span>{% endif %}
                 {% endfor %}
             </td>
             <td valign="top">
-              {% for relation in concert.artistsqs %}
-                <a title="{{ relation.artist.disambiguation }}" href="{% url 'artist_detail' relation.artist.mbid %}">{{ relation.artist.name }}</a><br>
+              {% for artist in concert.related_artists %}
+                <a title="{{ artist.disambiguation }}" href="{% url 'artist_detail' artist.mbid %}">{{ artist.name }}</a><br>
               {% endfor %}
             </td>
 
-            <td valign="top">{{ concert.genre.all|join:"<br>" }}</td>
+            <td valign="top">{{ genre|join:"<br>" }}</td>
             <td valign="top">
-              {% for ca in concert.concertannouncements %}
+              {% for ca in concert.related_concertannouncements %}
                 <a target="_blank" href="{{ ca.gigfinder.base_url }}{% if ca.gigfinder.name == 'podiumfestivalinfo' %} {{ ca.artist.name }} {{ ca.date }} 'site:podiuminfo.nl'  {% else %}{{ ca.gigfinder_concert_id }}{% endif %}">
                     {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
                 </a>
@@ -129,7 +129,7 @@
             <h5 class="card-header">Artists that performed here also performed in these 5 organisations</h5>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    {% for p in organisation.find_similar_organisations %}
+                    {% for p in similar_organisations %}
                     <li class="list-group-item">
                         <a href="{{ p.get_absolute_url }}">{{ p.name }} in {{ p.location }}</a>
                     </li>
@@ -157,13 +157,13 @@
     </div>
     </div>
 
-    {% if organisation.identifiersqs %}
+    {% if identifiers %}
     <div class="col-md-4 my-4">
     <div class="card">
         <h5 class="card-header">External identifier</h5>
         <div class="card-body">
             <ul class="list-unstyled">
-                {% for relation in organisation.identifiersqs %}
+                {% for relation in identifiers %}
                     <li>
                         <a target="_blank" href="{{ relation.identifier.service.base_url }}{{ relation.identifier.identifier }}">{{ relation.identifier }}</a>
                         {% if perms.hlwtadmin.update_externalidentifier %}[<a href="{% url 'identifier_update' relation.identifier.id %}">Edit the identifier</a>]{% endif %}

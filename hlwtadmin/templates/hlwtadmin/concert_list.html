@@ -18,11 +18,11 @@
             <div class="form-row">
                 <div class="col">
                     <label for="filter_start">From</label>
-                    <input class="form-control" type="date" id="filter_start" name="filter_start">
+                    <input class="form-control" type="date" id="filter_start" name="filter_start" value={{ start }}>
                 </div>
                     <div class="col">
                     <label for="filter_end">Until</label>
-                    <input class="form-control" type="date" id="filter_end" name="filter_end">
+                    <input class="form-control" type="date" id="filter_end" name="filter_end" value={{ end }}>
                 </div>
                 <div class="col">
                   <label for="filter">Country</label>
@@ -129,3 +129,5 @@
   </div>
 {% endif %}
 {% endblock %}
+
+

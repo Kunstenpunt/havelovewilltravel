@@ -452,15 +452,28 @@ class DefaultConcertListView(ListView):
         now = datetime.now()
         context['filter_start'] = self.request.GET.get('filter_start', (now - timedelta(days=365)).date().isoformat())
         context['filter_end'] = self.request.GET.get('filter_end', (now + timedelta(days=365)).date().isoformat())
+        # checks because if filter start with '' gets through otherwise
+        if not context['filter_start']:
+            context['filter_start'] = (now - timedelta(days=365)).date().isoformat()
+        if not context['filter_end']:
+            context['filter_end'] = (now + timedelta(days=365)).date().isoformat()
         context['filter'] = self.request.GET.get('filter', None)
         context['countries'] = Country.objects.all()
         context['genres'] = Genre.objects.all()
+        # had to rename variables because otherwise name clash in frontend
+        context['start'] = context['filter_start']
+        context['end'] = context['filter_end']
         return context
 
     def apply_filters(self):
         now = datetime.now()
         filter_start = self.request.GET.get('filter_start', (now - timedelta(days=365)).date().isoformat())
+        # checks because if filter start with '' gets through otherwise
+        if not filter_start:
+            filter_start = (now - timedelta(days=365)).date().isoformat()
         filter_end = self.request.GET.get('filter_end', (now + timedelta(days=365)).date().isoformat())
+        if not filter_end:
+            filter_end = (now + timedelta(days=365)).date().isoformat()
         filter_val = self.request.GET.get('filter', None)
         filter_genre = self.request.GET.get('genrefilter', None)
         filter_loc = self.request.GET.get('location', None)
@@ -485,13 +498,16 @@ class DefaultConcertListView(ListView):
                 Prefetch('genre',Genre.objects.all(), to_attr='related_genres'),
                 Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
                 ).all()
-
         return new_context
 
 
 class ConcertListView(DefaultConcertListView):
     model = Concert
     paginate_by = 30
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
     def get_queryset(self):
         return self.apply_filters()
@@ -744,19 +760,32 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
 
     def get_context_data(self, **kwargs):
         filter_val = self.request.GET.get('filter', '')
+        basic_query= Q(artist=self.object) 
+
         if filter_val == 'abroad':
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).exclude(relationconcertorganisation__organisation__location__country__name="Belgium").distinct()
+            basic_query.add(~Q(organisation__location__country__name="Belgium"), basic_query.connector)
         elif filter_val == 'belgium':
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).filter(relationconcertorganisation__organisation__location__country__name="Belgium").distinct()
+            basic_query.add(~Q(organisation__location__country__name="Belgium"), basic_query.connector)
         elif filter_val == 'cancelignore':
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).filter(Q(ignore=True) | Q(cancelled=True)).distinct()
+            basic_query.add(Q(ignore=True) | Q(cancelled=True))
         elif len(filter_val) > 0:
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).filter(relationconcertorganisation__organisation__location__country__name=filter_val).distinct()
-        else:
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).distinct()
+            basic_query.add(~Q(organisation__location__country__name=filter_val), basic_query.connector)
+
+        organisations = Organisation.objects.select_related('location','location__country')
+        concertannouncements = ConcertAnnouncement.objects.select_related('gigfinder','artist')
+
+        object_list = Concert.objects.filter(
+            basic_query
+            ).prefetch_related(
+                Prefetch('organisation', queryset=organisations, to_attr='related_organisations'),
+                Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
+            ).all()
+
         context = super().get_context_data(object_list=object_list, **kwargs)
         context["count"] = object_list.count()
-        return context
+        context["gigfinder"] = GigFinderUrl.objects.filter(artist=self.object).select_related('gigfinder')
+        context["similar_artists"] = self.object.find_similar_artists()
+        return context 
 
 
 class LocationForm(forms.ModelForm):
@@ -819,9 +848,8 @@ class LocationListView(ListView):
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', None)
         filter_search = self.request.GET.get('filtersearch', None)
-        # order by works? 
+        # order by is functional? 
         order = self.request.GET.get('orderby', 'country')
-        print(order)
 
         basic_query= Q() 
 
@@ -830,15 +858,10 @@ class LocationListView(ListView):
         if filter_search:
             basic_query.add(Q(city__unaccent__iregex=filter_search),basic_query.connector)
 
-        #gigfinderurl = GigFinderUrl.objects.all()
-
         new_context = Location.objects.filter(
             basic_query
             ).select_related('country'
-            ).all()#.prefetch_related(
-              #  Prefetch('genre', Genre.objects.all(), to_attr='related_genres'),
-              #  Prefetch('gigfinderurl_set', queryset=gigfinderurl, to_attr='related_gigfinderurls'),
-            #).all()
+            ).all()
 
         return new_context.annotate(num_organisations=Count('organisation')).order_by(order, 'city')
 
@@ -1014,11 +1037,24 @@ class OrganisationDetailView(DetailView, MultipleObjectMixin):
         venue_page = self.request.GET.get('venue_page', 1)
         organisations = [suborg[0] for suborg in RelationOrganisationOrganisation.objects.filter(organisation_b=self.object).values_list('organisation_a')]
         organisations.append(self.object.pk)
-        concerts = Concert.objects.filter(relationconcertorganisation__organisation__pk__in=organisations).distinct()
+        
+        #organisations = Organisation.objects.select_related('location','location__country')
+        concertannouncements = ConcertAnnouncement.objects.select_related('gigfinder','artist')
+
+        concerts = Concert.objects.filter(organisation__pk__in=organisations
+                    ).prefetch_related(
+                        Prefetch('organisation', Organisation.objects.all(), to_attr='related_organisations'),
+                        Prefetch('artist', Artist.objects.all(), to_attr='related_artists'),
+                        Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
+                    )#.distinct() ?
         object_list = Paginator(concerts, 30).page(concert_page)
         venue_list = Paginator(Venue.objects.filter(organisation=self.object).order_by('raw_venue'), 50).page(venue_page)
         context = super().get_context_data(object_list=object_list, venue_list=venue_list, **kwargs)
         context["count"] = concerts.count()
+        context["genre"] = self.object.genre.all()
+        context["organisation_type"] = self.object.organisation_type.all()
+        context["similar_organisations"] = self.object.find_similar_organisations()
+        context["identifiers"] = self.object.identifiersqs()
         return context
 
 

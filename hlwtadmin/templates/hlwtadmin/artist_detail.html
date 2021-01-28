@@ -57,23 +57,23 @@
             {% if concert.is_new %}{% load static %}<br/><span class="badge badge-secondary">New</span>{% endif %}
         </th>
         <td valign="top">
-            {% for relation in concert.organisationsqs %}
-                {% if relation.organisation %}
-                <a href="{% url 'organisation_detail' relation.organisation.id %}">{{ relation.organisation.name }}</a>
+            {% for organisation in concert.related_organisations %}
+                {% if organisation %}
+                <a href="{% url 'organisation_detail' organisation.id %}">{{ organisation.name }}</a>
                 {% else %}
                 Missing organisation
                 {% endif %}
-                {% if relation.organisation.location %}
+                {% if organisation.location %}
                 <br>
-                {{ relation.organisation.location }}
-                {% load static %}<img title="{{ organisation.location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ relation.organisation.location.country.iso_code }}.png" />
-                {% if relation.organisation.location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
+                {{ organisation.location }}
+                {% load static %}<img title="{{ organisation.location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ organisation.location.country.iso_code }}.png" />
+                {% if organisation.location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
                 {% endif %}
                 <br>
           {% endfor %}
         </td>
         <td valign="top">
-            {% for ca in concert.concertannouncements %}
+            {% for ca in concert.related_concertannouncements %}
             <a target="_blank" href="{{ ca.gigfinder.base_url }}{% if ca.gigfinder.name == 'podiumfestivalinfo' %} {{ ca.artist.name }} {{ ca.date }} 'site:podiuminfo.nl'  {% else %}{{ ca.gigfinder_concert_id }}{% endif %}">
                 {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
             </a>
@@ -126,7 +126,7 @@
             <h5 class="card-header">Top 5 artists that performed in same organisations</h5>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    {% for p in artist.find_similar_artists %}
+                    {% for p in similar_artists %}
                     <li class="list-group-item">
                         <a href="{{ p.get_absolute_url }}">{{ p.name }}</a>
                     </li>
@@ -144,7 +144,7 @@
             </ul>
         </div>
 
-        {% for gigfinderurl in artist.gigfinderurl_set.all %}
+        {% for gigfinderurl in gigfinder %}
         <div class="card">
             <h5 class="card-header">{{ gigfinderurl.gigfinder }}</h5>
             <ul class="list-group list-group-flush">
