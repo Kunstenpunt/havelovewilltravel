@@ -1,10 +1,12 @@
 import binascii
 
 from django.db import models
+from django.db.models import prefetch_related_objects
 from django.urls import reverse
-
+from django.contrib.postgres.fields import ArrayField
 from django_super_deduper.merge import MergedModelInstance
 
+import os
 from json import dumps
 import hashlib
 import hmac
@@ -13,13 +15,11 @@ from requests import post
 from datetime import datetime, timedelta, date
 import pytz
 from math import sqrt
-import os
 from collections import Counter
-
+import operator
 from regex import sub
 from collections import Counter
 from multiselectfield import MultiSelectField
-
 from simple_history.models import HistoricalRecords
 
 from .choices import ROLE_CHOICES
@@ -65,9 +65,14 @@ class Artist(models.Model):
     def concerts(self):
         return set([rel.concert for rel in RelationConcertArtist.objects.filter(artist=self)])
 
+    # unused?
     def recent_concerts(self, recent=5):
         return set([rel.concert for rel in RelationConcertArtist.objects.filter(artist=self).order_by('-concert__date').distinct()[:recent]])
 
+    def recent_concerts_queryset(self, recent=5):
+        return [rel.concert for rel in RelationConcertArtist.objects.filter(artist=self).select_related('concert').order_by('-concert__date').distinct()[:recent]]
+
+    # unused?
     def organisations(self, top=5):
         orgs = []
         concerts = self.recent_concerts()
@@ -77,10 +82,21 @@ class Artist(models.Model):
         result = [o for o, b in Counter(orgs).most_common(top)]
         return result
 
+    def organisations_qs(self, top=5):
+        orgs = []
+
+        concerts = self.recent_concerts_queryset()
+        prefetch_related_objects(concerts, 'organisation')
+
+        orgs = [org for concert in concerts for org in concert.organisation.all()]
+        result = [o for o, b in Counter(orgs).most_common(top)]
+        return result
+
     def find_similar_artists(self, top=5):
         related_artists = []
-        for org in self.organisations():
-            for artist in org.artists():
+
+        for org in self.organisations_qs():
+            for artist in org.artists_qs():
                 if artist.pk != self.pk:
                     related_artists.append(artist)
         result = [a for a, b in Counter(related_artists).most_common(top)]
@@ -96,6 +112,7 @@ class GigFinderUrl(models.Model):
     url = models.URLField()
     last_confirmed_by_musicbrainz = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, 0))
     last_synchronized = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, 0, tzinfo=pytz.utc))
+    ignore_periods = ArrayField(models.DateTimeField(), size=2, blank=True, null= True)
 
     def __str__(self):
         return self.url + " (" + str(self.artist) + ", " + str(self.gigfinder) + ")"
@@ -250,7 +267,7 @@ class Venue(models.Model):
 
 class Concert(models.Model):
     title = models.CharField(max_length=200)
-    date = models.DateField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True, db_index=True)
     artist = models.ManyToManyField("Artist", blank=True, default=None, related_name='concert_model',through='RelationConcertArtist')
     organisation = models.ManyToManyField("Organisation", blank=True, default=None, related_name='concert_model',through='RelationConcertOrganisation')
     until_date = models.DateField(blank=True, null=True, default=None)
@@ -461,9 +478,21 @@ class Organisation(models.Model):
     def recent_concerts(self, recent=5):
         return set([rel.concert for rel in RelationConcertOrganisation.objects.filter(organisation=self).order_by('-concert__date').distinct()[:recent]])
 
+    def recent_concerts_qs(self, recent=5):
+        return [rel.concert for rel in RelationConcertOrganisation.objects.filter(organisation=self).select_related('concert').order_by('-concert__date').distinct()[:recent]]
+
     def artists(self, top=5):
         artsts = set()
-        for concert in self.recent_concerts():
+        for concert in self.recent_concerts:
+            for rel in concert.artistsqs():
+                artsts.add(rel.artist)
+        result = [a for a, b in Counter(artsts).most_common(top)]
+        return result
+
+    # to optimize find_similar things
+    def artists_qs(self, top=5):
+        artsts = set()
+        for concert in self.recent_concerts_qs():
             for rel in concert.artistsqs():
                 artsts.add(rel.artist)
         result = [a for a, b in Counter(artsts).most_common(top)]
@@ -471,7 +500,7 @@ class Organisation(models.Model):
 
     def find_similar_organisations(self, top=5):
         related_organisations = []
-        for artist in self.artists():
+        for artist in self.artists_qs():
             for org in artist.organisations():
                 if org.pk != self.pk:
                     related_organisations.append(org)

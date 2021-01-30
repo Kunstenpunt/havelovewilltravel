@@ -20,7 +20,7 @@ from collections import Counter
 from django.views.generic.list import MultipleObjectMixin
 from .forms import ConcertForm 
 
-from .models import Concert, ConcertAnnouncement, Artist, Organisation, Location, Genre, RelationConcertConcert, \
+from .models import Concert, ConcertAnnouncement, Artist, Organisation, OrganisationType, Location, Genre, RelationConcertConcert, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
     RelationArtistArtist, OrganisationsMerge, ConcertsMerge, LocationsMerge, GigFinderUrl, RelationOrganisationIdentifier, \
     ExternalIdentifier, RelationLocationLocation, RelationLocationLocationType
@@ -452,15 +452,28 @@ class DefaultConcertListView(ListView):
         now = datetime.now()
         context['filter_start'] = self.request.GET.get('filter_start', (now - timedelta(days=365)).date().isoformat())
         context['filter_end'] = self.request.GET.get('filter_end', (now + timedelta(days=365)).date().isoformat())
+        # checks because if filter start with '' gets through otherwise
+        if not context['filter_start']:
+            context['filter_start'] = (now - timedelta(days=365)).date().isoformat()
+        if not context['filter_end']:
+            context['filter_end'] = (now + timedelta(days=365)).date().isoformat()
         context['filter'] = self.request.GET.get('filter', None)
-        context['countries'] = Country.objects.all().distinct()
-        context['genres'] = Genre.objects.all().distinct()
+        context['countries'] = Country.objects.all()
+        context['genres'] = Genre.objects.all()
+        # had to rename variables because otherwise name clash in frontend
+        context['start'] = context['filter_start']
+        context['end'] = context['filter_end']
         return context
 
     def apply_filters(self):
         now = datetime.now()
         filter_start = self.request.GET.get('filter_start', (now - timedelta(days=365)).date().isoformat())
+        # checks because if filter start with '' gets through otherwise
+        if not filter_start:
+            filter_start = (now - timedelta(days=365)).date().isoformat()
         filter_end = self.request.GET.get('filter_end', (now + timedelta(days=365)).date().isoformat())
+        if not filter_end:
+            filter_end = (now + timedelta(days=365)).date().isoformat()
         filter_val = self.request.GET.get('filter', None)
         filter_genre = self.request.GET.get('genrefilter', None)
         filter_loc = self.request.GET.get('location', None)
@@ -474,19 +487,27 @@ class DefaultConcertListView(ListView):
         if filter_loc:
             basic_query.add(Q(organisation__location__pk=filter_loc),basic_query.connector)
 
+        organisations = Organisation.objects.select_related('location')
+        concertannouncements = ConcertAnnouncement.objects.select_related('gigfinder','artist')
+
         new_context = Concert.objects.filter(
             basic_query
             ).prefetch_related(
                 Prefetch('artist',Artist.objects.all(), to_attr='related_artists'),
-                Prefetch('organisation',Organisation.objects.all(), to_attr='related_organisations'),
+                Prefetch('organisation', queryset=organisations, to_attr='related_organisations'),
+                Prefetch('genre',Genre.objects.all(), to_attr='related_genres'),
+                Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
                 ).all()
-
         return new_context
 
 
 class ConcertListView(DefaultConcertListView):
     model = Concert
     paginate_by = 30
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
     def get_queryset(self):
         return self.apply_filters()
@@ -648,18 +669,31 @@ class ArtistListView(ListView):
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', '')
         filter_genre = self.request.GET.get('genrefilter', None)
+        order = self.request.GET.get('orderby', 'name')
+        basic_query= Q(name__unaccent__iregex=filter_val) 
+
         if filter_genre:
-            new_context = Artist.objects.filter(name__unaccent__iregex=filter_val).filter(genre__name=filter_genre)
-        else:
-            new_context = Artist.objects.filter(name__unaccent__iregex=filter_val)
-        return new_context
+            basic_query.add(Q(genre__name=filter_genre),basic_query.connector)
+
+        gigfinderurl = GigFinderUrl.objects.all()
+
+        new_context = Artist.objects.filter(
+            basic_query
+            ).prefetch_related(
+                Prefetch('genre', Genre.objects.all(), to_attr='related_genres'),
+                Prefetch('gigfinderurl_set', queryset=gigfinderurl, to_attr='related_gigfinderurls'),
+            ).all()
+
+        return new_context.annotate(num_concerts=Count('relationconcertartist'))
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.request.GET.get('filter', '')
         context['num_artists'] = Artist.objects.filter(name__unaccent__iregex=context['filter']).count()
-        context['genres'] = Genre.objects.all().distinct()
+        context['genres'] = Genre.objects.all()
         return context
+
 
 '''
 def ArtistBulkAddRole(request, id=None):
@@ -726,19 +760,32 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
 
     def get_context_data(self, **kwargs):
         filter_val = self.request.GET.get('filter', '')
+        basic_query= Q(artist=self.object) 
+
         if filter_val == 'abroad':
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).exclude(relationconcertorganisation__organisation__location__country__name="Belgium").distinct()
+            basic_query.add(~Q(organisation__location__country__name="Belgium"), basic_query.connector)
         elif filter_val == 'belgium':
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).filter(relationconcertorganisation__organisation__location__country__name="Belgium").distinct()
+            basic_query.add(~Q(organisation__location__country__name="Belgium"), basic_query.connector)
         elif filter_val == 'cancelignore':
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).filter(Q(ignore=True) | Q(cancelled=True)).distinct()
+            basic_query.add(Q(ignore=True) | Q(cancelled=True))
         elif len(filter_val) > 0:
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).filter(relationconcertorganisation__organisation__location__country__name=filter_val).distinct()
-        else:
-            object_list = Concert.objects.filter(relationconcertartist__artist=self.object).distinct()
+            basic_query.add(~Q(organisation__location__country__name=filter_val), basic_query.connector)
+
+        organisations = Organisation.objects.select_related('location','location__country')
+        concertannouncements = ConcertAnnouncement.objects.select_related('gigfinder','artist')
+
+        object_list = Concert.objects.filter(
+            basic_query
+            ).prefetch_related(
+                Prefetch('organisation', queryset=organisations, to_attr='related_organisations'),
+                Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
+            ).all()
+
         context = super().get_context_data(object_list=object_list, **kwargs)
         context["count"] = object_list.count()
-        return context
+        context["gigfinder"] = GigFinderUrl.objects.filter(artist=self.object).select_related('gigfinder')
+        context["similar_artists"] = self.object.find_similar_artists()
+        return context 
 
 
 class LocationForm(forms.ModelForm):
@@ -801,15 +848,22 @@ class LocationListView(ListView):
     def get_queryset(self):
         filter_val = self.request.GET.get('filter', None)
         filter_search = self.request.GET.get('filtersearch', None)
+        # order by is functional? 
         order = self.request.GET.get('orderby', 'country')
-        if filter_search and filter_val:
-            return Location.objects.filter(city__unaccent__iregex=filter_search).filter(country__name=filter_val).annotate(num_organisations=Count('organisation')).order_by(order, 'city')
-        if not filter_search and filter_val:
-            return Location.objects.filter(country__name=filter_val).annotate(num_organisations=Count('organisation')).order_by(order, 'city')
-        if filter_search and not filter_val:
-            return Location.objects.filter(city__unaccent__iregex=filter_search).annotate(num_organisations=Count('organisation')).order_by(order, 'city')
-        if not filter_search and not filter_val:
-            return Location.objects.all().annotate(num_organisations=Count('organisation')).order_by(order, 'city')
+
+        basic_query= Q() 
+
+        if filter_val:
+            basic_query.add(Q(country__name=filter_val),basic_query.connector)
+        if filter_search:
+            basic_query.add(Q(city__unaccent__iregex=filter_search),basic_query.connector)
+
+        new_context = Location.objects.filter(
+            basic_query
+            ).select_related('country'
+            ).all()
+
+        return new_context.annotate(num_organisations=Count('organisation')).order_by(order, 'city')
 
 
 class CitiesWithoutCountryListView(ListView):
@@ -883,10 +937,22 @@ class DefaultOrganisationListView(ListView):
         filter_val = self.request.GET.get('filter', '')
         filter_country = self.request.GET.get('filter_country', None)
         order = self.request.GET.get('orderby', 'name')
+        
+        basic_query= Q(name__unaccent__iregex=filter_val) 
+
         if filter_country:
-            new_context = Organisation.objects.select_related('location__country').filter(name__unaccent__iregex=filter_val).filter(location__country__name=filter_country)
-        else:
-            new_context = Organisation.objects.filter(name__unaccent__iregex=filter_val,)
+            basic_query.add(Q(location__country__name=filter_country),basic_query.connector)
+
+        organisation_type = OrganisationType.objects.all()
+
+        new_context = Organisation.objects.filter(
+            basic_query
+            ).select_related('location','location__country'
+            ).prefetch_related(
+                Prefetch('genre', Genre.objects.all(), to_attr='related_genres'),
+                Prefetch('organisation_type', queryset=organisation_type, to_attr='related_organisation_types'),
+            ).all()
+
         return new_context.annotate(num_concerts=Count('relationconcertorganisation')).order_by(order)
 
 
@@ -971,11 +1037,24 @@ class OrganisationDetailView(DetailView, MultipleObjectMixin):
         venue_page = self.request.GET.get('venue_page', 1)
         organisations = [suborg[0] for suborg in RelationOrganisationOrganisation.objects.filter(organisation_b=self.object).values_list('organisation_a')]
         organisations.append(self.object.pk)
-        concerts = Concert.objects.filter(relationconcertorganisation__organisation__pk__in=organisations).distinct()
+        
+        #organisations = Organisation.objects.select_related('location','location__country')
+        concertannouncements = ConcertAnnouncement.objects.select_related('gigfinder','artist')
+
+        concerts = Concert.objects.filter(organisation__pk__in=organisations
+                    ).prefetch_related(
+                        Prefetch('organisation', Organisation.objects.all(), to_attr='related_organisations'),
+                        Prefetch('artist', Artist.objects.all(), to_attr='related_artists'),
+                        Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
+                    )#.distinct() ?
         object_list = Paginator(concerts, 30).page(concert_page)
         venue_list = Paginator(Venue.objects.filter(organisation=self.object).order_by('raw_venue'), 50).page(venue_page)
         context = super().get_context_data(object_list=object_list, venue_list=venue_list, **kwargs)
         context["count"] = concerts.count()
+        context["genre"] = self.object.genre.all()
+        context["organisation_type"] = self.object.organisation_type.all()
+        context["similar_organisations"] = self.object.find_similar_organisations()
+        context["identifiers"] = self.object.identifiersqs()
         return context
 
 

@@ -1,4 +1,5 @@
 {% extends "base_generic.html" %}
+{% block head %}{% load static %}{% endblock head %}
 
 {% block content %}
 <div class="jumbotron my-4">
@@ -17,11 +18,11 @@
             <div class="form-row">
                 <div class="col">
                     <label for="filter_start">From</label>
-                    <input class="form-control" type="date" id="filter_start" name="filter_start">
+                    <input class="form-control" type="date" id="filter_start" name="filter_start" value={{ start }}>
                 </div>
                     <div class="col">
                     <label for="filter_end">Until</label>
-                    <input class="form-control" type="date" id="filter_end" name="filter_end">
+                    <input class="form-control" type="date" id="filter_end" name="filter_end" value={{ end }}>
                 </div>
                 <div class="col">
                   <label for="filter">Country</label>
@@ -66,9 +67,9 @@
         {% if concert.multiple_organisations_in_related_locations and request.resolver_match.url_name == "concerts_with_multiple_organisations_in_different_locations" %}<tr class="table-info">{% else %} <tr> {% endif %}
         <td>
             <a href="{{ concert.get_absolute_url }}">{{ concert.date }}{% if concert.until_date and concert.until_date != concert.date %} - <br/>{{ concert.until_date }}{% endif %}</a>
-            {% if concert.verified %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
-            {% if concert.manual %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/manual.png' %}" alt="manual" />{% endif %}
-            {% if concert.is_new %}{% load static %}<br/><span class="badge badge-secondary">New</span>{% endif %}
+            {% if concert.verified %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
+            {% if concert.manual %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/manual.png' %}" alt="manual" />{% endif %}
+            {% if concert.is_new %}<br/><span class="badge badge-secondary">New</span>{% endif %}
         </td>
         <td valign="top">
           {% for artist in concert.related_artists %}
@@ -89,14 +90,14 @@
             <br>
           {% endfor %}
         </td>
-        <td valign="top">{{ concert.genre.all|join:"<br>" }}</td>
+        <td valign="top">{{ concert.related_genres|join:"<br>" }}</td>
         <td valign="top">
-          {% for ca in concert.concertannouncements %}
+          {% for ca in concert.related_concertannouncements %}
             <a target="_blank" href="{{ ca.gigfinder.base_url }}{% if ca.gigfinder.name == 'podiumfestivalinfo' %} {{ ca.artist.name }} {{ ca.date }} 'site:podiuminfo.nl'  {% else %}{{ ca.gigfinder_concert_id }}{% endif %}">
-                {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
+                <img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
             </a>
             <a href="{% url 'concertannouncement_detail' ca.pk %}" title="{{ ca }}">{{ ca|truncatechars:30 }}</a>
-            {% if not ca.recently_seen %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" alt="not recently seen" />{% endif %}
+            {% if not ca.recently_seen %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" alt="not recently seen" />{% endif %}
             <br>
           {% endfor %}
         </td>
@@ -128,3 +129,5 @@
   </div>
 {% endif %}
 {% endblock %}
+
+

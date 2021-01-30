@@ -1,5 +1,5 @@
 {% extends "base_generic.html" %}
-
+{% block head %}{% load static %}{% endblock head %}
 {% block content %}
 <div class="jumbotron my-4">
     <nav aria-label="breadcrumb">
@@ -9,9 +9,9 @@
       </ol>
     </nav>
     <h1 class="jumbotron-heading">Organisation List</h1>
-    <p class="lead">This page provides an overview of locations in Have Love, Will Travel.</p>
+    <p class="lead">This page provides an overview of organisations in Have Love, Will Travel.</p>
     <hr class="my-4">
-    <p>It shows whether or not the location is verified, and it indicates the amount of organisations in the location.</p>
+    <p>It shows information.</p>
         <form method="get" action="{% url 'organisations' %}">
             <div class="form-group">
                 <label for="filter">Search for an organisation</label>
@@ -59,18 +59,18 @@
             <td>
               <a href="{{ organisation.get_absolute_url }}">{{ organisation.name }}</a><br>
                 <span class="badge badge-primary badge-pill">{{ organisation.num_concerts }}</span>
-                {% if organisation.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
+                {% if organisation.verified %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
                 <br/>
                 {% if organisation.disambiguation %}<small class="text-muted"><em>{{ organisation.disambiguation }}</em></small>{% endif %}
             </td>
             <td>{{ organisation.location }}
                 {% if organisation.location %}
-                    {% load static %}<img title="{{ organisation.location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ organisation.location.country.iso_code }}.png" />
-                    {% if organisation.location.verified %}{% load static %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
+                    <img title="{{ organisation.location.country }}" style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ organisation.location.country.iso_code }}.png" />
+                    {% if organisation.location.verified %}<img style="width: 20px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}
                 {% endif %}
             </td>
-            <td>{{ organisation.organisation_type.all|join:"," }}</td>
-            <td>{{ organisation.genre.all|join:"," }}</td>
+            <td>{{ organisation.related_organisation_types|join:"," }}</td>
+            <td>{{ organisation.related_genres|join:"," }}</td>
           </tr>
         {% endfor %}
     </table>
