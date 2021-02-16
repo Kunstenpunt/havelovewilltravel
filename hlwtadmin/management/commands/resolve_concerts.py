@@ -18,7 +18,6 @@ class Command(BaseCommand):
                 print(organisation)
                 if organisation:
                     print("about to link", organisation, "to", concert)
-                    input()
                     rel = RelationConcertOrganisation.objects.create(concert=concert, organisation=organisation)
                     rel.save()
                 else:
