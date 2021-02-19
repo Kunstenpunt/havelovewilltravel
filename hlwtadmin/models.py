@@ -146,6 +146,7 @@ class ConcertAnnouncement(models.Model):
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
     cancelled = models.BooleanField(null=True, blank=True, default=False)
+    description = models.TextField(default=None, blank=True, null=True)
     history = HistoricalRecords()
 
     def __str__(self):

@@ -3,6 +3,7 @@
 {% block content %}
 <div class="jumbotron my-4">
     <h1 class="display-3">{% block title %}{{ concertannouncement.title }}{% endblock %}</h1>
+    <p>{{ concertannouncement.description }}</p>
     {% if concertannouncement.concert %}
     <h4 class="display-4"><a href="{% url 'concert_detail' concertannouncement.concert.id %}">See related concert</a></h4>
     {% endif %}
