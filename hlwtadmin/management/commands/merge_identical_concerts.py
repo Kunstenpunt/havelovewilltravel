@@ -16,13 +16,13 @@ class Command(BaseCommand):
             mergeconcerts = []
             if len(arts) == 1:
                 artist = arts[0]
-                for art_concert in artist.concerts():
+                art_concerts = [rel.concert for rel in RelationConcertArtist.objects.filter(artist=artist).filter(concert__date=concert.date).filter(concert__until_date__isnull=True)]
+                for art_concert in art_concerts:
                     if art_concert != concert:
                         if concert.date == art_concert.date:
-                            if not art_concert.until_date:
-                                art_orgs = [rel.organisation for rel in art_concert.organisationsqs()]
-                                if art_orgs == orgs:
-                                    mergeconcerts.append(art_concert)
+                            art_orgs = [rel.organisation for rel in art_concert.organisationsqs()]
+                            if art_orgs == orgs:
+                                mergeconcerts.append(art_concert)
 
             if len(mergeconcerts) > 0:
                 print("\tlet's merge")
