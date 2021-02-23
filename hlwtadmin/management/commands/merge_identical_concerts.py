@@ -27,7 +27,6 @@ class Command(BaseCommand):
 
             if len(mergeconcerts) > 0:
                 print("\tlet's do this")
-                input()
                 try:
                     concert_merge = ConcertsMerge.objects.create(
                         primary_object=concert
