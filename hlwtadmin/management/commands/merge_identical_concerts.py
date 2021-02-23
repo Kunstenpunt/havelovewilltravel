@@ -22,19 +22,21 @@ class Command(BaseCommand):
                         if concert.date == art_concert.date:
                             art_orgs = [rel.organisation for rel in art_concert.organisationsqs()]
                             if art_orgs == orgs:
+                                print("\t", concert, concert.pk, "is very similar to", art_concert, art_concert.pk)
                                 mergeconcerts.append(art_concert)
 
             if len(mergeconcerts) > 0:
-                print("\tlet's merge")
-                for conc in mergeconcerts:
-                    print("\t", conc, conc.date, conc.pk)
+                print("\tlet's do this")
                 input()
                 try:
                     concert_merge = ConcertsMerge.objects.create(
                         primary_object=concert
                     )
                     concert_merge.alias_objects.set(mergeconcerts)
+                    print(concert_merge)
+                    concert_merge.merge()
+                    print("\tdone")
                     concert_merge.delete()
                 except Exception as e:
-                    print("error", e)
+                    print("\texception", e)
                     pass
