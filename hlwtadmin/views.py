@@ -497,7 +497,7 @@ class DefaultConcertListView(ListView):
                 Prefetch('organisation', queryset=organisations, to_attr='related_organisations'),
                 Prefetch('genre',Genre.objects.all(), to_attr='related_genres'),
                 Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
-                ).all()
+                ).distinct()
         return new_context
 
 
