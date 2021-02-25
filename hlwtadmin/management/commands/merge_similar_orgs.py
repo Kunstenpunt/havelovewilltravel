@@ -40,9 +40,10 @@ class Command(BaseCommand):
                         org.save(update_fields=['name'])
                 mergeorgs = []
                 #for simorg in Organisation.objects.filter(location=superloc).filter(name__unaccent__iexact=org.name).exclude(pk=org.pk):
-                for simorg in Organisation.objects.filter(location=loc).filter(name__unaccent__iexact=org.name).exclude(pk=org.pk):
-                    print("\t", org, org.id, "is very similar to", simorg, simorg.id)
-                    mergeorgs.append(simorg)
+                for simorg in Organisation.objects.filter(location=loc).filter(name__iexact=org.name).exclude(pk=org.pk):
+                    if Organisation.objects.filter(pk=org.id).count() > 0:
+                        print("\t", org, org.id, "is very similar to", simorg, simorg.id)
+                        mergeorgs.append(simorg)
 
                 if len(mergeorgs) > 0:
                     try:
