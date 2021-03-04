@@ -502,7 +502,10 @@ class DefaultConcertListView(ListView):
                 Prefetch('genre',Genre.objects.all(), to_attr='related_genres'),
                 Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
                 ).distinct()
+<<<<<<< HEAD
         
+=======
+>>>>>>> 014055d2c1bb17820fd91cfd32ee5424dd923104
         return new_context
 
 
@@ -530,7 +533,7 @@ class ConcertsInNonNeighbouringCountries(DefaultConcertListView):
         return self.apply_filters().exclude(relationconcertorganisation__organisation__location__country__name__in=["Belgium", "Luxembourg", "Ireland", "France", "Germany", "United Kingdom", "Netherlands", "Spain", "Portugal", "Italy", "Denmark"]).exclude(verified=True)
 
 
-class ConcertsWithMultipleOrganisationsInDifferentCountries(DefaultConcertListView):
+class ConcertsWithMultipleOrganisationsInDifferentLocations(DefaultConcertListView):
     model = Concert
     paginate_by = 30
 

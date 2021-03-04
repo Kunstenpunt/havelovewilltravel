@@ -25,7 +25,7 @@ class Command(BaseCommand):
         self.ua = UserAgent()
 
         # loop through all announcements of songkick that are not ignored
-        for concertannouncement in ConcertAnnouncement.objects.filter(gigfinder__name="www.facebook.com").filter(raw_venue__raw_venue="|||www.facebook.com").exclude(ignore=True).order_by('pk'):
+        for concertannouncement in ConcertAnnouncement.objects.filter(gigfinder__name="www.facebook.com"):
 
             print("working on", concertannouncement, concertannouncement.pk)
             time.sleep(3)
@@ -33,87 +33,21 @@ class Command(BaseCommand):
             concert = self.get_event(concertannouncement.gigfinder_concert_id)
             print("data", concert)
             if concert:
-                venue_name = "|".join([concert["venue"], concert["stad"], concert["land"], self.platform.name])
-                print("working with venue name", venue_name)
-                venue = Venue.objects.filter(raw_venue=venue_name).first()
-                print("venue is", venue)
-                if not venue:
-                    print("new venue to be made!")
-                    venue = Venue.objects.create(
-                        raw_venue=venue_name,
-                        raw_location="|".join([concert["stad"], concert["land"], self.platform.name])
-                    )
-                    venue.save()
-
-                if not venue.organisation:
-                    print("checking for org")
-                    self._create_new_unverified_organisation_and_relate_to_venue(concertannouncement, venue)
-
                 if concert["titel"] != concertannouncement.title:
                     concertannouncement.title = concert["titel"]
                 if concert["datum"] != concertannouncement.date:
                     concertannouncement.date = concert["datum"]
                 if concert["einddatum"] != concertannouncement.until_date:
                     concertannouncement.until_date = concert["einddatum"]
-                if venue != concertannouncement.raw_venue:
-                    concertannouncement.raw_venue = venue
                 if concert["latitude"] != concertannouncement.latitude:
                     concertannouncement.latitude = concert["latitude"]
                 if concert["longitude"] != concertannouncement.longitude:
                     concertannouncement.longitude = concert["longitude"]
+                if concert["description"] != concertannouncement.description:
+                    concertannouncement.description = concert["description"]
                 concertannouncement.last_seen_on = datetime.now()
-                print("ca geupdated", concertannouncement)
-                concertannouncement.save()
-
-    def _create_new_unverified_organisation_and_relate_to_venue(self, concertannouncement, raw_venue):
-        # what is the most likely location of the venue
-        # is there an organisation in that location that is similar to the raw_venue
-        # if there is, relate that organisation to venue
-        # if not, create new organisation
-        try:
-            stad, land, bron = raw_venue.raw_venue.split("|")[-3:]
-            name_prop = "|".join(raw_venue.raw_venue.split("|")[:-3])
-            name = name_prop if len(name_prop.strip()) > 0 else raw_venue.raw_venue
-
-            try:
-                year = int(name[-4:])
-                if name[-5] == " " and (1950 < year < 2055):
-                    name = sub("\d\d\d\d$", "", name)
-                    name.strip()
-            except ValueError:
-                pass
-
-            loc = None
-            org = None
-            if land.lower() != "none" or stad.lower() != "none" or land != "" or stad != "":
-                if name not in ("None", "nan"):
-                    loc = concertannouncement.most_likely_clean_location()
-                    org = Organisation.objects. \
-                        create(name=name,
-                               sort_name=name,
-                               annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (
-                                   land if len(land.strip()) else "unknown country") + " (" + bron + ")",
-                               location=loc,
-                               verified=False)
-                    org.save()
-                if raw_venue.organisation is None and not raw_venue.non_assignable and org is not None:
-                    raw_venue.organisation = org
-                    raw_venue.save()
-            else:
-                org = Organisation.objects. \
-                    create(name=name,
-                           sort_name=name,
-                           annotation=(stad if len(stad.strip()) > 0 else "unknown city") + ", " + (
-                               land if len(land.strip()) else "unknown country") + " (" + bron + ")",
-                           location=loc,
-                           verified=False)
-                org.save()
-            if raw_venue.organisation is None and not raw_venue.non_assignable and org is not None:
-                raw_venue.organisation = org
-                raw_venue.save()
-        except ValueError as e:
-            print("----something went wrong", e)
-            pass
+                print("ca geupdated", concertannouncement, concertannouncement.pk)
+                concertannouncement.save(update_fields=["description", "latitude", "longitude", "title", "date", "until_date", "last_seen_on"])
 
     def get_event(self, event_id, test_file=None, test=False):
         url = "http://mobile.facebook.com/events/" + str(event_id)
@@ -136,6 +70,7 @@ class Command(BaseCommand):
             einddatum = dateparse(ld["endDate"]).date() if "endDate" in ld else None
             location = self._get_location(ld)
             titel = ld["name"]
+            desc = ld["description"]
             event_data = {
                 "event_id": event_id,
                 "datum": datum,
@@ -145,7 +80,8 @@ class Command(BaseCommand):
                 "venue": location["venue"],
                 "latitude": location["lat"],
                 "longitude": location["lng"],
-                "titel": titel[0:199]
+                "titel": titel[0:199],
+                "description": desc
             }
             print("event", event_data)
         except AttributeError as e:
