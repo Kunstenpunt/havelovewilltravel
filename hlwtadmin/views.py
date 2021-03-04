@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
-from django.urls import reverse_lazy
+from django.forms import modelform_factory
+from django.urls import reverse_lazy, reverse
 from django import forms
 from dal import autocomplete
 from django.db.models import Q, Exists, Count, F, Max, DateField
@@ -18,7 +19,9 @@ from datetime import datetime, timedelta
 from simple_history.models import HistoricalChanges
 from collections import Counter
 from django.views.generic.list import MultipleObjectMixin
-from .forms import ConcertForm 
+
+from .forms import ConcertForm, GigFinderUrlFormset
+from .choices import get_role_choices
 
 from .models import Concert, ConcertAnnouncement, Artist, Organisation, OrganisationType, Location, Genre, RelationConcertConcert, \
     Country, RelationOrganisationOrganisation, RelationConcertArtist, RelationConcertOrganisation, Venue, \
@@ -478,18 +481,19 @@ class DefaultConcertListView(ListView):
         filter_genre = self.request.GET.get('genrefilter', None)
         filter_loc = self.request.GET.get('location', None)
 
-        basic_query= Q(date__gte=filter_start) 
-        basic_query.add(Q(date__lte=filter_end),basic_query.connector)
+        basic_query= Q(date__gte=filter_start)
+        basic_query.add(Q(date__lte=filter_end),Q.AND)
         if filter_val:
-            basic_query.add(Q(organisation__location__country__name=filter_val),basic_query.connector)
+            basic_query.add(Q(organisation__location__country__name=filter_val),Q.AND)
         if filter_genre:
-            basic_query.add(Q(genre__name=filter_genre),basic_query.connector)
+            basic_query.add(Q(genre__name=filter_genre),Q.AND)
         if filter_loc:
-            basic_query.add(Q(organisation__location__pk=filter_loc),basic_query.connector)
+            basic_query.add(Q(organisation__location__pk=filter_loc),Q.AND)
 
-        organisations = Organisation.objects.select_related('location')
+        organisations = Organisation.objects.select_related('location','location__country')
         concertannouncements = ConcertAnnouncement.objects.select_related('gigfinder','artist')
 
+        # why the duplication?
         new_context = Concert.objects.filter(
             basic_query
             ).prefetch_related(
@@ -497,17 +501,14 @@ class DefaultConcertListView(ListView):
                 Prefetch('organisation', queryset=organisations, to_attr='related_organisations'),
                 Prefetch('genre',Genre.objects.all(), to_attr='related_genres'),
                 Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
-                ).all()
+                ).distinct()
+        
         return new_context
 
 
 class ConcertListView(DefaultConcertListView):
     model = Concert
     paginate_by = 30
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
 
     def get_queryset(self):
         return self.apply_filters()
@@ -659,7 +660,21 @@ class ArtistUpdate(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        queryset=GigFinderUrl.objects.filter(artist=self.object)
+        if self.request.POST:
+            context["gigfinders"] = GigFinderUrlFormset(self.request.POST, queryset=queryset, instance=self.object)
+        else:
+            context["gigfinders"] = GigFinderUrlFormset(queryset=queryset,instance=self.object)
         return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        gigfinders = context["gigfinders"]
+        self.object = form.save()
+        if gigfinders.is_valid():
+            gigfinders.instance = self.object
+            gigfinders.save()
+        return super().form_valid(form)
 
 
 class ArtistListView(ListView):
@@ -694,21 +709,6 @@ class ArtistListView(ListView):
         context['genres'] = Genre.objects.all()
         return context
 
-
-'''
-def ArtistBulkAddRole(request, id=None):
-    if request.method == 'POST': #<- Checking for method type
-        id_list = request.POST.getlist('artists')
-        role = request.POST.get('role')
-    #This will submit an array of the value attributes of all the                
-    #checkboxes that have been checked, that is an array of {{obj.id}}
-
-        # Now all that is left is to iterate over the array fetch the   
-        #object with the ID and delete it. 
-    artists = Artist.objects.filter(id__in=id_list)
-    
-            Agent.objects.get(id=agent_id).delete()
-'''
 
 class IncludeArtistListView(ListView):
     model = Artist
@@ -779,13 +779,38 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
             ).prefetch_related(
                 Prefetch('organisation', queryset=organisations, to_attr='related_organisations'),
                 Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
-            ).all()
+            ).distinct()
 
         context = super().get_context_data(object_list=object_list, **kwargs)
         context["count"] = object_list.count()
         context["gigfinder"] = GigFinderUrl.objects.filter(artist=self.object).select_related('gigfinder')
         context["similar_artists"] = self.object.find_similar_artists()
+        context["roles"] = [d for (d,b) in get_role_choices()]
         return context 
+
+
+def process_detail_artist_bulk_actions(request, pk):
+    if request.method == "POST":
+        action = request.POST.get('action')
+        concert_ids = request.POST.getlist('_selected_action')
+        artist = pk
+        if action == 'merge':
+            if concert_ids:
+                concert_target = request.POST.get('merged_with')
+                if concert_target in concert_ids:
+                    concert_ids.remove(concert_target)
+                concert_target = Concert.objects.get(pk=concert_target)
+                concert_sources = Concert.objects.filter(pk__in=concert_ids)
+                concert_merge = ConcertsMerge.objects.create(primary_object=concert_target)
+                concert_merge.alias_objects.set(concert_sources)
+                concert_merge.merge()
+                concert_merge.delete()
+        if action == 'role':
+            if concert_ids:
+                role = request.POST.get('add_role')
+                RelationConcertArtist.objects.filter(artist=pk,concert_id__in=concert_ids).update(roles=role)
+
+    return HttpResponseRedirect(reverse('artist_detail', kwargs={"pk": pk}))
 
 
 class LocationForm(forms.ModelForm):

@@ -1,9 +1,13 @@
 # https://stackoverflow.com/questions/50380769/how-to-create-a-autocomplete-input-field-in-a-form-using-django
 
 from django import forms
+from django.forms import ModelForm
+from django.forms.widgets import NumberInput
+from django.forms.models import inlineformset_factory
+
 import datetime
 
-from .models import Concert, Genre, Artist, Organisation, Location
+from .models import Concert, Genre, Artist, Organisation, Location, GigFinderUrl
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Div, ButtonHolder, Submit, HTML, Button
@@ -131,3 +135,11 @@ class ConcertForm(forms.ModelForm):
 
         self.helper.add_input(Submit('submit', 'Submit', css_class='btn btn-outline-primary btn-custom form-left-button'))
         self.helper.form_method = 'POST'
+
+
+# to create a nested form to have ignore period for gigfinderurls related to an artist
+GigFinderUrlFormset = inlineformset_factory(
+    Artist, GigFinderUrl, extra=0, fields=('gigfinder','active_start','active_end'), widgets = {
+    'active_start': forms.DateInput(format='%d-%m-%Y'),
+    'active_end': forms.DateInput(format='%d-%m-%Y')
+    }, help_texts={'active_start':'(e.g. 01-01-2020)','active_end':'(e.g. 15-01-2020)'})

@@ -112,7 +112,8 @@ class GigFinderUrl(models.Model):
     url = models.URLField()
     last_confirmed_by_musicbrainz = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, 0))
     last_synchronized = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, 0, tzinfo=pytz.utc))
-    ignore_periods = ArrayField(models.DateTimeField(), size=2, blank=True, null= True)
+    active_start = models.DateTimeField(null=True, blank=True)
+    active_end = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.url + " (" + str(self.artist) + ", " + str(self.gigfinder) + ")"
@@ -353,12 +354,15 @@ class Concert(models.Model):
         RelationConcertConcert.objects.filter(concert_b=self).all().delete()
         super(Concert, self).delete()
 
+
     def multiple_organisations_in_related_locations(self):
         locs = set([rel.organisation.location for rel in self.organisationsqs()])
+        
         for loc_a in locs:
             for loc_b in locs:
                 if loc_a.related_to(loc_b):
                     return True
+
 
     def get_changelist(self):
         changes = []
