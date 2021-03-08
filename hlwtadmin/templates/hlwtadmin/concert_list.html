@@ -73,7 +73,7 @@
         </td>
         <td valign="top">
           {% for artist in concert.related_artists %}
-            <a title="{{ artist.disambiguation }}" href="{% url 'artist_detail' artist.mbid %}">{{ artist.name }}</a><br>
+            <a title="{{ artist.disambiguation }}" href="{% url 'artist_detail' artist.mbid %}">{{ artist.name }}{% if artist.credited_as %}*{% endif%}</a><br>
           {% endfor %}
         </td>
         <td valign="top">

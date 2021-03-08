@@ -497,15 +497,12 @@ class DefaultConcertListView(ListView):
         new_context = Concert.objects.filter(
             basic_query
             ).prefetch_related(
-                Prefetch('artist',Artist.objects.all(), to_attr='related_artists'),
+                Prefetch('artist',Artist.objects.all().annotate(credited_as=F('relationconcertartist__artist_credited_as')).distinct(), to_attr='related_artists'),
                 Prefetch('organisation', queryset=organisations, to_attr='related_organisations'),
                 Prefetch('genre',Genre.objects.all(), to_attr='related_genres'),
                 Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
                 ).distinct()
-<<<<<<< HEAD
         
-=======
->>>>>>> 014055d2c1bb17820fd91cfd32ee5424dd923104
         return new_context
 
 
@@ -702,7 +699,7 @@ class ArtistListView(ListView):
                 Prefetch('gigfinderurl_set', queryset=gigfinderurl, to_attr='related_gigfinderurls'),
             ).all()
 
-        return new_context.annotate(num_concerts=Count('relationconcertartist'))
+        return new_context.annotate(num_concerts=Count('relationconcertartist__concert', distinct=True))
 
 
     def get_context_data(self, **kwargs):
@@ -767,14 +764,14 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
 
         if filter_val == 'abroad':
             basic_query.add(~Q(organisation__location__country__name="Belgium"), basic_query.connector)
-        elif filter_val == 'belgium':
-            basic_query.add(~Q(organisation__location__country__name="Belgium"), basic_query.connector)
+        elif filter_val in ['belgium','Belgium']:
+            basic_query.add(Q(organisation__location__country__name="Belgium"), basic_query.connector)
         elif filter_val == 'cancelignore':
-            basic_query.add(Q(ignore=True) | Q(cancelled=True))
+            basic_query.add((Q(ignore=True) | Q(cancelled=True)), basic_query.connector)
         elif len(filter_val) > 0:
-            basic_query.add(~Q(organisation__location__country__name=filter_val), basic_query.connector)
+            basic_query.add(Q(organisation__location__country__name=filter_val), basic_query.connector)
 
-        organisations = Organisation.objects.select_related('location','location__country')
+        organisations = Organisation.objects.select_related('location','location__country').distinct()
         concertannouncements = ConcertAnnouncement.objects.select_related('gigfinder','artist')
 
         object_list = Concert.objects.filter(
@@ -782,14 +779,25 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
             ).prefetch_related(
                 Prefetch('organisation', queryset=organisations, to_attr='related_organisations'),
                 Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
-            ).distinct()
+            ).annotate(credited_as=F('relationconcertartist__artist_credited_as')).distinct()
 
         context = super().get_context_data(object_list=object_list, **kwargs)
         context["count"] = object_list.count()
         context["gigfinder"] = GigFinderUrl.objects.filter(artist=self.object).select_related('gigfinder')
         context["similar_artists"] = self.object.find_similar_artists()
         context["roles"] = [d for (d,b) in get_role_choices()]
+        context["paginate_by_selection"] = self.get_paginate_by(object_list)
         return context 
+
+    def get_paginate_by(self, queryset):
+        """
+        Paginate by specified value in querystring, or use default class property value.
+        """
+        try:
+            int(self.request.GET.get('paginate_by'))
+            return self.request.GET.get('paginate_by', self.paginate_by)
+        except:
+            return self.paginate_by
 
 
 def process_detail_artist_bulk_actions(request, pk):
@@ -797,22 +805,41 @@ def process_detail_artist_bulk_actions(request, pk):
         action = request.POST.get('action')
         concert_ids = request.POST.getlist('_selected_action')
         artist = pk
-        if action == 'merge':
-            if concert_ids:
-                concert_target = request.POST.get('merged_with')
-                if concert_target in concert_ids:
-                    concert_ids.remove(concert_target)
-                concert_target = Concert.objects.get(pk=concert_target)
-                concert_sources = Concert.objects.filter(pk__in=concert_ids)
-                concert_merge = ConcertsMerge.objects.create(primary_object=concert_target)
-                concert_merge.alias_objects.set(concert_sources)
-                concert_merge.merge()
-                concert_merge.delete()
-        if action == 'role':
-            if concert_ids:
-                role = request.POST.get('add_role')
-                RelationConcertArtist.objects.filter(artist=pk,concert_id__in=concert_ids).update(roles=role)
 
+        # things have been selected
+        if concert_ids:
+            if action == 'merge':
+                # check if a target has been selected
+                if request.POST.get('merged_with'):
+                    concert_target = request.POST.get('merged_with')
+                    if concert_target in concert_ids:
+                        concert_ids.remove(concert_target)
+                    concert_target = Concert.objects.get(pk=concert_target)
+                    concert_sources = Concert.objects.filter(pk__in=concert_ids)
+                    concert_merge = ConcertsMerge.objects.create(primary_object=concert_target)
+                    concert_merge.alias_objects.set(concert_sources)
+                    concert_merge.merge()
+                    concert_merge.delete()
+            if action == 'role':
+                # check if a role has to be added
+                if request.POST.get('add_role') :
+                    role = request.POST.get('add_role')
+                    RelationConcertArtist.objects.filter(artist=pk,concert_id__in=concert_ids).update(roles=role)
+            if action == 'delete':
+                # protected foreign keys
+                RelationConcertArtist.objects.filter(concert_id__in=concert_ids,artist=pk).delete()
+                RelationConcertOrganisation.objects.filter(concert_id__in=concert_ids).delete()
+                # related ConcertAnnouncements
+                ConcertAnnouncement.objects.filter(concert_id__in=concert_ids).update(ignore=True, concert=None)
+                Concert.objects.filter(pk__in=concert_ids).delete()
+            if action == 'credited_as':
+                if request.POST.get('add_credited'):
+                    RelationConcertArtist.objects.filter(concert_id__in=concert_ids,artist=pk).update(artist_credited_as=request.POST.get('add_credited'))
+                else:
+                    RelationConcertArtist.objects.filter(concert_id__in=concert_ids,artist=pk).update(artist_credited_as=None)
+
+
+    # always redirect after each action
     return HttpResponseRedirect(reverse('artist_detail', kwargs={"pk": pk}))
 
 
