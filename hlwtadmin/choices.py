@@ -5,3 +5,6 @@ ROLE_CHOICES = (
     ('solist', 'Solist'),
     ('composer', 'Composer'),
     ('not specified', 'not specified'))
+
+def get_role_choices():
+    return ROLE_CHOICES

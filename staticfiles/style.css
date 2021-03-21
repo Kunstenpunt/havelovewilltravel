@@ -39,3 +39,8 @@ ul.concert-detail-edit li {
     border-left: 1px solid #CCCCCC;
     margin: 1em auto 1em 2em;
   }
+
+.mbr-10 {
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
