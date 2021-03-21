@@ -10,5 +10,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for org in Organisation.objects.filter(relationconcertorganisation__isnull=True).filter(venue__concertannouncement__isnull=True):
-            print(org, org.pk)
-            input()
+            org.delete()
