@@ -10,4 +10,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for org in Organisation.objects.filter(relationconcertorganisation__isnull=True).filter(venue__concertannouncement__isnull=True):
-            org.delete()
+            venues = Venue.objects.filter(organisation=org)
+            if len(venues) < 2:
+                if len(venues) == 1:
+                    print("deleting venue", venues[0], venues[0].pk)
+                    venues[0].delete()
+                print("deleting organisation", org, org.pk)
+                org.delete()
