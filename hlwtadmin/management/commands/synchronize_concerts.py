@@ -152,6 +152,7 @@ class FacebookScraper(PlatformLeecher):
 
             location = self._get_location(ld)
             titel = ld["name"]
+            cancelled = "Cancel" in ld["eventStatus"] if "eventStatus" in ld else False
             event_data = {
                 "event_id": event_id,
                 "datum": datum,
@@ -161,7 +162,8 @@ class FacebookScraper(PlatformLeecher):
                 "venue": location["venue"],
                 "latitude": location["lat"],
                 "longitude": location["lng"],
-                "titel": titel[0:199]
+                "titel": titel[0:199],
+                "cancelled": cancelled
             }
         except AttributeError as e:
             print("error FB", e)
@@ -232,7 +234,8 @@ class FacebookScraper(PlatformLeecher):
                                 raw_venue=venue,
                                 ignore=False,
                                 latitude=concert["latitude"],
-                                longitude=concert["longitude"]
+                                longitude=concert["longitude"],
+                                cancelled=concert["cancelled"]
                             )
                             ca._change_reason = "automatic_create_" + datetime.now().date().isoformat()
                             ca.save()
@@ -250,6 +253,8 @@ class FacebookScraper(PlatformLeecher):
                                 concertannouncement.latitude = concert["latitude"]
                             if concert["longitude"] != concertannouncement.longitude:
                                 concertannouncement.longitude = concert["longitude"]
+                            if concert["cancelled"] != concertannouncement.cancelled:
+                                concertannouncement.cancelled = concert["cancelled"]
                             concertannouncement.last_seen_on = datetime.now()
                             concertannouncement._change_reason = "automatic_change_" + datetime.now().date().isoformat()
                             concertannouncement.save()
