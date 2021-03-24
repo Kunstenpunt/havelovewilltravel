@@ -25,7 +25,7 @@ class Command(BaseCommand):
         self.ua = UserAgent()
 
         # loop through all announcements of facebook that are not ignored
-        for concertannouncement in ConcertAnnouncement.objects.filter(gigfinder__name="www.facebook.com").filter(until_date__isnull=False):
+        for concertannouncement in ConcertAnnouncement.objects.filter(gigfinder__name="www.facebook.com").filter(until_date__isnull=False).filter(last_updated__lt="2021-03-20").order_by("-pk"):
 
             print("working on", concertannouncement, concertannouncement.pk)
             time.sleep(3)
