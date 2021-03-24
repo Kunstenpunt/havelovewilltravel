@@ -522,6 +522,14 @@ class IgnoredConcertListView(DefaultConcertListView):
         return self.apply_filters().filter(ignore=True)
 
 
+class VagueConcertsAbroadListView(DefaultConcertListView):
+    model = Concert
+    paginate_by = 30
+
+    def get_queryset(self):
+        return self.apply_filters().filter(ignore=False).filter(until_date__isnull=False).exclude(organisation__location__country__name="Belgium").order_by("-date")
+
+
 class ConcertsInNonNeighbouringCountries(DefaultConcertListView):
     model = Concert
     paginate_by = 30

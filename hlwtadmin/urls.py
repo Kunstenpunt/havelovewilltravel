@@ -16,6 +16,7 @@ urlpatterns = [
     path('concerts_with_multiple_organisations_in_different_locations/', views.ConcertsWithMultipleOrganisationsInDifferentLocations.as_view(), name='concerts_with_multiple_organisations_in_different_locations'),
     path('concerts_with_more_than_one_artist/', views.ConcertsWithMoreThanOneArtist.as_view(), name='concerts_with_more_than_one_artist'),
     path('concerts_in_non_neighbouring_countries/', views.ConcertsInNonNeighbouringCountries.as_view(), name='concerts_in_non_neighbouring_countries'),
+    path('vague_concerts_abroad/', views.VagueConcertsAbroadListView.as_view(), name='vague_concerts_abroad'),
     path('concert/<int:pk>', views.ConcertDetailView.as_view(), name='concert_detail'),
     path('concert/create/', views.ConcertCreate.as_view(), name='concert_create'),
     path('concert/create/<int:pk>', views.ConcertCreate.as_view(), name='concert-create-similar'),
