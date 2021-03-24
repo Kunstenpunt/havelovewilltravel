@@ -9,7 +9,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        for org in Organisation.objects.filter(relationconcertorganisation__isnull=True).filter(venue__concertannouncement__isnull=True):
+        for org in Organisation.objects.filter(relationconcertorganisation__isnull=True).filter(venue__concertannouncement__isnull=True).exclude(verified=True):
             venues = Venue.objects.filter(organisation=org)
             if len(venues) < 2:
                 if len(venues) == 1:
