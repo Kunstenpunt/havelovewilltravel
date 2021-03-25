@@ -25,9 +25,10 @@ class Command(BaseCommand):
         self.ua = UserAgent()
 
         # loop through all announcements of facebook that are not ignored
-        for concertannouncement in ConcertAnnouncement.objects.filter(gigfinder__name="www.facebook.com").filter(until_date__isnull=False).filter(updated_at__lt="2021-03-20").order_by("-pk"):
-
-            print("working on", concertannouncement, concertannouncement.pk)
+        todo = ConcertAnnouncement.objects.filter(gigfinder__name="www.facebook.com").filter(until_date__isnull=False).filter(updated_at__lt="2021-03-20").order_by("-pk")
+        todo_len = len(todo)
+        for i, concertannouncement in enumerate(todo):
+            print("working on", i, "of", todo_len, "with", concertannouncement, concertannouncement.pk)
             time.sleep(3)
             # fetch data from facebook
             concert = self.get_event(concertannouncement.gigfinder_concert_id)
