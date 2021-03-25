@@ -39,19 +39,36 @@
     </p>
 </div>
 <div class="container my-4">
-    <p class="mx-auto" style="text-align: center">Amount of concerts shown {{ count }}</p>
-    <form class="mx-auto" style="text-align: center" method="GET">
-        <select name="paginate_by" id="">
-            <option value="{{ paginate_by_selection }}">{{ paginate_by_selection }}</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-            <option value="50">50</option>
-        </select>
-        <input type="submit" value="Paginate">
-    </form>
+    
+        {% load my_tags %}
+    <div class="row">
+        <div class="col-lg-6">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.previous_page_number %}">previous</a></li>{% endif %}
+                    <li class="page-item"><a class="page-link" href="#">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+                    {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.next_page_number %}">next</a></li>{% endif %}
+                </ul>
+            </nav>
+        </div>
+        <div class="col-lg-6">
+            <form class="mx-auto" style="text-align: center" method="GET">
+                <select name="paginate_by" id="">
+                    <option value="{{ paginate_by_selection }}">{{ paginate_by_selection }}</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                </select>
+                <input type="submit" value="Paginate">
+            </form>
+        </div>
+    </div>
     {% if user.is_authenticated %}
-    <form action={% url 'artist_detail_bulk_actions' artist.pk %}  method="POST">
+        {% if filter %}
+        <form action={% url 'artist_detail_bulk_actions' artist.pk page_obj.number filter  %}  method="POST">
+        {% endif %}
+        <form action={% url 'artist_detail_bulk_actions' artist.pk page_obj.number %}  method="POST">
     {% csrf_token %}
     <div class="pt-5 actions form-inline mbr-10">
         <p class="mx-3" style="text-align: left">
@@ -62,6 +79,9 @@
                     <option value="role">Add role to selected</option>
                     <option value="delete">Permanently (!) Delete selected</option>
                     <option value="credited_as">Add Credited as to selected</option>
+                    <option value="cancelled_status">Toggle Cancelled Status</option>
+                    <option value="ignore_status">Toggle Ignore Status</option>
+                    <option value="verified_status">Toggle Verified Status</option>
                 </select>
             </label>
         <p class="mx-3" style="text-align: left">
@@ -84,7 +104,7 @@
         <p style="text-align: top">
             <button type="submit" class="btn btn-primary btn-sm mbr-10"
                     title="Run the selected action">Go</button>
-            <span class="action-counter help-block"
+            <span id="selectioncounter" class="action-counter help-block"
                 data-actions-icnt="{{object.item_set.count}}"
                 style="display: inline;">
                 0 of {{object.item_set.count}} selected
@@ -96,11 +116,14 @@
         <thead class="thead-light">
             <tr>
             {% if user.is_authenticated %}
-              <th scope="col">Actions</th>
+              <th scope="col" style="vertical-align: middle;">
+                <a href="javascript:;" id="select_all"><br/>Select All</a>       
+                <a href="javascript:;" id="clear_all"><br/>Clear All</a>
+              </th>
             {% endif %}
-              <th scope="col">Date</th>
-              <th scope="col">Organisation</th>
-              <th scope="col">Gigfinders</th>
+              <th scope="col" style="vertical-align: middle;">Date</th>
+              <th scope="col" style="vertical-align: middle;">Organisation</th>
+              <th scope="col" style="vertical-align: middle;">Gigfinders</th>
             </tr>
         </thead>
         {% for concert in object_list %}
@@ -111,7 +134,7 @@
                 name="_selected_action"
                 type="checkbox"
                 value="{{concert.pk}}"
-                onChange='updateconcerts("{{ concert.pk }}" , "{{ concert.date }}", "{{ concert.related_organisations|escape }}")'>
+                onChange='updateConcerts("{{ concert.pk }}" , "{{ concert.date }}", "{{ concert.until_date }}", "{{ concert.related_organisations|escape }}")'>
         </td>
         {% endif %}
         <th scope="row">
@@ -274,7 +297,6 @@
 <script>
   var span = document.getElementById("myInfo");
   var mbid = span.getAttributeNode("class").value;
-  console.log(mbid);
 
   async function get() {
     const response = await fetch("http://musicbrainz.org/ws/2/artist/"+ mbid + "?inc=url-rels&fmt=json");
@@ -323,17 +345,41 @@
             $('.merge-with,.add-role, .add-credited').addClass('d-none');
         }
     });
+    $("#select_all").click(function() {
+            var item = document.getElementsByName("_selected_action");
+            for (var i=0; i < item.length; i++) {
+                item[i].setAttribute("checked","true");
+                item[i].onchange();
+            };
+            document.getElementById("selectioncounter").textContent="Everything selected";
+        });
+    $("#clear_all").click(function() {
+        var item = document.getElementsByName("_selected_action");
+        for (var i=0; i < item.length; i++) {
+            if (item[i].checked) {
+                item[i].removeAttribute("checked");
+                item[i].onchange();
+            }
+        }
+        document.getElementById("selectioncounter").textContent="Nothing selected";
+    });
     </script>
     <script>
         var selected_concerts = {};
         var selected_targets = $('#selectTarget')[0];
-        function updateconcerts(pk, date, orgs) {
+
+        function updateConcerts(pk, date_from, date_until, orgs) {
             selected_targets.options.length = 0;
             if (selected_concerts.hasOwnProperty(pk)) {
                 delete selected_concerts[pk]; 
             }
             else {
-                selected_concerts[pk] = date + " " + orgs
+                if (date_until !== '' && date_until !== date_from && date_until !== 'None') {
+                    selected_concerts[pk] = date_from + "-" + date_until + " " + orgs
+                }
+                else {
+                    selected_concerts[pk] = date_from + " " + orgs
+                }
             }
             selected_targets.options[selected_targets.options.length]=new Option("---------","");
             for (var key in selected_concerts){

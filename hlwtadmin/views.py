@@ -32,6 +32,7 @@ from bootstrap_modal_forms.forms import BSModalForm
 from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout
+from django_super_deduper.merge import MergedModelInstance
 
 class SubcountryAutocompleteFromList(autocomplete.Select2ListView):
     def get_list(self):
@@ -160,7 +161,10 @@ class OrganisationAutocompleteSelect(autocomplete.Select2QuerySetView):
         return qs
 
     def get_result_label(self, item):
-        return(item.name)
+        return(
+            f'{item.name[0:80]}, '
+            f'{item.location if item.location else "No location"}'
+            )
 
 
 class LocationAutocomplete(autocomplete.Select2QuerySetView):
@@ -609,11 +613,11 @@ class ConcertCreate(CreateView):
     def get(self, request, *args, **kwargs):
         if 'pk' in kwargs:
             example_concert = get_object_or_404(Concert, pk=self.kwargs.get('pk'))
-            form = ConcertForm(instance=example_concert)
+            form = ConcertForm(instance=example_concert, initial={'manual':True, 'longitude': None,'latitude': None })
             context = {'form': form}
             return render(request, 'hlwtadmin/concert_form.html', context)
         
-        context = {'form': ConcertForm()}
+        context = {'form': ConcertForm(initial={'manual':True})}
         return render(request, 'hlwtadmin/concert_form.html', context)
 
 
@@ -758,8 +762,9 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
     fields = '__all__'
     paginate_by = 30
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):        
         filter_val = self.request.GET.get('filter', '')
+
         basic_query= Q(artist=self.object) 
 
         if filter_val == 'abroad':
@@ -772,7 +777,7 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
             basic_query.add(Q(organisation__location__country__name=filter_val), basic_query.connector)
 
         organisations = Organisation.objects.select_related('location','location__country').distinct()
-        concertannouncements = ConcertAnnouncement.objects.select_related('gigfinder','artist')
+        concertannouncements = ConcertAnnouncement.objects.select_related('gigfinder','artist').distinct()
 
         object_list = Concert.objects.filter(
             basic_query
@@ -780,13 +785,14 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
                 Prefetch('organisation', queryset=organisations, to_attr='related_organisations'),
                 Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
             ).annotate(credited_as=F('relationconcertartist__artist_credited_as')).distinct()
-
+        
         context = super().get_context_data(object_list=object_list, **kwargs)
-        context["count"] = object_list.count()
         context["gigfinder"] = GigFinderUrl.objects.filter(artist=self.object).select_related('gigfinder')
         context["similar_artists"] = self.object.find_similar_artists()
         context["roles"] = [d for (d,b) in get_role_choices()]
         context["paginate_by_selection"] = self.get_paginate_by(object_list)
+        context["filter"] = filter_val
+
         return context 
 
     def get_paginate_by(self, queryset):
@@ -795,12 +801,16 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
         """
         try:
             int(self.request.GET.get('paginate_by'))
+            self.request.session['paginate_by'] = self.request.GET.get('paginate_by')
             return self.request.GET.get('paginate_by', self.paginate_by)
         except:
+            if 'paginate_by' in self.request.session:
+                if self.request.session['paginate_by']:
+                    return self.request.session['paginate_by']
             return self.paginate_by
 
 
-def process_detail_artist_bulk_actions(request, pk):
+def process_detail_artist_bulk_actions(request, pk, page=1, filter=""):
     if request.method == "POST":
         action = request.POST.get('action')
         concert_ids = request.POST.getlist('_selected_action')
@@ -812,19 +822,24 @@ def process_detail_artist_bulk_actions(request, pk):
                 # check if a target has been selected
                 if request.POST.get('merged_with'):
                     concert_target = request.POST.get('merged_with')
-                    if concert_target in concert_ids:
-                        concert_ids.remove(concert_target)
+                    concert_ids.remove(concert_target)
                     concert_target = Concert.objects.get(pk=concert_target)
+                    # retrieve value before it's changed
+                    date = concert_target.date
+                    until_date = concert_target.until_date
                     concert_sources = Concert.objects.filter(pk__in=concert_ids)
-                    concert_merge = ConcertsMerge.objects.create(primary_object=concert_target)
-                    concert_merge.alias_objects.set(concert_sources)
-                    concert_merge.merge()
-                    concert_merge.delete()
+                    mm = MergedModelInstance.create(concert_target, concert_sources)
+                    # set date manually to target date
+                    mm.date = date
+                    mm.until_date = until_date
+                    mm.save()
+
             if action == 'role':
                 # check if a role has to be added
                 if request.POST.get('add_role') :
                     role = request.POST.get('add_role')
                     RelationConcertArtist.objects.filter(artist=pk,concert_id__in=concert_ids).update(roles=role)
+
             if action == 'delete':
                 # protected foreign keys
                 RelationConcertArtist.objects.filter(concert_id__in=concert_ids,artist=pk).delete()
@@ -832,15 +847,47 @@ def process_detail_artist_bulk_actions(request, pk):
                 # related ConcertAnnouncements
                 ConcertAnnouncement.objects.filter(concert_id__in=concert_ids).update(ignore=True, concert=None)
                 Concert.objects.filter(pk__in=concert_ids).delete()
+
             if action == 'credited_as':
                 if request.POST.get('add_credited'):
                     RelationConcertArtist.objects.filter(concert_id__in=concert_ids,artist=pk).update(artist_credited_as=request.POST.get('add_credited'))
                 else:
                     RelationConcertArtist.objects.filter(concert_id__in=concert_ids,artist=pk).update(artist_credited_as=None)
 
+            if action == 'cancelled_status':
+                concerts = Concert.objects.filter(id__in=concert_ids)
+                for c in concerts:
+                    if c.cancelled == None:
+                        c.cancelled = True
+                    else:
+                        c.cancelled = not c.cancelled
+                concerts.update()
+
+            if action == 'ignore_status':
+                concerts = Concert.objects.filter(id__in=concert_ids)
+                for c in concerts:
+                    if c.ignore == None:
+                        c.ignore = True
+                    else:
+                        c.ignore = not c.ignore
+                concerts.update()
+
+            if action == 'verified_status':
+                concerts = Concert.objects.filter(id__in=concert_ids)
+                for c in concerts:
+                    if c.verified == None:
+                        c.verified = True
+                    else:
+                        c.verified = not c.verified
+                concerts.update()
+
 
     # always redirect after each action
-    return HttpResponseRedirect(reverse('artist_detail', kwargs={"pk": pk}))
+    url = reverse('artist_detail', kwargs={"pk": pk})
+    if filter:
+        return HttpResponseRedirect(f'{url}?filter={filter}&page={page}')
+    else:
+        return HttpResponseRedirect(f'{url}?page={page}')
 
 
 class LocationForm(forms.ModelForm):
