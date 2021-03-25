@@ -32,7 +32,8 @@ urlpatterns = [
     path('artist/<str:pk>', views.ArtistDetailView.as_view(), name='artist_detail'),
     path('artist/create/', views.ArtistCreate.as_view(), name='artist_create'),
     path('artist/<str:pk>/update', views.ArtistUpdate.as_view(), name='artist_update'),
-    path('artist/<str:pk>/bulk/', views.process_detail_artist_bulk_actions, name='artist_detail_bulk_actions'),
+    path('artist/<str:pk>/<int:page>/bulk/', views.process_detail_artist_bulk_actions, name='artist_detail_bulk_actions'),
+    path('artist/<str:pk>/<int:page>/<str:filter>/bulk/', views.process_detail_artist_bulk_actions, name='artist_detail_bulk_actions'),
     # locations
     path('locations/', views.LocationListView.as_view(), name='locations'),
     path('recently_added_locations/', views.RecentlyAddedLocationsListView.as_view(), name='recently_added_locations'),

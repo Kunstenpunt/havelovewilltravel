@@ -5,6 +5,7 @@ from django.db.models import Count
 from collections import Counter
 
 from django.db.models import Prefetch
+from django_super_deduper.merge import MergedModelInstance
 
 
 class Command(BaseCommand):
@@ -49,10 +50,14 @@ class Command(BaseCommand):
                                         for s in specifics:
                                             if l.date <= s.date <= l.until_date:
                                                 try:
-                                                    concert_merge = ConcertsMerge.objects.create(primary_object=s)
-                                                    concert_merge.alias_objects.set(l)
-                                                    concert_merge.merge()
-                                                    concert_merge.delete()
+                                                    mm = MergedModelInstance.create(s, l)
+                                                    mm.date = concert_target.date
+                                                    mm.until_date = concert_target.until_date
+                                                    mm.save()
+                                                    #concert_merge = ConcertsMerge.objects.create(primary_object=s)
+                                                    #concert_merge.alias_objects.set(l)
+                                                    #concert_merge.merge()
+                                                    #concert_merge.delete()
                                                 except:
                                                     # already deleted
                                                     continue
