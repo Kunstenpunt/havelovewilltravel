@@ -140,29 +140,32 @@ class FacebookScraper(PlatformLeecher):
         soup = BeautifulSoup(r, 'html.parser')
         try:
             ld = loads(soup.find("script", {"type": "application/ld+json"}).text)
-            datum = dateparse(ld["startDate"])
-            einddatum = dateparse(ld["endDate"]) if "endDate" in ld else None
-            if einddatum:
-                if einddatum.hour < 12 and datum < einddatum:
-                    einddatum = (einddatum - timedelta(days=1))
-                einddatum = einddatum.date()
-                if einddatum == datum.date():
-                    einddatum = None
-            datum = datum.date()
+            if ld["@type"] == "Event":
+                datum = dateparse(ld["startDate"])
+                einddatum = dateparse(ld["endDate"]) if "endDate" in ld else None
+                if einddatum:
+                    if einddatum.hour < 12 and datum < einddatum:
+                        einddatum = (einddatum - timedelta(days=1))
+                    einddatum = einddatum.date()
+                    if einddatum == datum.date():
+                        einddatum = None
+                datum = datum.date()
 
-            location = self._get_location(ld)
-            titel = ld["name"]
-            event_data = {
-                "event_id": event_id,
-                "datum": datum,
-                "einddatum": einddatum,
-                "land": location["country"],
-                "stad": location["city"],
-                "venue": location["venue"],
-                "latitude": location["lat"],
-                "longitude": location["lng"],
-                "titel": titel[0:199]
-            }
+                location = self._get_location(ld)
+                titel = ld["name"]
+                cancelled = "Cancel" in ld["eventStatus"] if "eventStatus" in ld else False
+                event_data = {
+                    "event_id": event_id,
+                    "datum": datum,
+                    "einddatum": einddatum,
+                    "land": location["country"],
+                    "stad": location["city"],
+                    "venue": location["venue"],
+                    "latitude": location["lat"],
+                    "longitude": location["lng"],
+                    "titel": titel[0:199],
+                    "cancelled": cancelled
+                }
         except AttributeError as e:
             print("error FB", e)
             event_data = {}
@@ -232,7 +235,8 @@ class FacebookScraper(PlatformLeecher):
                                 raw_venue=venue,
                                 ignore=False,
                                 latitude=concert["latitude"],
-                                longitude=concert["longitude"]
+                                longitude=concert["longitude"],
+                                cancelled=concert["cancelled"]
                             )
                             ca._change_reason = "automatic_create_" + datetime.now().date().isoformat()
                             ca.save()
@@ -250,6 +254,8 @@ class FacebookScraper(PlatformLeecher):
                                 concertannouncement.latitude = concert["latitude"]
                             if concert["longitude"] != concertannouncement.longitude:
                                 concertannouncement.longitude = concert["longitude"]
+                            if concert["cancelled"] != concertannouncement.cancelled:
+                                concertannouncement.cancelled = concert["cancelled"]
                             concertannouncement.last_seen_on = datetime.now()
                             concertannouncement._change_reason = "automatic_change_" + datetime.now().date().isoformat()
                             concertannouncement.save()
