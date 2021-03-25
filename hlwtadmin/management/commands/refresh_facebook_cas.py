@@ -73,31 +73,32 @@ class Command(BaseCommand):
             try:
                 ld = loads(soup.find("script", {"type": "application/ld+json"}).text)
                 print("raw data", ld)
-                datum = dateparse(ld["startDate"])
-                einddatum = dateparse(ld["endDate"]) if "endDate" in ld else None
-                if einddatum:
-                    if einddatum.hour < 12 and datum < einddatum:
-                        einddatum = (einddatum - timedelta(days=1))
-                    einddatum = einddatum.date()
-                    if einddatum == datum.date():
-                        einddatum = None
-                datum = datum.date()
-                location = self._get_location(ld)
-                titel = ld["name"]
-                desc = ld["description"]
-                event_data = {
-                    "event_id": event_id,
-                    "datum": datum,
-                    "einddatum": einddatum,
-                    "land": location["country"],
-                    "stad": location["city"],
-                    "venue": location["venue"],
-                    "latitude": location["lat"],
-                    "longitude": location["lng"],
-                    "titel": titel[0:199],
-                    "description": desc
-                }
-                print("event", event_data)
+                if ld["@type"] == "Event":
+                    datum = dateparse(ld["startDate"])
+                    einddatum = dateparse(ld["endDate"]) if "endDate" in ld else None
+                    if einddatum:
+                        if einddatum.hour < 12 and datum < einddatum:
+                            einddatum = (einddatum - timedelta(days=1))
+                        einddatum = einddatum.date()
+                        if einddatum == datum.date():
+                            einddatum = None
+                    datum = datum.date()
+                    location = self._get_location(ld)
+                    titel = ld["name"]
+                    desc = ld["description"]
+                    event_data = {
+                        "event_id": event_id,
+                        "datum": datum,
+                        "einddatum": einddatum,
+                        "land": location["country"],
+                        "stad": location["city"],
+                        "venue": location["venue"],
+                        "latitude": location["lat"],
+                        "longitude": location["lng"],
+                        "titel": titel[0:199],
+                        "description": desc
+                    }
+                    print("event", event_data)
             except AttributeError as e:
                 print("error", e)
                 event_data = {}
