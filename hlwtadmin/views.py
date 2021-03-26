@@ -818,6 +818,17 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
             return self.paginate_by
 
 
+# solves losing parameters
+def refresh_paginate_by(request, pk, page=1, filter=""):
+    if request.method == "POST":
+        # always redirect after each action
+        url = reverse('artist_detail', kwargs={"pk": pk})
+        if filter:
+            return HttpResponseRedirect(f'{url}?filter={filter}&page={page}')
+        else:
+            return HttpResponseRedirect(f'{url}?page={page}')
+
+
 def process_detail_artist_bulk_actions(request, pk, page=1, filter=""):
     if request.method == "POST":
         action = request.POST.get('action')
@@ -869,7 +880,7 @@ def process_detail_artist_bulk_actions(request, pk, page=1, filter=""):
                         c.cancelled = True
                     else:
                         c.cancelled = not c.cancelled
-                concerts.update()
+                Concert.objects.bulk_update(concerts, ['cancelled'])
 
             if action == 'ignore_status':
                 concerts = Concert.objects.filter(id__in=concert_ids)
@@ -878,7 +889,7 @@ def process_detail_artist_bulk_actions(request, pk, page=1, filter=""):
                         c.ignore = True
                     else:
                         c.ignore = not c.ignore
-                concerts.update()
+                Concert.objects.bulk_update(concerts, ['ignore'])
 
             if action == 'verified_status':
                 concerts = Concert.objects.filter(id__in=concert_ids)
@@ -887,7 +898,7 @@ def process_detail_artist_bulk_actions(request, pk, page=1, filter=""):
                         c.verified = True
                     else:
                         c.verified = not c.verified
-                concerts.update()
+                Concert.objects.bulk_update(concerts, ['verified'])
 
 
     # always redirect after each action
