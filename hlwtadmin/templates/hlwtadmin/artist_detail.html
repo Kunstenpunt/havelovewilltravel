@@ -52,7 +52,12 @@
             </nav>
         </div>
         <div class="col-lg-6">
-            <form class="mx-auto" style="text-align: center" method="GET">
+            {% if filter %}
+            <form action={% url 'paginate_by_refresh' artist.pk page_obj.number filter  %}  method="POST">
+            {% endif %}
+            <form action={% url 'paginate_by_refresh' artist.pk page_obj.number %}  method="POST">
+            {% csrf_token %}
+
                 <select name="paginate_by" id="">
                     <option value="{{ paginate_by_selection }}">{{ paginate_by_selection }}</option>
                     <option value="10">10</option>
@@ -69,56 +74,55 @@
         <form action={% url 'artist_detail_bulk_actions' artist.pk page_obj.number filter  %}  method="POST">
         {% endif %}
         <form action={% url 'artist_detail_bulk_actions' artist.pk page_obj.number %}  method="POST">
-    {% csrf_token %}
-    <div class="pt-5 actions form-inline mbr-10">
-        <p class="mx-3" style="text-align: left">
-            <label name="option" class="mbr-10">
-                Action: <select name="action" required="" class="form-control input-sm">
-                    <option value="" selected="selected">---------</option>
-                    <option value="merge">Merge selected</option>
-                    <option value="role">Add role to selected</option>
-                    <option value="delete">Permanently (!) Delete selected</option>
-                    <option value="credited_as">Add Credited as to selected</option>
-                    <option value="cancelled_status">Toggle Cancelled Status</option>
-                    <option value="ignore_status">Toggle Ignore Status</option>
-                    <option value="verified_status">Toggle Verified Status</option>
-                </select>
-            </label>
-        <p class="mx-3" style="text-align: left">
-            <label class="merge-with d-none mbr-10">
-                Map to: <select id="selectTarget" name="merged_with" class="form-control input-sm"></select>
-            </label>
-            <label class="add-role d-none mbr-10">
-                Assign Role: <select name="add_role" class="form-control input-sm">
-                    <option value="" selected="selected">---------</option>
-                    {% for role in roles %}
-                        <option value="{{ role }}">{{ role }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <label class="add-credited d-none mbr-10">
-                Assign Credited As: <input type="text" name="add_credited" class="form-control input-sm">
-                </select>
-            </label>
-        </p>
-        <p style="text-align: top">
-            <button type="submit" class="btn btn-primary btn-sm mbr-10"
-                    title="Run the selected action">Go</button>
-            <span id="selectioncounter" class="action-counter help-block"
-                data-actions-icnt="{{object.item_set.count}}"
-                style="display: inline;">
-                0 of {{object.item_set.count}} selected
-            </span>
-        </p>
-    </div>
+        {% csrf_token %}
+            <div class="pt-5 actions form-inline mbr-10">
+                <p class="mx-3" style="text-align: left">
+                    <label name="option" class="mbr-10">
+                        Action: <select name="action" required="" class="form-control input-sm">
+                            <option value="" selected="selected">---------</option>
+                            <option value="merge">Merge selected</option>
+                            <option value="role">Add role to selected</option>
+                            <option value="delete">Permanently (!) Delete selected</option>
+                            <option value="credited_as">Add Credited as to selected</option>
+                            <option value="cancelled_status">Toggle Cancelled Status</option>
+                            <option value="ignore_status">Toggle Ignore Status</option>
+                            <option value="verified_status">Toggle Verified Status</option>
+                        </select>
+                    </label>
+                <p class="mx-3" style="text-align: left">
+                    <label class="merge-with d-none mbr-10">
+                        Map to: <select id="selectTarget" name="merged_with" class="form-control input-sm"></select>
+                    </label>
+                    <label class="add-role d-none mbr-10">
+                        Assign Role: <select name="add_role" class="form-control input-sm">
+                            <option value="" selected="selected">---------</option>
+                            {% for role in roles %}
+                                <option value="{{ role }}">{{ role }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="add-credited d-none mbr-10">
+                        Assign Credited As: <input type="text" name="add_credited" class="form-control input-sm">
+                        </select>
+                    </label>
+                </p>
+                <p style="text-align: top">
+                    <button type="submit" class="btn btn-primary btn-sm mbr-10"
+                            title="Run the selected action">Go</button>
+                    <span id="selectioncounter" class="action-counter help-block"
+                        data-actions-icnt="{{object.item_set.count}}"
+                        style="display: inline;">
+                        0 of {{object.item_set.count}} selected
+                    </span>
+                </p>
+            </div>
     {% endif %}
     <table class="table table-striped table-sm">
         <thead class="thead-light">
             <tr>
             {% if user.is_authenticated %}
               <th scope="col" style="vertical-align: middle;">
-                <a href="javascript:;" id="select_all"><br/>Select All</a>       
-                <a href="javascript:;" id="clear_all"><br/>Clear All</a>
+                <input type="checkbox" id="toggle-all">
               </th>
             {% endif %}
               <th scope="col" style="vertical-align: middle;">Date</th>
@@ -345,23 +349,22 @@
             $('.merge-with,.add-role, .add-credited').addClass('d-none');
         }
     });
-    $("#select_all").click(function() {
-            var item = document.getElementsByName("_selected_action");
-            for (var i=0; i < item.length; i++) {
-                item[i].setAttribute("checked","true");
-                item[i].onchange();
-            };
+    // Listen for click on toggle checkbox
+    $('#toggle-all').click(function(event) {   
+        if(this.checked) {
+            // Iterate each checkbox
+            $("[name='_selected_action']").each(function() {
+                this.checked = true;
+                this.onchange()                   
+            });
             document.getElementById("selectioncounter").textContent="Everything selected";
-        });
-    $("#clear_all").click(function() {
-        var item = document.getElementsByName("_selected_action");
-        for (var i=0; i < item.length; i++) {
-            if (item[i].checked) {
-                item[i].removeAttribute("checked");
-                item[i].onchange();
-            }
+        } else {
+            $("[name='_selected_action']").each(function() {
+                this.checked = false;
+                this.onchange()                     
+            });
+            document.getElementById("selectioncounter").textContent="Nothing selected";
         }
-        document.getElementById("selectioncounter").textContent="Nothing selected";
     });
     </script>
     <script>
