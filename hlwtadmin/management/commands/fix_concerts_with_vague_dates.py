@@ -14,7 +14,6 @@ class Command(BaseCommand):
                     if ca.until_date is None:
                         print(concert, concert.pk, ca, ca.pk)
                         print("updating until date")
-                        input()
                         concert.date = ca.date
                         concert.until_date = None
                         concert.save(update_fields=["until_date"])
