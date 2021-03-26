@@ -224,7 +224,7 @@
                 <ul class="list-unstyled">
                     {% for relation in venue_list %}
                         <li>
-                            <a href="{% url 'venue_update' relation.id %}">{{ relation.raw_venue }}</a>
+                            <a href="{% url 'venue_update' relation.id %}">{{ relation.raw_venue }}</a> (<a href="{% url 'venue_detail' relation.id %}">view</a>)
                         </li>
                     {% endfor %}
                 </ul>
