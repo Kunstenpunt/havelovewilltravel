@@ -21,7 +21,6 @@ class Command(BaseCommand):
             if similar_concerts:
                 similar_concert = similar_concerts[0]
                 print("\tsimilar", similar_concert.pk, similar_concert)
-                input()
 
                 mergeconcerts = [concert]
 
