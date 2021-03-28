@@ -28,28 +28,27 @@ class Command(BaseCommand):
         todo = ConcertAnnouncement.objects.filter(gigfinder__name="www.facebook.com").filter(until_date__isnull=False).filter(updated_at__lt="2021-03-20").order_by("-pk")
         todo_len = len(todo)
         for i, concertannouncement in enumerate(todo):
-            if i > 5140:
-                print("working on", i, "of", todo_len, "with", concertannouncement, concertannouncement.pk)
-                time.sleep(3)
-                # fetch data from facebook
-                concert = self.get_event(concertannouncement.gigfinder_concert_id)
-                print("data", concert)
-                if concert:
-                    if concert["titel"] != concertannouncement.title:
-                        concertannouncement.title = concert["titel"]
-                    if concert["datum"] != concertannouncement.date:
-                        concertannouncement.date = concert["datum"]
-                    if concert["einddatum"] != concertannouncement.until_date:
-                        concertannouncement.until_date = concert["einddatum"]
-                    if concert["latitude"] != concertannouncement.latitude:
-                        concertannouncement.latitude = concert["latitude"]
-                    if concert["longitude"] != concertannouncement.longitude:
-                        concertannouncement.longitude = concert["longitude"]
-                    if concert["description"] != concertannouncement.description:
-                        concertannouncement.description = concert["description"]
-                    concertannouncement.last_seen_on = datetime.now()
-                    print("ca geupdated", concertannouncement, concertannouncement.pk)
-                    concertannouncement.save(update_fields=["description", "latitude", "longitude", "title", "date", "until_date", "last_seen_on"])
+            print("working on", i, "of", todo_len, "with", concertannouncement, concertannouncement.pk)
+            time.sleep(3)
+            # fetch data from facebook
+            concert = self.get_event(concertannouncement.gigfinder_concert_id)
+            print("data", concert)
+            if concert:
+                if concert["titel"] != concertannouncement.title:
+                    concertannouncement.title = concert["titel"]
+                if concert["datum"] != concertannouncement.date:
+                    concertannouncement.date = concert["datum"]
+                if concert["einddatum"] != concertannouncement.until_date:
+                    concertannouncement.until_date = concert["einddatum"]
+                if concert["latitude"] != concertannouncement.latitude:
+                    concertannouncement.latitude = concert["latitude"]
+                if concert["longitude"] != concertannouncement.longitude:
+                    concertannouncement.longitude = concert["longitude"]
+                if concert["description"] != concertannouncement.description:
+                    concertannouncement.description = concert["description"]
+                concertannouncement.last_seen_on = datetime.now()
+                print("ca geupdated", concertannouncement, concertannouncement.pk)
+                concertannouncement.save(update_fields=["description", "latitude", "longitude", "title", "date", "until_date", "last_seen_on"])
 
     def get_html(self, url):
         time.sleep(5.0)
@@ -65,6 +64,7 @@ class Command(BaseCommand):
         url = "https://mobile.facebook.com/events/" + str(event_id)
         print(url)
         r = None
+        event_data = {}
         if not test:
             r = self.get_html(url)
         else:
@@ -104,7 +104,7 @@ class Command(BaseCommand):
             except AttributeError as e:
                 print("error", e)
                 event_data = {}
-            return event_data
+        return event_data
 
     def _get_location(self, ld):
         try:
