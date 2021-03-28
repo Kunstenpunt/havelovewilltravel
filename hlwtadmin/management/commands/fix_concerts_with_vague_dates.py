@@ -18,3 +18,7 @@ class Command(BaseCommand):
                         concert.until_date = None
                         concert.save(update_fields=["until_date"])
 
+        for concert in Concert.objects.filter(until_date__isnull=False):
+            if concert.date == concert.until_date:
+                concert.until_date = None
+                concert.save(update_fields=["until_date"])
