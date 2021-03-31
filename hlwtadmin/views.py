@@ -104,6 +104,7 @@ class ArtistAutocomplete(autocomplete.Select2QuerySetView):
         else:
             return item.name
 
+
 class ArtistAutocompleteSelect(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Artist.objects.all()
@@ -157,7 +158,7 @@ class OrganisationAutocompleteSelect(autocomplete.Select2QuerySetView):
             qs = qs.filter(location__id=location)
 
         if self.q:
-            qs = qs.filter(name__unaccent__istartswith=self.q)
+            qs = qs.filter(name__unaccent__iregex=self.q)
         return qs
 
     def get_result_label(self, item):
@@ -196,9 +197,9 @@ class LocationAutocompleteSelect(autocomplete.Select2QuerySetView):
             qs = qs.filter(country__id=country)
 
         if self.q:
-            qs = qs.filter(city__unaccent__istartswith=self.q)
+            qs = qs.filter(city__unaccent__iregex=self.q)
             if not qs:
-                qs = qs.filter(country__unaccent__istartswith=self.q)
+                qs = qs.filter(country__unaccent__iregex=self.q)
         return qs
 
 
