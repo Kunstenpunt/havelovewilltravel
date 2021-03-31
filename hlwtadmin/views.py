@@ -822,6 +822,8 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
 # solves losing parameters
 def refresh_paginate_by(request, pk, page=1, filter=""):
     if request.method == "POST":
+        if 'paginate_by' in request.POST:
+            request.session['paginate_by'] = request.POST.get('paginate_by')
         # always redirect after each action
         url = reverse('artist_detail', kwargs={"pk": pk})
         if filter:
