@@ -57,9 +57,14 @@
           <tr>
             <th>Date</th>
             <th>Artist</th>
+              {% if request.resolver_match.url_name != 'concerts_without_organisations' %}
             <th>Organisation</th>
             <th>Genre</th>
+              {% endif %}
             <th>Gigfinders</th>
+              {% if request.resolver_match.url_name == 'concerts_without_organisations' %}
+              <th>Actions</th>
+              {% endif %}
           </tr>
         </thead>
         {% for concert in concert_list %}
@@ -76,6 +81,7 @@
             <a title="{{ artist.disambiguation }}" href="{% url 'artist_detail' artist.mbid %}">{{ artist.name }}{% if artist.credited_as %}*{% endif%}</a><br>
           {% endfor %}
         </td>
+        {% if request.resolver_match.url_name != 'concerts_without_organisations' %}
         <td valign="top">
           {% for organisation in concert.related_organisations %}
             {% if organisation %}
@@ -91,16 +97,23 @@
           {% endfor %}
         </td>
         <td valign="top">{{ concert.related_genres|join:"<br>" }}</td>
+        {% endif %}
         <td valign="top">
           {% for ca in concert.related_concertannouncements %}
             <a target="_blank" href="{{ ca.gigfinder.base_url }}{% if ca.gigfinder.name == 'podiumfestivalinfo' %} {{ ca.artist.name }} {{ ca.date }} 'site:podiuminfo.nl'  {% else %}{{ ca.gigfinder_concert_id }}{% endif %}">
                 <img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
             </a>
-            <a href="{% url 'concertannouncement_detail' ca.pk %}" title="{{ ca }}">{{ ca|truncatechars:30 }}</a>
+            <a href="{% url 'concertannouncement_detail' ca.pk %}" title="{{ ca }}">{% if request.resolver_match.url_name != 'concerts_without_organisations' %}{{ ca|truncatechars:30 }}{% else %}{{ ca|truncatechars:100 }}{% endif %}</a>
             {% if not ca.recently_seen %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" alt="not recently seen" />{% endif %}
             <br>
           {% endfor %}
         </td>
+        {% if request.resolver_match.url_name == 'concerts_without_organisations' %}
+        <td>
+            {% if perms.hlwtadmin.create_relationconcertorganisation %}<a href="{% url 'relationconcertorganisation_create' concert.id %}" class="button-add">+</a>{% endif %}
+            {% if perms.hlwtadmin.delete_concert %}<a href="{% url 'concert_delete_with_ca_on_ignore' concert.id 1 %}"><img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}
+        </td>
+        {% endif %}
         </tr>
         {% endfor %}
     </table>
