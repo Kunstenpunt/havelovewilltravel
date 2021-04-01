@@ -18,6 +18,8 @@ class Command(BaseCommand):
 
         # Clean Concert <> Organisation
         values = RelationConcertOrganisation.objects.all().values_list('concert', 'organisation', 'organisation_credited_as', 'relation_type', 'verified')
+        print([t for t in Counter(values).most_common() if t[1] > 1])
+        input()
         for item, c in Counter(values).most_common():
             if c > 1:
                 hit = RelationConcertOrganisation.objects.filter(concert=item[0]).filter(organisation=item[1]).filter(organisation_credited_as=item[2]).filter(relation_type=item[3]).filter(verified=item[4]).first().delete()
