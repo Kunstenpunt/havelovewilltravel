@@ -10,6 +10,12 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
+        # Delete relations with empty organisations
+        RelationConcertOrganisation.objects.filter(organisation__isnull=True).delete()
+
+        # Delete relations with empty artists
+        RelationConcertArtist.objects.filter(artist__isnull=True).delete()
+
         # Clean Concert <> Organisation
         values = RelationConcertOrganisation.objects.all().values_list('concert', 'organisation', 'organisation_credited_as', 'relation_type', 'verified')
         for item, c in Counter(values).most_common():
