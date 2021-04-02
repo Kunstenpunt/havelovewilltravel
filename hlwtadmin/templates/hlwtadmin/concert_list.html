@@ -100,12 +100,13 @@
         {% endif %}
         <td valign="top">
           {% for ca in concert.related_concertannouncements %}
+            <span {% if ca.ignore %}style="text-decoration: line-through"{% endif %}>
             <a target="_blank" href="{{ ca.gigfinder.base_url }}{% if ca.gigfinder.name == 'podiumfestivalinfo' %} {{ ca.artist.name }} {{ ca.date }} 'site:podiuminfo.nl'  {% else %}{{ ca.gigfinder_concert_id }}{% endif %}">
                 <img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ ca.gigfinder }}.png" alt="{{ ca.gigfinder }}" />
             </a>
             <a href="{% url 'concertannouncement_detail' ca.pk %}" title="{{ ca }}">{% if request.resolver_match.url_name != 'concerts_without_organisations' %}{{ ca|truncatechars:30 }}{% else %}{{ ca|truncatechars:100 }}{% endif %}</a>
             {% if not ca.recently_seen %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/skulnbones.png' %}" alt="not recently seen" />{% endif %}
-            <br>
+            </span><br>
           {% endfor %}
         </td>
         {% if request.resolver_match.url_name == 'concerts_without_organisations' %}

@@ -215,7 +215,7 @@
         <div class="card-body">
         <ul class="list-group list-group-flush">
             {% for relation in concert.concertannouncements %}
-                <li class="list-group-item">
+                <li class="list-group-item" {% if relation.ignore %}style="text-decoration: line-through"{% endif %}>
                     <a target="_blank" href="{{ relation.gigfinder.base_url }}{% if relation.gigfinder.name == 'podiumfestivalinfo' %} {{ relation.artist.name }} {{ relation.date }} 'site:podiuminfo.nl'  {% else %}{{ relation.gigfinder_concert_id }}{% endif %}"><img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ relation.gigfinder }}.png" alt="{{ relation.gigfinder }}" /></a> -
                     <a href="{% url 'concertannouncement_detail' relation.id %}">{{ relation.title }}</a> with venue
                     <a href="{% url 'venue_detail' relation.raw_venue.id %}">{{ relation.raw_venue }}</a>
