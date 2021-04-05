@@ -443,7 +443,7 @@ class Organisation(models.Model):
         (DAY, 'Precise up to the day')
     )
     name = models.CharField(max_length=200)
-    sort_name = models.CharField(max_length=200)
+    sort_name = models.CharField(max_length=200, blank=True, null=True)
     disambiguation = models.CharField(max_length=200, blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
@@ -511,6 +511,11 @@ class Organisation(models.Model):
                     related_organisations.append(org)
         result = [a for a, b in Counter(related_organisations).most_common(top)]
         return result
+
+    def save(self, *args, **kwargs):
+        if self.sort_name is None:
+            self.sort_name = self.name
+        super(Organisation, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['sort_name']

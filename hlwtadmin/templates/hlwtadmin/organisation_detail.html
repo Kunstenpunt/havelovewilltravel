@@ -24,7 +24,7 @@
             </tr>
             <tr>
                 <td>Location</td>
-                <td>{% if organisation.address %}{{ organisation.address }}, {% endif %} {% if organisation.location %}<a href="{% url 'location_detail' organisation.location.id %}">{{ organisation.location }}</a> {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ organisation.location.country.iso_code }}.png" />{% endif %}</td>
+                <td>{% if organisation.address %}{{ organisation.address }}, {% endif %} {% if organisation.location %}<a href="{% url 'location_detail' organisation.location.id %}">{{ organisation.location }}</a> {% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'flags/' %}{{ organisation.location.country.iso_code }}.png" />{% endif %}{% if organisation.location.verified %}{% load static %}<img style="width: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% endif %}</td>
             </tr>
             <tr>
                 <td>Type</td>
@@ -59,6 +59,9 @@
             </tr>
             {% endif %}
         </table>
+        <p style="text-align:right;">
+        {% if perms.hlwtadmin.update_organisation %}<a href="{% url 'organisation_update' organisation.id %}">Update this organisation</a>{% endif %}
+        </p>
     </div>
 
     {% if organisation.identifiersqs.first.identifier.service.name == "wikidata.org" %}
