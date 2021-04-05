@@ -25,14 +25,12 @@ class Command(BaseCommand):
 
             if mergeconcerts:
                 print("\tlet's do this?")
-                input()
                 try:
                     concert_merge = ConcertsMerge.objects.create(
                         primary_object=mergeconcerts
                     )
                     concert_merge.alias_objects.set([concert])
                     print(concert_merge)
-                    input()
                     concert_merge.merge()
                     print("\tdone")
                     concert_merge.delete()
