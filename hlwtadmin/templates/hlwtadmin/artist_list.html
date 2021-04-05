@@ -51,7 +51,7 @@
             <td>
                 <a href="{{ artist.get_absolute_url }}">{{ artist.name }}</a>
                 <a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}"><img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/musicbrainz.png' %}" alt="{{ artist.name }}" /></a>
-                <br><small class="text-muted"><em>{{ artist.disambiguation }}</em> ({{ artist.related_genres|join:"," }})</small>
+                <br><small class="text-muted"><em>{{ artist.disambiguation }}</em> {{ artist.related_genres|join:"," }}</small>
             </td>
             <td>
                 {% for gf in artist.related_gigfinderurls %}<a target="_blank" href="{{ gf.url }}"><img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/' %}{{ gf.gigfinder }}.png" alt="{{ gf.gigfinder }}" /></a>{% endfor %}
