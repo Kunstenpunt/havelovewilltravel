@@ -710,7 +710,7 @@ class ArtistListView(ListView):
             ).prefetch_related(
                 Prefetch('genre', Genre.objects.all(), to_attr='related_genres'),
                 Prefetch('gigfinderurl_set', queryset=gigfinderurl, to_attr='related_gigfinderurls'),
-            ).all()
+            ).all().order_by(order)
 
         return new_context.annotate(num_concerts=Count('relationconcertartist__concert', distinct=True))
 
