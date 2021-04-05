@@ -12,7 +12,6 @@ class Command(BaseCommand):
         for concert in Concert.objects.filter(until_date__isnull=True).order_by('-verified'):
             orgs = [rel.organisation for rel in concert.organisationsqs()]
             arts = [rel.artist for rel in concert.artistsqs()]
-            print(concert, concert.date, orgs, arts, concert.pk)
             mergeconcerts = []
             if len(arts) == 1:
                 artist = arts[0]
@@ -22,6 +21,7 @@ class Command(BaseCommand):
                         if concert.date == art_concert.date:
                             art_orgs = [rel.organisation for rel in art_concert.organisationsqs()]
                             if art_orgs == orgs:
+                                print(concert, concert.date, orgs, arts, concert.pk)
                                 print("\t", concert, concert.pk, "is very similar to", art_concert, art_concert.pk)
                                 mergeconcerts.append(art_concert)
 
