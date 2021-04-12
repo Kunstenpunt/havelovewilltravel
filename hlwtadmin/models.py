@@ -225,7 +225,7 @@ class ConcertAnnouncement(models.Model):
                     self.concert.updated_at = datetime.now()
                     self.concert.save()
                     update_change_reason(self.concert, "automatic_change_" + datetime.now().date().isoformat())
-                if self.raw_venue.organisation and (self.raw_venue.organisation not in [rel.organisation for rel in self.concert.organisationsqs()]):
+                if not self.ignore and self.raw_venue.organisation and (self.raw_venue.organisation not in [rel.organisation for rel in self.concert.organisationsqs()]):
                     rel = RelationConcertOrganisation.objects.\
                         create(concert=self.concert,
                                organisation=self.raw_venue.organisation)
