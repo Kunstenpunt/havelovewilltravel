@@ -400,7 +400,8 @@ class Concert(models.Model):
                     delta.changes = deltachanges
                     changes.append(delta)
             if relation.history_type == "+":
-                changes.append({"new_record": relation, "changes": [{"field": "organisation", "old": ("not existing", "not existing"), "new": (relation.instance.organisation.pk, relation.instance.organisation.name)}]})
+                if relation.instance.organisation:
+                    changes.append({"new_record": relation, "changes": [{"field": "organisation", "old": ("not existing", "not existing"), "new": (relation.instance.organisation.pk, relation.instance.organisation.name)}]})
         return changes
 
     def get_artists_changelist(self):
