@@ -379,7 +379,8 @@ class Concert(models.Model):
         changes = []
         for relation in RelationConcertOrganisation.history.filter(concert=self):
             if relation.history_type == "-":
-                changes.append({"new_record": relation, "changes": [{"field": "organisation", "old": (relation.instance.organisation.pk, relation.instance.organisation.name), "new": ("deleted", "deleted")}]})
+                if relation.instance.organisation:
+                    changes.append({"new_record": relation, "changes": [{"field": "organisation", "old": (relation.instance.organisation.pk, relation.instance.organisation.name), "new": ("deleted", "deleted")}]})
             if relation.history_type == "~":
                 old_record = relation.prev_record
                 if old_record:
