@@ -21,6 +21,7 @@ urlpatterns = [
     path('concert/create/', views.ConcertCreate.as_view(), name='concert_create'),
     path('concert/create/<int:pk>', views.ConcertCreate.as_view(), name='concert-create-similar'),
     path('concert/<int:pk>/update/', views.ConcertUpdate.as_view(), name='concert_update'),
+    path('concert/<int:pk>/<int:special>', views.ConcertDetailView.as_view(), name='concert_special_action'),
     path('concert/<int:pk>/delete/', views.ConcertDelete.as_view(), name='concert_delete'),
     path('concert/<int:pk>/delete/<int:concert_delete_with_ca_on_ignore>', views.ConcertDelete.as_view(), name='concert_delete_with_ca_on_ignore'),
     path('concert-check/', views.concertcheckduplicate, name='concert-check-duplicate'),

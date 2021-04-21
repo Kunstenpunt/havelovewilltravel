@@ -612,6 +612,9 @@ class ConcertDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        special_action = self.kwargs["special"] if "special" in self.kwargs else None
+        if special_action == 1:
+            self.object.set_until_date_to_null()
         return context
 
 

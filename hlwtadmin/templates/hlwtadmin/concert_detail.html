@@ -37,7 +37,7 @@
                 {% endif %}
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
-                        <h3 class="card-title">{{ concert.date|date:"l" }}<br/>{{ concert.date|date:"F" }} {{ concert.date|date:"d" }}<br/>{{ concert.date|date:"Y" }}<br/><small class="text-muted">{% if concert.until_date and concert.until_date != concert.date %}(until {{ concert.until_date|date:"F d" }}){% endif %}</small></h3>
+                        <h3 class="card-title">{{ concert.date|date:"l" }}<br/>{{ concert.date|date:"F" }} {{ concert.date|date:"d" }}<br/>{{ concert.date|date:"Y" }}<br/><small class="text-muted">{% if concert.until_date and concert.until_date != concert.date %}(until {{ concert.until_date|date:"F d" }}){% if perms.hlwtadmin.update_concert %}<a href="{% url 'concert_special_action' concert.id 1 %}"><img src="{% static 'icons/erase.png' %}" alt="delete" /></a>{% endif %}{% endif %}</small></h3>
                         <small class="text-muted">
                             {% if concert.verified %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/verified.svg' %}" alt="verified" />{% else %}Not verified{% endif %}
                             {% if concert.manual %}<img style="width: 25px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/manual.png' %}" alt="manual" />{% endif %}

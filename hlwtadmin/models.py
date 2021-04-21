@@ -321,6 +321,10 @@ class Concert(models.Model):
     def get_absolute_url(self):
         return reverse('concert_detail', args=[str(self.id)])
 
+    def set_until_date_to_null(self):
+        self.until_date = None
+        self.save(update_fields=['until_date'])
+
     def find_concurring_concerts(self):
         l = set()
         for this_org in RelationConcertOrganisation.objects.filter(concert__id=self.id):
