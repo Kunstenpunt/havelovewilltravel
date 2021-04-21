@@ -10,7 +10,7 @@ django-bootstrap-modal-forms==1.5.0
 django-compat==1.0.15
 django-cors-headers==3.3.0
 django-crispy-forms==1.9.2
-django-debug-toolbar==2.2
+django-debug-toolbar==2.2.1
 django-extensions==2.2.9
 django-filter==2.2.0
 django-simple-history==2.12.0
