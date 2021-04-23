@@ -776,8 +776,9 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
 
     def get_context_data(self, **kwargs):        
         filter_val = self.request.GET.get('filter', '')
+        sort_val = self.request.GET.get('sorting', '-date')
 
-        basic_query= Q(artist=self.object) 
+        basic_query = Q(artist=self.object)
 
         if filter_val == 'abroad':
             basic_query.add(~Q(organisation__location__country__name="Belgium"), basic_query.connector)
@@ -796,7 +797,7 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
             ).prefetch_related(
                 Prefetch('organisation', queryset=organisations, to_attr='related_organisations'),
                 Prefetch('concertannouncement_set', queryset=concertannouncements, to_attr='related_concertannouncements'),
-            ).annotate(credited_as=F('relationconcertartist__artist_credited_as')).distinct()
+            ).annotate(credited_as=F('relationconcertartist__artist_credited_as')).distinct().order_by(sort_val)
         
         context = super().get_context_data(object_list=object_list, **kwargs)
         context["gigfinder"] = GigFinderUrl.objects.filter(artist=self.object).select_related('gigfinder')
@@ -804,6 +805,7 @@ class ArtistDetailView(DetailView, MultipleObjectMixin):
         context["roles"] = [d for (d,b) in get_role_choices()]
         context["paginate_by_selection"] = self.get_paginate_by(object_list)
         context["filter"] = filter_val
+        context["sorting"] = sort_val
 
         return context 
 

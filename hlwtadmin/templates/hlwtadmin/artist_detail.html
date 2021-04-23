@@ -27,20 +27,38 @@
         {% endfor %}
         ...
         </p>
+        <p>See <a href="/hlwtadmin/concertannouncements/?artist={{ artist.mbid }}">all announcements</a> of this artist.</p>
+    </div>
+    <div class="mx-auto" style="width: 800px; text-align: center">
+        <form method="get" action="{% url request.resolver_match.url_name artist.mbid %}">
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="form-col">
+                        <select class="form-control" id="filter" name="filter">
+                            <option value="" {% if filter == "" %}selected="selected"{% endif %}>All concerts</option>
+                            <option value="abroad" {% if filter == "abroad" %}selected="selected"{% endif %}>Concerts abroad</option>
+                            <option value="belgium" {% if filter == "belgium" %}selected="selected"{% endif %}>Concerts in Belgium</option>
+                            <option value="cancelignore" {% if filter == "cancelignore" %}selected="selected"{% endif %}>Cancelled or ignored concerts</option>
+                        </select>
+                    </div>
+                    <div class="form-col">
+                        <select class="form-control" id="sorting" name="sorting">
+                            <option value="date" {% if sorting == "date" %}selected="selected"{% endif %}>Oldest concerts first</option>
+                            <option value="-date" {% if sorting == "-date" %}selected="selected"{% endif %}>Recent concerts first</option>
+                        </select>
+                    </div>
+                    <div class="form-col">
+                        <input class="btn btn-primary" type="submit" name="submit" value="Submit"/>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
-<div class="mx-auto" style="width: 800px; text-align: center">
-    <p>
-        <a href="/hlwtadmin/artist/{{ artist.mbid }}">all concerts</a> |
-        <a href="/hlwtadmin/artist/{{ artist.mbid }}?filter=abroad">concerts abroad</a> |
-        <a href="/hlwtadmin/artist/{{ artist.mbid }}?filter=belgium">concerts in Belgium</a> |
-        <a href="/hlwtadmin/artist/{{ artist.mbid }}?filter=cancelignore">cancelled or ignored concerts</a> | 
-        <a href="/hlwtadmin/concertannouncements/?artist={{ artist.mbid }}">all announcements</a>
-    </p>
-</div>
+
 <div class="container my-4">
     
-        {% load my_tags %}
+    {% load my_tags %}
     <div class="row">
         <div class="col-lg-6">
             <nav aria-label="Page navigation">
