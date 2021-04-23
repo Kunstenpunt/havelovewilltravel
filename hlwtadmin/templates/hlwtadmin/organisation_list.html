@@ -51,7 +51,7 @@
                 <th>Name</th>
                 <th>Location</th>
                 <th>Type</th>
-                <th>Genre</th>
+                <!--<th>Genre</th>-->
             </tr>
         </thead>
         {% for organisation in organisation_list %}
@@ -70,7 +70,7 @@
                 {% endif %}
             </td>
             <td>{{ organisation.related_organisation_types|join:"," }}</td>
-            <td>{{ organisation.related_genres|join:"," }}</td>
+            <!--<td>{{ organisation.related_genres|join:"," }}</td>-->
           </tr>
         {% endfor %}
     </table>

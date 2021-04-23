@@ -59,7 +59,7 @@
             <th>Artist</th>
               {% if request.resolver_match.url_name != 'concerts_without_organisations' %}
             <th>Organisation</th>
-            <th>Genre</th>
+            <!--<th>Genre</th>-->
               {% endif %}
             <th>Gigfinders</th>
               {% if request.resolver_match.url_name == 'concerts_without_organisations' %}
@@ -96,7 +96,7 @@
             <br>
           {% endfor %}
         </td>
-        <td valign="top">{{ concert.related_genres|join:"<br>" }}</td>
+        <!--<td valign="top">{{ concert.related_genres|join:"<br>" }}</td>-->
         {% endif %}
         <td valign="top">
           {% for ca in concert.related_concertannouncements %}

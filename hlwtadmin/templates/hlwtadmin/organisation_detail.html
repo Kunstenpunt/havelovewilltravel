@@ -79,7 +79,7 @@
             <tr>
               <th scope="col">Date</th>
               <th scope="col">Artist</th>
-              <th scope="col">Genre</th>
+              <!--<th scope="col">Genre</th>-->
               <th scope="col">Gigfinders</th>
             </tr>
         </thead>
@@ -100,7 +100,7 @@
               {% endfor %}
             </td>
 
-            <td valign="top">{{ genre|join:"<br>" }}</td>
+            <!--<td valign="top">{{ genre|join:"<br>" }}</td>-->
             <td valign="top">
               {% for ca in concert.related_concertannouncements %}
                 <span {% if ca.ignore %}style="text-decoration: line-through"{% endif %}>
