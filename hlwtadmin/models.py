@@ -42,6 +42,9 @@ class Artist(models.Model):
     include = models.BooleanField(default=False)
     exclude = models.BooleanField(default=False)
     genre = models.ManyToManyField("Genre", blank=True)
+    artist_type = models.CharField(max_length=150, blank=True, null=True)
+    begin = models.CharField(max_length=80, blank=True, null=True)
+    end = models.CharField(max_length=80, blank=True, null=True)
 
     def __str__(self):
         return self.name

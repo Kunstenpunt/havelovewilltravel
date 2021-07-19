@@ -11,10 +11,14 @@
     </nav>
     <div class="row">
         <div class="col-md-8">
-            <h1 class="display-4">{% block title %}{{ artist.name }}{% endblock %}
-                {% if artist.disambiguation %}<br/><small class="text-muted">{{ artist.disambiguation }}</small>{% endif%}
+            <h1 class="display-4">{% block title %}{{ artist.name }}{% endblock %}</h1>
+            <em>
+                {% if artist.disambiguation %}{{ artist.disambiguation }}{% endif%}
+                ({% if artist.artist_type %}{{ artist.artist_type }},{% endif %}
+                 {% if artist.begin %}{{ artist.begin }}{% else %}...{% endif %} -
+                 {% if artist.end %}{{ artist.end }}{% else %}...{% endif %})
                 <a target="_blank" href="https://musicbrainz.org/artist/{{ artist.mbid }}">{% load static %}<img style="width: 16px; height: 16px; border: 0px; margin-left: 1px; margin-right: 1px;" src="{% static 'icons/musicbrainz.png' %}" alt="{{ artist.name }}" /></a>
-            </h1>
+            </em>
             <p>Genre: {{ artist.genre.all|join:"," }}</p>
             <p id="myInfo" class="{{ artist.mbid }}"></p>
         </div>

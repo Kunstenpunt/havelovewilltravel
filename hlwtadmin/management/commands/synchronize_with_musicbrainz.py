@@ -34,11 +34,17 @@ class Command(BaseCommand):
                                  disambiguation=artist["disambiguation"] if "disambiguation" in artist else None,
                                  mbid=artist["id"],
                                  include=include,
-                                 exclude=False
+                                 exclude=False,
+                                 artist_type=artist["type"],
+                                 begin=artist["life-span"]["begin"],
+                                 end=artist["life-span"]["end"]
                                 )
         else:
             a.name = artist["name"]
             a.disambiguation = artist["disambiguation"] if "disambiguation" in artist else None
+            a.artist_type = artist["type"] if "type" in artist else None
+            a.begin = artist["life-span"]["begin"] if ("life-span" in artist and "begin" in artist["life-span"]) else None
+            a.end = artist["life-span"]["end"] if ("life-span" in artist and "end" in artist["life-span"]) else None
             a.include = include
         a.save()
 
