@@ -36,8 +36,8 @@ class Command(BaseCommand):
                                  include=include,
                                  exclude=False,
                                  artist_type=artist["type"],
-                                 begin=artist["life-span"]["begin"],
-                                 end=artist["life-span"]["end"]
+                                 begin=artist["life-span"]["begin"] if ("life-span" in artist and "begin" in artist["life-span"]) else None,
+                                 end=artist["life-span"]["end"] if ("life-span" in artist and "end" in artist["life-span"]) else None
                                 )
         else:
             a.name = artist["name"]
