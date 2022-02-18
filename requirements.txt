@@ -19,7 +19,7 @@ fake-useragent==0.1.11
 gunicorn==20.0.4
 idna==2.8
 musicbrainzngs==0.7.1
-numpy==1.17.4
+numpy==1.21.0
 pandas==0.25.3
 psycopg2-binary==2.8.4
 pycountry==19.8.18
