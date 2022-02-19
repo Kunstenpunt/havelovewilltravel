@@ -35,7 +35,7 @@ class Command(BaseCommand):
                                  mbid=artist["id"],
                                  include=include,
                                  exclude=False,
-                                 artist_type=artist["type"],
+                                 artist_type=artist["type"] if "type" in artist else None,
                                  begin=artist["life-span"]["begin"] if ("life-span" in artist and "begin" in artist["life-span"]) else None,
                                  end=artist["life-span"]["end"] if ("life-span" in artist and "end" in artist["life-span"]) else None
                                 )
