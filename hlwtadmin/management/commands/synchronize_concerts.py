@@ -43,8 +43,8 @@ class Command(BaseCommand):
         leecher_songkick = SongkickLeecher()
         for gfurl in GigFinderUrl.objects.filter(last_synchronized__lte=datetime.now(pytz.utc)-timedelta(days=4)):
             print(gfurl.artist, gfurl.artist.mbid, gfurl.url, gfurl.gigfinder.name, gfurl.last_synchronized)
-            if gfurl.gigfinder.name == "www.facebook.com" and gfurl.artist.exclude is not True:
-                leecher_fb.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
+#            if gfurl.gigfinder.name == "www.facebook.com" and gfurl.artist.exclude is not True:
+#                leecher_fb.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
             if gfurl.gigfinder.name == "bandsintown.com" and gfurl.artist.exclude is not True:
                 leecher_bit.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
             if gfurl.gigfinder.name == "www.setlist.fm" and gfurl.artist.exclude is not True:
