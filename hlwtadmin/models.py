@@ -1051,10 +1051,11 @@ class ConcertannouncementToConcert:
             name = name_prop if len(name_prop.strip()) > 0 else self.concertannouncement.raw_venue.raw_venue
 
             try:
-                year = int(name[-4:])
-                if name[-5] == " " and (1950 < year < 2055):
-                    name = sub("\d\d\d\d$", "", name)
-                    name.strip()
+                if len(name) > 4:
+                    year = int(name[-4:])
+                    if name[-5] == " " and (1900 < year < 2055):
+                        name = sub("\d\d\d\d$", "", name)
+                        name.strip()
             except ValueError:
                 pass
 
