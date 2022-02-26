@@ -95,8 +95,9 @@ class Command(BaseCommand):
         for artistobject in Artist.objects.all():
             if artistobject.mbid not in updated and not artistobject.exclude:
                 artist = self.__obtain_a_specific_mb_artist(artistobject.mbid)
-                self.__create_or_update_artist(artist, include=True)
-                self.__create_or_update_artist_gigfinders(artist)
+                if artist:
+                    self.__create_or_update_artist(artist, include=True)
+                    self.__create_or_update_artist_gigfinders(artist)
 
     def __obtain_a_specific_mb_artist(self, mbid):
         set_useragent("kunstenpunt", "0.1", "github.com/kunstenpunt")
@@ -109,6 +110,6 @@ class Command(BaseCommand):
                 print("musicbrainz netwerkerror", e)
                 sleep(25.0)
             except musicbrainz.ResponseError as e:
-                print("musicbrainz response error", e)
-                return artist
+                print("musicbrainz response error", e, "while looking for", mbid)
+                return None
         return artist
