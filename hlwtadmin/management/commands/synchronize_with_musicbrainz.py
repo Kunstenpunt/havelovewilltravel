@@ -1,7 +1,7 @@
 from hlwtadmin.models import Artist, GigFinderUrl, GigFinder, ConcertAnnouncement, Venue
 
 from musicbrainzngs import set_useragent, search_artists, musicbrainz, get_artist_by_id
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -49,7 +49,6 @@ class Command(BaseCommand):
         a.save()
 
     def __create_or_update_artist_gigfinders(self, artist):
-        print(artist)
         artistobject = Artist.objects.filter(pk=artist["id"]).first()
         urlrels = artist["url-relation-list"] if "url-relation-list" in artist else []
         for urlrel in urlrels:
@@ -67,7 +66,7 @@ class Command(BaseCommand):
                         artist=artistobject,
                         gigfinder=gf,
                         url=url,
-                        last_confirmed_by_musicbrainz=datetime.now()
+                        last_confirmed_by_musicbrainz=datetime.now(timezone.utc)
                     )
                     gfurl.save()
 
