@@ -41,16 +41,16 @@ class Command(BaseCommand):
         leecher_bit = BandsInTownLeecher()
         leecher_setlist = SetlistFmLeecher()
         leecher_songkick = SongkickLeecher()
-        for gfurl in GigFinderUrl.objects.filter(last_synchronized__lte=datetime.now(pytz.utc)-timedelta(days=4)):
+        for gfurl in GigFinderUrl.objects.filter():#last_synchronized__lte=datetime.now(pytz.utc)-timedelta(days=4)):
             print(gfurl.artist, gfurl.artist.mbid, gfurl.url, gfurl.gigfinder.name, gfurl.last_synchronized)
 #            if gfurl.gigfinder.name == "www.facebook.com" and gfurl.artist.exclude is not True:
 #                leecher_fb.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
             if gfurl.gigfinder.name == "bandsintown.com" and gfurl.artist.exclude is not True:
                 leecher_bit.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
-            if gfurl.gigfinder.name == "www.setlist.fm" and gfurl.artist.exclude is not True:
-                leecher_setlist.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
-            if gfurl.gigfinder.name == "www.songkick.com" and gfurl.artist.exclude is not True:
-                leecher_songkick.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
+#            if gfurl.gigfinder.name == "www.setlist.fm" and gfurl.artist.exclude is not True:
+#                leecher_setlist.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
+#            if gfurl.gigfinder.name == "www.songkick.com" and gfurl.artist.exclude is not True:
+#                leecher_songkick.set_events_for_identifier(gfurl.artist, gfurl.artist.mbid, gfurl.url)
             gfurl.last_synchronized = datetime.now(pytz.utc)
             try:
                 gfurl.save(update_fields=['last_synchronized'])
@@ -269,15 +269,17 @@ class BandsInTownLeecher(PlatformLeecher):
         self.gf = GigFinder.objects.filter(name="bandsintown.com").first()
 
     def set_events_for_identifier(self, band, mbid, url):
-        period = "1900-01-01,2050-01-01"
+        period = "all"
         bandnaam = urlparse.unquote(url.split("/")[-1].split("?came_from")[0])
+        print(band, bandnaam)
         events = None
         trials = 0
         while events is None and trials < 10:
             trials += 1
             try:
                 try:
-                    events = self.bitc.artists_events(bandnaam, date=period)
+                    events = self.bitc.artists_events(str(band), date=period)
+                    print("found", events, "in", period)
                 except requests.exceptions.ConnectionError:
                     print("error BIT connection")
                     events = None
@@ -289,6 +291,8 @@ class BandsInTownLeecher(PlatformLeecher):
                             events = self.bitc.artists_events(bandnaam, date=period)
                         else:
                             events = []
+                if events is None:
+                    print("nothing found")
             except decoder.JSONDecodeError:
                 events = None
 
