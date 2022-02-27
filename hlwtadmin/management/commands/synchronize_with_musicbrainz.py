@@ -17,7 +17,7 @@ class Command(BaseCommand):
         while artists["artist-count"] < 0:
             try:
                 sleep(1.0)
-                artists_area = search_artists(country=area, limit=limit, offset=offset)
+                artists_area = search_artists(country=area, area=area, beginarea=area, endarea=area, limit=limit, offset=offset)
                 artists['artist-list'] = artists_area["artist-list"]
                 artists['artist-count'] = artists_area["artist-count"]
             except musicbrainz.NetworkError:
