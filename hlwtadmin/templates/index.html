@@ -12,7 +12,7 @@
       <p>Check <a href="https://github.com/Kunstenpunt/havelovewilltravel">GitHub</a> for <a href="https://github.com/Kunstenpunt/havelovewilltravel">code</a>, <a href="https://github.com/Kunstenpunt/havelovewilltravel/issues">issue tracking</a> and <a href="https://github.com/Kunstenpunt/havelovewilltravel/wiki">documentation</a>.</p>
     </div>
 </section>
-{% if not user.is_authenticated %}
+
 <div class="row">
   <div class="col-md-12">
     <h2>Concerts abroad today <small><a href="{% url 'upcoming_concerts' %}">Or click here to see all upcoming concerts</a></small></h2>
@@ -28,7 +28,7 @@
   </div>
 </div>
 <hr>
-{% endif %}
+
 <div class="card-columns">
   {% if user.is_authenticated %}
   <div class="card">
