@@ -20,8 +20,9 @@
     {% for concert in concerts_abroad_today %}
         <li class="list-group-item">
           <a href="{% url 'concert_detail' concert.pk %}">{{ concert.date }}</a> >
-          {% for artist in concert.related_artists %}<a href="{% url 'artist_detail' artist.pk %}">{{ artist.name }}</a>{% endfor %} at
-          {% for organisation in concert.related_organisations %}<a href="{% url 'organisation_detail' organisation.pk %}">{{ organisation.name }}</a> in <a href="{% url 'location_detail' organisation.location.pk %}">{{ organisation.location }}</a>{% endfor %}
+          {% for artist in concert.related_artists %}{% if artist %}<a href="{% url 'artist_detail' artist.pk %}">{{ artist.name }}</a>{% else %}No artist{% endif%}{% endfor %} at
+          {% for organisation in concert.related_organisations %}<a href="{% url 'organisation_detail' organisation.pk %}">{{ organisation.name }}</a> in
+          {% if organisation.location %}<a href="{% url 'location_detail' organisation.location.pk %}">{{ organisation.location }}</a>{% else %}No location{% endif %}{% endfor %}
         </li>
     {% endfor %}
     </ul>
