@@ -471,6 +471,7 @@ class DefaultConcertListView(ListView):
         # had to rename variables because otherwise name clash in frontend
         context['start'] = context['filter_start']
         context['end'] = context['filter_end']
+        context['abroad'] = self.request.GET.get('abroadfilter', None)
         return context
 
     def apply_filters(self):
@@ -485,9 +486,14 @@ class DefaultConcertListView(ListView):
         filter_val = self.request.GET.get('filter', None)
         filter_genre = self.request.GET.get('genrefilter', None)
         filter_loc = self.request.GET.get('location', None)
+        filter_abroad = self.request.GET.get('abroadfilter', None)
+        print(filter_abroad)
 
         basic_query= Q(date__gte=filter_start)
         basic_query.add(Q(date__lte=filter_end),Q.AND)
+        if filter_abroad:
+            print(filter_abroad, "yes")
+            basic_query.add(~Q(organisation__location__country__name='Belgium'),Q.AND)
         if filter_val:
             basic_query.add(Q(organisation__location__country__name=filter_val),Q.AND)
         if filter_genre:
