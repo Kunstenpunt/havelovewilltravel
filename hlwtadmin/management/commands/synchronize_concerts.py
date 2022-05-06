@@ -390,6 +390,7 @@ class SetlistFmLeecher(PlatformLeecher):
         while retrieved_hits < total_hits:
             headers = {"x-api-key": self.platform_access_granter, "Accept": "application/json", "Accept-charset": "unicode-1-1"}
             r = get("https://api.setlist.fm/rest/1.0/artist/{1}/setlists?p={0}".format(p, mbid), headers=headers)
+            print(r.text)
             try:
                 response = loads(r.text)
             except decoder.JSONDecodeError:
@@ -456,7 +457,7 @@ class SetlistFmLeecher(PlatformLeecher):
         if state is not None and concert["venue"]["city"]["country"]["code"] in ["US", "Brazil", "Australia", "Canada"]:
             stad = stad + ", " + state
         return {
-            "titel": concert["info"] if "info" in concert else band.name + " @ " + concert["venue"]["name"] + " in " + concert["venue"]["city"]["name"] + ", " + concert["venue"]["city"]["country"]["code"],
+            "titel": band.name + " @ " + concert["venue"]["name"] + " in " + concert["venue"]["city"]["name"] + ", " + concert["venue"]["city"]["country"]["code"],
             "datum": dateparse(concert["eventDate"], ["%d-%m-%Y"]).date(),
             "artiest": concert["artist"]["name"],
             "artiest_id": concert["artist"]["url"],
@@ -468,7 +469,8 @@ class SetlistFmLeecher(PlatformLeecher):
             "latitude": concert["venue"]["city"]["coords"]["lat"] if "lat" in concert["venue"]["city"]["coords"] else None,
             "longitude": concert["venue"]["city"]["coords"]["long"] if "long" in concert["venue"]["city"]["coords"] else None,
             "source": self.platform,
-            "event_id": concert["id"]
+            "event_id": concert["id"],
+            "description": concert["info"] if "info" in concert else None
         }
 
 
